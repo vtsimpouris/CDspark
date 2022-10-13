@@ -1,17 +1,27 @@
 import _aux.Pair;
-import _aux.lib;
+import _aux.Parameters;
+import algorithms.Algorithm;
 import algorithms.AlgorithmEnum;
+import algorithms.CorrelationDetective;
+import clustering.ClusteringAlgorithmEnum;
 import data_reading.DataReader;
 import lombok.NonNull;
-import lombok.extern.java.Log;
 import similarities.MultivariateSimilarityFunction;
 import similarities.functions.PearsonCorrelation;
-import similarities.functions.SimEnum;
+import similarities.SimEnum;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.logging.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class Main {
     public static void main(String[] args) {
@@ -23,7 +33,7 @@ public class Main {
         AlgorithmEnum algorithm;
         boolean parallel;
         boolean random;
-        int run;
+        int seed;
         SimEnum simMetricName;
         int maxPLeft;
         int maxPRight;
@@ -62,7 +72,7 @@ public class Main {
             shrinkFactor = Double.parseDouble(args[i]); i++;
             k = Integer.parseInt(args[i]); i++;
             approximationStrategy = args[i]; i++;
-            run = Integer.parseInt(args[i]); i++;
+            seed = Integer.parseInt(args[i]); i++;
             parallel = args[i].equals("true"); i++;
             random = args[i].equals("true"); i++;
             saveStats = args[i].equals("true"); i++;
@@ -85,7 +95,7 @@ public class Main {
             shrinkFactor = 1;
             k = -1;
             approximationStrategy = "simple";
-            run = 0;
+            seed = 0;
             parallel = false;
             random = false;
             saveStats = true;
@@ -101,7 +111,7 @@ public class Main {
         int defaultDesiredClusters = 10; // set to Integer.MAX_VALUE for unrestricted and clustering based on epsilon only
         double epsilonMultiplier = 0.8;
         int maxLevels = 20;
-        boolean useKMeans = true;
+        ClusteringAlgorithmEnum clusteringAlgorithm = ClusteringAlgorithmEnum.KMEANS;
         int breakFirstKLevelsToMoreClusters = 0;
         int clusteringRetries = 50;
         double maxApproximationSize = Math.sqrt(2 * m * (1- (0.5)));
@@ -114,6 +124,12 @@ public class Main {
             case PEARSON_CORRELATION: default: simMetric = new PearsonCorrelation(); break;
         }
 
+//        Set empirical bounding to false if metric does not have such bounds
+        if (!simMetric.hasEmpiricalBounds()){
+            empiricalBounding = false;
+            LOGGER.info("Metric does not have empirical bounds, setting empiricalBounding to false");
+        }
+
 //        read data
         Pair<String[], double[][]> dataPair = getData(dataType, inputPath, n, m, partition, LOGGER);
         headers = dataPair.x;
@@ -121,6 +137,74 @@ public class Main {
 
 //        preprocess (if necessary)
         data = simMetric.preprocess(data);
+
+        Parameters par = new Parameters(
+                LOGGER,
+                dateTime,
+                codeVersion,
+                saveStats,
+                saveResults,
+                resultPath,
+                threads,
+                algorithm,
+                parallel,
+                random,
+                seed,
+                simMetric,
+                maxPLeft,
+                maxPRight,
+                dataType,
+                outputPath,
+                headers,
+                data,
+                n,
+                m,
+                partition,
+                empiricalBounding,
+                tau,
+                minJump,
+                startEpsilon,
+                epsilonMultiplier,
+                maxLevels,
+                defaultDesiredClusters,
+                clusteringAlgorithm,
+                breakFirstKLevelsToMoreClusters,
+                clusteringRetries,
+                shrinkFactor,
+                maxApproximationSize,
+                nPriorityBuckets,
+                k,
+                approximationStrategy
+        );
+        par.init();
+
+        run(par);
+    }
+
+    private static void run(@NonNull Parameters par) {
+        par.LOGGER.info(String.format("----------- new run starting with %s on %s part %d, n=%d ---------------------",
+                par.algorithm, par.dataType, par.partition, par.n));
+        par.LOGGER.info("Starting time " + LocalDateTime.now());
+
+        Algorithm algorithm;
+        switch (par.algorithm){
+            case CD: default: algorithm = new CorrelationDetective(par); break;
+        }
+        List<Pair<int[],int[]>> results = algorithm.run();
+
+        par.LOGGER.info(String.format("Ending time " + LocalDateTime.now()));
+        par.LOGGER.info("Number of reported results: " + results.size());
+
+//        Save stats
+        if (par.saveStats){
+            par.statBag.saveStats(par);
+        }
+
+//        Save results
+        if (par.saveResults){
+            saveResults(results, par);
+        }
+
     }
 
     private static Pair<String[], double[][]> getData(String dataType, String inputPath, int n, int m, int partition, Logger LOGGER) {
@@ -174,12 +258,40 @@ public class Main {
             } break;
         }
 
-        double[][] data = dataPair.y;
-        String[] headers = dataPair.x;
-
-
-
         return dataPair;
+    }
+
+    public static void saveResults(List<Pair<int[],int[]>> results, Parameters parameters){
+        try {
+//            Make root dirs if necessary
+            String rootdirname = Pattern.compile("\\/[a-z_0-9.]+.csv").matcher(parameters.resultPath).replaceAll("");
+            new File(rootdirname).mkdirs();
+
+            File file = new File(parameters.resultPath);
+
+            FileWriter fw = new FileWriter(file, false);
+
+//            Write header
+            fw.write("lhs,rhs,headers1,headers2\n");
+
+            String[] headers = parameters.headers;
+
+//            Write results
+            for (int i = 0; i < results.size(); i++) {
+                Pair<int[], int[]> resultPair = results.get(i);
+                fw.write(String.format("%s,%s,%s,%s%n",
+                        Arrays.stream(resultPair.x).mapToObj(String::valueOf).collect(Collectors.joining("-")),
+                        Arrays.stream(resultPair.y).mapToObj(String::valueOf).collect(Collectors.joining("-")),
+                        Arrays.stream(resultPair.x).mapToObj(s -> headers[s]).collect(Collectors.joining("-")),
+                        Arrays.stream(resultPair.y).mapToObj(s -> headers[s]).collect(Collectors.joining("-"))
+                ));
+            }
+
+            fw.close();
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     private static Logger getLogger(Level logLevel){

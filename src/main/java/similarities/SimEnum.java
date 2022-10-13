@@ -1,4 +1,4 @@
-package similarities.functions;
+package similarities;
 
 public enum SimEnum {
     PEARSON_CORRELATION,

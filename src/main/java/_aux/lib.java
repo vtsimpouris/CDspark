@@ -3,6 +3,8 @@ package _aux;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 
 import java.util.*;
+import java.util.logging.Logger;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class lib {
@@ -29,6 +31,17 @@ public class lib {
         return res;
     }
 
+    public static double avg(double[] z){
+        return Arrays.stream(z).reduce(0, Double::sum)/z.length;
+    }
+
+    public static double var(double[] z){
+        double sum = Arrays.stream(z).reduce(0, Double::sum);
+        double sumSquare = Arrays.stream(z).reduce(0, (a,b) -> a+b*b);
+        double avg = sum/z.length;
+        return sumSquare/z.length - avg*avg;
+    }
+
     public static double[] sub(double[] in1, double[] in2) {
         double[] res = new double[in1.length];
         for (int i=0;i<in1.length;i++) res[i]=in1[i]-in2[i];
@@ -49,7 +62,7 @@ public class lib {
     }
 
 //    Get element-wise mean of list of vectors
-    public static double[] elementwiseMean(List<double[]> in) {
+    public static double[] elementwiseAvg(List<double[]> in) {
         double[] res = new double[in.get(0).length];
 //        Iterate over all vectors
         for (int i=0;i<in.size();i++) {
@@ -104,12 +117,17 @@ public class lib {
     }
 
     public static double[] znorm(double[] z) {
-        double sum = Arrays.stream(z).reduce(0, Double::sum);
-        double sumSquare = Arrays.stream(z).reduce(0, (a,b) -> a+b*b);
+        double sum = 0;
+        double sumSquare = 0;
+        for (int i=0;i<z.length;i++) {
+            sum+=z[i];
+            sumSquare+=z[i]*z[i];
+        }
         double avg = sum/z.length;
         double var = sumSquare/z.length - avg*avg;
         var=Math.max(var + 1E-16, -var); // for floating point errors
         double stdev = Math.sqrt(var);
+
         for (int i=0;i<z.length;i++){
             z[i]=(z[i]-avg)/stdev;
             if(Double.isNaN(z[i])){
@@ -117,6 +135,13 @@ public class lib {
             }
         }
         return z;
+    }
+
+    public static double[][] znorm(double[][] Z) {
+        for (int i=0;i<Z.length;i++) {
+            Z[i]=znorm(Z[i]);
+        }
+        return Z;
     }
 
     //    zero-sum and l2-normalize a vector
@@ -139,8 +164,26 @@ public class lib {
         }
     }
 
-    public static double getDuration(long start, long stop){
-        return (stop - start) / 1000d;
+    public static <T> Stream<T> getStream(Stream<T> stream, boolean parallel){
+        return parallel ? stream.parallel(): stream.sequential();
+    }
+
+    public static IntStream getStream(BitSet bitSet, boolean parallel){
+        return parallel ? bitSet.stream().parallel(): bitSet.stream().sequential();
+    }
+
+    public static <T> Stream<T> getStream(T[] array, boolean parallel){
+        if(parallel){
+            return Arrays.stream(array).parallel();
+        }else{
+            return Arrays.stream(array).sequential();
+        }
+    }
+
+    public static double nanoToSec(long nano){return nano/1E9;}
+
+    public static void printBar(Logger logger){
+        logger.fine("-------------------------------------");
     }
 
 }

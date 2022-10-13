@@ -1,10 +1,13 @@
 package _aux;
 
 import algorithms.AlgorithmEnum;
+import clustering.ClusteringAlgorithmEnum;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import similarities.functions.SimEnum;
+import lombok.Setter;
+import similarities.MultivariateSimilarityFunction;
 
+import java.util.Random;
 import java.util.logging.Logger;
 
 @RequiredArgsConstructor
@@ -22,10 +25,10 @@ public class Parameters {
     @NonNull public AlgorithmEnum algorithm;
     @NonNull public boolean parallel;
     @NonNull public boolean random;
-    @NonNull public int run;
+    @NonNull public int seed;
 
     //    Query
-    @NonNull public SimEnum simMetric;
+    @NonNull public MultivariateSimilarityFunction simMetric;
     @NonNull public int maxPLeft;
     @NonNull public int maxPRight;
 
@@ -39,7 +42,7 @@ public class Parameters {
     @NonNull public int partition;
 
     //    Bounding
-    @NonNull boolean empiricalBounding;
+    @NonNull public boolean empiricalBounding;
 
     //    Clustering
     @NonNull public double tau;
@@ -48,7 +51,7 @@ public class Parameters {
     @NonNull public double epsilonMultiplier;
     @NonNull public int maxLevels;
     @NonNull public int defaultDesiredClusters;
-    @NonNull public boolean useKMeans;
+    @NonNull public ClusteringAlgorithmEnum clusteringAlgorithm;
     @NonNull public int breakFirstKLevelsToMoreClusters;
     @NonNull public int clusteringRetries;
 
@@ -58,4 +61,13 @@ public class Parameters {
     @NonNull public int nPriorityBuckets;
     @NonNull public int k;
     @NonNull public String approximationStrategy;
+
+//    Misc
+    public StatBag statBag = new StatBag();
+    public Random randomGenerator;
+    @Setter public double[][] distMatrix;
+
+    public void init(){
+        randomGenerator = random ? new Random(): new Random(seed);
+    }
 }
