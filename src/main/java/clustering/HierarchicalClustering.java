@@ -65,7 +65,7 @@ public class HierarchicalClustering {
             switch (par.clusteringAlgorithm) {
                 default:
                 case KMEANS:
-                    subClusters = Clustering.getKMeansMaxClusters(c.points, par.data, par.distMatrix,
+                    subClusters = Clustering.getKMeansMaxClusters(c.points, par.data, par.pairwiseDistances,
                             epsilon, nDesiredClusters, par.simMetric.distFunc);
                     break;
             }

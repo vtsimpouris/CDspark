@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 import java.util.logging.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ public class Main {
         boolean random;
         int seed;
         SimEnum simMetricName;
+        String aggPattern;
         int maxPLeft;
         int maxPRight;
         String dataType;
@@ -60,6 +62,7 @@ public class Main {
             inputPath = args[i]; i++;
             outputPath = args[i]; i++;
             simMetricName = SimEnum.valueOf(args[i]); i++;
+            aggPattern = args[i]; i++;
             empiricalBounding = args[i].equals("true"); i++;
             dataType = args[i]; i++;
             n = Integer.parseInt(args[i]); i++;
@@ -83,6 +86,7 @@ public class Main {
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
             simMetricName = SimEnum.PEARSON_CORRELATION;
+            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
             n = 1000;
@@ -104,7 +108,7 @@ public class Main {
 
 //        Initiate logger
         Logger LOGGER = getLogger(logLevel);
-        String resultPath = String.format("%s/results/%s_n%s_w%s_part%s_tau%.2f_umin%.3f.csv", outputPath, dataType,
+        String resultPath = String.format("%s/results/%s_n%s_m%s_part%s_tau%.2f.csv", outputPath, dataType,
                 n, m, partition, tau);
         String dateTime = (new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")).format(new Date());
         int threads = ForkJoinPool.getCommonPoolParallelism();
@@ -122,6 +126,37 @@ public class Main {
         MultivariateSimilarityFunction simMetric;
         switch (simMetricName){
             case PEARSON_CORRELATION: default: simMetric = new PearsonCorrelation(); break;
+        }
+
+        // Create aggregation function from pattern
+        double[] Wl = new double[maxPLeft];
+        double[] Wr = new double[maxPRight];
+        switch (aggPattern){
+            case "avg": {
+                Arrays.fill(Wl, 1.0/maxPLeft);
+                Arrays.fill(Wr, 1.0/maxPRight);
+                break;
+            }
+            case "sum": {
+                Arrays.fill(Wl, 1.0);
+                Arrays.fill(Wr, 1.0);
+                break;
+            }
+            default: {
+                Pattern pattern = Pattern.compile("custom((\\(([0-9.]+-{0,1})+\\)){2})");
+                Matcher matcher = pattern.matcher(aggPattern);
+                if (matcher.matches()){
+                    String[] leftRight = matcher.group(1).split("\\)\\(");
+                    String[] left = leftRight[0].substring(1).split("-");
+                    String[] right = leftRight[1].substring(0, leftRight[1].length()-1).split("-");
+                    Wl = Arrays.stream(left).mapToDouble(Double::parseDouble).toArray();
+                    Wr = Arrays.stream(right).mapToDouble(Double::parseDouble).toArray();
+                } else {
+                    LOGGER.severe("Aggregation pattern not recognized, should be 'avg', 'sum' or 'custom(u0-u1-...-uPLeft)(w0-w1-...-wPRight)'");
+                    System.exit(1);
+                }
+
+            }
         }
 
 //        Set empirical bounding to false if metric does not have such bounds
@@ -151,6 +186,9 @@ public class Main {
                 random,
                 seed,
                 simMetric,
+                aggPattern,
+                Wl,
+                Wr,
                 maxPLeft,
                 maxPRight,
                 dataType,

@@ -1,6 +1,7 @@
 package clustering;
 
 import _aux.lib;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -20,14 +21,14 @@ public class Cluster {
     public boolean finalized = false;
 
 //    Hypersphere statistics
-    @Setter public Double radius;
+    @Setter @Getter public Double radius;
     public double[] centroid;
     @NonNull public Integer centroidIdx;
 
     //    Relations
-    @Setter public Cluster parent;
-    public ArrayList<Cluster> children = new ArrayList<>();
-    @Setter public int level;
+    @Setter @Getter public Cluster parent;
+    @Getter public ArrayList<Cluster> children = new ArrayList<>();
+    @Setter @Getter public int level;
 
 //    Misc
     public Double score;
@@ -108,10 +109,10 @@ public class Cluster {
         finalized = true;
     }
 
-    public double getDistance(int pId, double[][] distMatrix){
+    public double getDistance(int pId, double[][] pairwiseDistances){
 //        If cluster is not final, compute distance from point centroid, otherwise get from local cache (geometric centroid)
         if (!finalized){
-            return distMatrix[pId][centroidIdx];
+            return pairwiseDistances[pId][centroidIdx];
         } else {
             return distances.get(pId);
         }

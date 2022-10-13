@@ -4,25 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="first commit">
-      <change afterPath="$PROJECT_DIR$/src/main/java/Sandbox.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/_aux/Stage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/_aux/Tuple3.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/algorithms/StageRunner.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/clustering/Clustering.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/clustering/ClusteringAlgorithmEnum.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/clustering/HierarchicalClustering.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Implemented pearson, CD stage 1 and 2">
+      <change afterPath="$PROJECT_DIR$/src/main/java/_aux/ResultTuple.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterBounds.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/_aux/Parameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/Parameters.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/clustering/Cluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clustering/Cluster.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/clustering/Clustering.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clustering/Clustering.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/clustering/HierarchicalClustering.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clustering/HierarchicalClustering.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/SimEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/SimEnum.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,8 +29,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -64,12 +60,20 @@
       <recent name="" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="bounding" />
       <recent name="_aux" />
       <recent name="algorithms" />
       <recent name="data_reading" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Main" />
+      <module name="SimilarityDetective" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Sandbox" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Sandbox" />
       <module name="SimilarityDetective" />
@@ -79,6 +83,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
         <item itemvalue="Application.Sandbox" />
       </list>
     </recent_temporary>
@@ -91,7 +96,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1665603611943</updated>
-      <workItem from="1665603613203" duration="20664000" />
+      <workItem from="1665603613203" duration="33989000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -100,7 +105,14 @@
       <option name="project" value="LOCAL" />
       <updated>1665609043747</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Implemented pearson, CD stage 1 and 2">
+      <created>1665664099115</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1665664099115</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -119,6 +131,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="first commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="first commit" />
+    <MESSAGE value="Implemented pearson, CD stage 1 and 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented pearson, CD stage 1 and 2" />
   </component>
 </project>

@@ -30,9 +30,11 @@ public class StatBag {
 
             boolean exists = file.exists();
 
+//            todo check if complete
             List<String> excludedColumns = Arrays.asList(
                     "LOGGER", "data", "statBag", "saveResults",
-                    "resultPath", "headers", "outputPath", "stageDurations"
+                    "resultPath", "headers", "outputPath", "stageDurations",
+                    "Wl", "Wr"
             );
 
             FileWriter resultWriter = new FileWriter(fileName, true);

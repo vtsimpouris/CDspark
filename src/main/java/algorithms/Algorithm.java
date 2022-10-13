@@ -15,7 +15,7 @@ public abstract class Algorithm {
         this.par = parameters;
     }
 
-    public abstract List<Pair<int[], int[]>> run();
+    public abstract List<ResultTuple> run();
     public abstract void printStats(StatBag statBag);
 
     public void printDurations(StatBag statBag){

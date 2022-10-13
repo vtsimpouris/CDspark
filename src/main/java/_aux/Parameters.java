@@ -29,6 +29,9 @@ public class Parameters {
 
     //    Query
     @NonNull public MultivariateSimilarityFunction simMetric;
+    @NonNull public String aggPattern;
+    @NonNull public double[] Wl;
+    @NonNull public double[] Wr;
     @NonNull public int maxPLeft;
     @NonNull public int maxPRight;
 
@@ -65,7 +68,7 @@ public class Parameters {
 //    Misc
     public StatBag statBag = new StatBag();
     public Random randomGenerator;
-    @Setter public double[][] distMatrix;
+    @Setter public double[][] pairwiseDistances;
 
     public void init(){
         randomGenerator = random ? new Random(): new Random(seed);

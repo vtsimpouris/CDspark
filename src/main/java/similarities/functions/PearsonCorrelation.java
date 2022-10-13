@@ -1,6 +1,7 @@
 package similarities.functions;
 
 import _aux.lib;
+import bounding.ClusterBounds;
 import clustering.Cluster;
 import similarities.DistanceFunction;
 import similarities.MultivariateSimilarityFunction;
@@ -28,9 +29,10 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         return lib.dot(x, y);
     }
 
-    public double[] getBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr, boolean theoretical){
+    public ClusterBounds getBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr, boolean empirical){
         double lower;
         double upper;
+        double maxLowerBoundSubset = -1;
 
         double nominator_lower = 0;
         double nominator_upper = 0;
@@ -40,9 +42,10 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         //numerator: (nominator -- dyslexia strikes?!)
         for (int i = 0; i < LHS.size(); i++) {
             for (int j = 0; j < RHS.size(); j++) {
-                double[] bounds = theoretical ? theoreticalBounds(LHS.get(i), RHS.get(j)): empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances);
+                double[] bounds = empirical ? empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances): theoreticalBounds(LHS.get(i), RHS.get(j));
                 nominator_lower += Wl[i] * Wr[j] * bounds[0];
                 nominator_upper += Wl[i] * Wr[j] * bounds[1];
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
             }
         }
 
@@ -52,10 +55,10 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
 
         for(int i=0; i< LHS.size(); i++){
             for(int j=i+1; j< LHS.size(); j++){
-                double[] bounds = theoretical ? theoreticalBounds(LHS.get(i), RHS.get(j)): empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances);
+                double[] bounds = empirical ? empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances): theoreticalBounds(LHS.get(i), RHS.get(j));
                 denominator_lower_left += Wl[i] * Wl[j] * bounds[0];
                 denominator_upper_left += Wl[i] * Wl[j] * bounds[1];
-
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
             }
         }
 
@@ -65,10 +68,10 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
 
         for(int i=0; i< RHS.size(); i++){
             for(int j=i+1; j< RHS.size(); j++){
-                double[] bounds = theoretical ? theoreticalBounds(LHS.get(i), RHS.get(j)): empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances);
+                double[] bounds = empirical ? empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances): theoreticalBounds(LHS.get(i), RHS.get(j));
                 denominator_lower_left += Wl[i] * Wl[j] * bounds[0];
                 denominator_upper_left += Wl[i] * Wl[j] * bounds[1];
-
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
             }
         }
 
@@ -91,7 +94,7 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
             upper = 1000;
         }
 
-        return new double[]{lower, upper};
+        return new ClusterBounds(lower, upper, maxLowerBoundSubset);
     }
 
     public double[] theoreticalBounds(Cluster C1, Cluster C2){
@@ -110,12 +113,12 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
     }
 
 //    Empirical bounds
-    @Override public double[] empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr) {
+    @Override public ClusterBounds empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr) {
         return getBounds(LHS, RHS, pairwiseDistances, Wl, Wr, false);
     }
 
 //    Theoretical bounds
-    @Override public double[] theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr) {
+    @Override public ClusterBounds theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr) {
         return getBounds(LHS, RHS, null, Wl, Wr, true);
     }
 

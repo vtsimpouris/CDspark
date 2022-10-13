@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Clustering {
 
-    public static ArrayList<Cluster> getKMeansMaxClusters(List<Integer> vIDs, double[][] data, double[][] distMatrix, double threshold,
+    public static ArrayList<Cluster> getKMeansMaxClusters(List<Integer> vIDs, double[][] data, double[][] pairwiseDistances, double threshold,
                                                           int nClusters, DistanceFunction distFunc) {
         // allstocks -> stock dataset in array of size (n_dim rows, n_vec columns);
         // threshold -> epsilon -- max dist from centroid to point in cluster
@@ -21,7 +21,7 @@ public class Clustering {
 
 //            Find closest cluster
             for (Cluster c:allClusters) {
-                double dist = c.getDistance(i,distMatrix);
+                double dist = c.getDistance(i,pairwiseDistances);
                 if (dist <= minDist) {
                     minDist = dist;
                     minCluster = c;
@@ -30,7 +30,7 @@ public class Clustering {
             if (minDist<threshold) { // no need to create a new
                 minCluster.addPoint(i);
             } else if (allClusters.size()<nClusters) { // i can create a new cluster
-                Cluster c = new Cluster(allClusters.size(), distFunc, i); // note that i is added to the listofcontents in the constructor
+                Cluster c = new Cluster(distFunc, i); // note that i is added to the listofcontents in the constructor
                 allClusters.add(c);
             } else { //I cannot create a new cluster  -- just assign to the closest
                 minCluster.addPoint(i);

@@ -1,5 +1,7 @@
 package similarities;
 
+import bounding.ClusterBounds;
+import bounding.ClusterCombination;
 import clustering.Cluster;
 import lombok.NonNull;
 import lombok.Setter;
@@ -19,8 +21,8 @@ public abstract class MultivariateSimilarityFunction {
     public abstract double[][] preprocess(double[][] data);
 
     public abstract double sim(double[] x, double[] y);
-    public abstract double[] empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr);
-    public abstract double[] theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr);
+    public abstract ClusterBounds empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr);
+    public abstract ClusterBounds theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr);
 
     public double[] empiricalBounds(Cluster C1, Cluster C2, double[][] pairwiseDistances){
         long ccID = getUniqueId(C1.id, C2.id);
