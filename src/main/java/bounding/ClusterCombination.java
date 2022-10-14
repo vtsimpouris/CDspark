@@ -1,35 +1,41 @@
 package bounding;
 
 import _aux.Parameters;
+import _aux.ResultTuple;
 import clustering.Cluster;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import similarities.MultivariateSimilarityFunction;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 public class ClusterCombination {
-    @NonNull ArrayList<Cluster> LHS;
-    @NonNull ArrayList<Cluster> RHS;
+    ArrayList<Cluster> LHS;
+    ArrayList<Cluster> RHS;
 
     @Setter @Getter boolean isPositive = false;
     @Setter @Getter boolean isDecisive = false;
+    @Getter boolean isSingleton;
+    @Getter List<Cluster> clusters;
 
     @Getter double LB = -Double.MAX_VALUE;
     @Getter double UB = Double.MAX_VALUE;
     @Getter double maxLowerBoundSubset = -Double.MAX_VALUE;
 
-//    ------------------- METHODS -------------------
 
-    public ArrayList<Cluster> getClusters(){
-        ArrayList<Cluster> out = new ArrayList<>();
-        out.addAll(LHS); out.addAll(RHS);
-        return out;
+    Double maxSubsetSimilarity;
+
+
+
+//    ------------------- METHODS -------------------
+    public ClusterCombination(@NonNull ArrayList<Cluster> LHS, @NonNull ArrayList<Cluster> RHS) {
+        this.LHS = LHS;
+        this.RHS = RHS;
+        this.clusters = new ArrayList<>(); clusters.addAll(this.LHS); clusters.addAll(this.RHS);
+        this.isSingleton = this.getClusters().stream().anyMatch(c -> c.size() > 1);
     }
 
     public void swapLeftRightSide(){
@@ -63,22 +69,11 @@ public class ClusterCombination {
         this.checkAndSetMaxSubsetLowerBoundSubset(bounds.getMaxLowerBoundSubset());
     }
 
-    public boolean canBeSplit(){
-        for(Cluster c : this.getClusters()){
-            if(c.size() > 1){
-                return true;
-            }
-        }
-        return false;
-    }
-
 //    Split cluster combination into 'smaller' combinations by replacing the largest cluster with its children
     public ArrayList<ClusterCombination> split(){
         ArrayList<ClusterCombination> subCCs = new ArrayList<>();
 
-        ArrayList<Cluster> clusters = this.getClusters();
         int lSize = LHS.size();
-        int rSize = RHS.size();
 
 //        Get cluster with largest radius and more than one point
         int cToBreak = 0;
@@ -121,7 +116,7 @@ public class ClusterCombination {
 //    Unpack CC to all cluster combinations with singleton clusters
     public ArrayList<ClusterCombination> getSingletons(){
         ArrayList<ClusterCombination> out = new ArrayList<>();
-        if (this.canBeSplit()) {
+        if (this.isSingleton()) {
             ArrayList<ClusterCombination> splitted = this.split();
             for (ClusterCombination sc : splitted) {
                 out.addAll(sc.getSingletons());
@@ -134,41 +129,63 @@ public class ClusterCombination {
 
 //    Find the maximum similarity of one of the subsets of this cluster combination
     public double getMaxSubsetSimilarity(Parameters par){
-        ArrayList<Cluster> subsetSide;
-        double subsetSimilarity;
-        double maxSim = -Double.MAX_VALUE;
+        if (maxSubsetSimilarity == null){
+            ArrayList<Cluster> subsetSide;
+            double subsetSimilarity;
+            maxSubsetSimilarity = -Double.MAX_VALUE;
 
-        if (LHS.size() > 1){
-            for (int i = 0; i < LHS.size(); i++) {
-                subsetSide = new ArrayList<>(LHS);
-                subsetSide.remove(i);
-                ClusterCombination subCC = new ClusterCombination(subsetSide, RHS);
-                subCC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
-                subsetSimilarity = subCC.getLB();
-                if (Math.abs(subsetSimilarity - subCC.getUB()) > 0.001){
-                    par.LOGGER.fine("Subset similarity is not tight: " + subsetSimilarity + " " + subCC.getUB());
+            if (LHS.size() > 1){
+                for (int i = 0; i < LHS.size(); i++) {
+                    subsetSide = new ArrayList<>(LHS);
+                    subsetSide.remove(i);
+                    ClusterCombination subCC = new ClusterCombination(subsetSide, RHS);
+                    subCC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
+                    subsetSimilarity = subCC.getLB();
+                    if (Math.abs(subsetSimilarity - subCC.getUB()) > 0.001){
+                        par.LOGGER.fine("Subset similarity is not tight: " + subsetSimilarity + " " + subCC.getUB());
+                    }
+
+                    maxSubsetSimilarity = Math.max(maxSubsetSimilarity, subsetSimilarity);
+                    maxSubsetSimilarity = Math.max(maxSubsetSimilarity, subCC.getMaxSubsetSimilarity(par));
                 }
+            }
 
-                maxSim = Math.max(maxSim, subsetSimilarity);
-                maxSim = Math.max(maxSim, subCC.getMaxSubsetSimilarity(par));
+            if (RHS.size() > 1){
+                for (int i = 0; i < RHS.size(); i++) {
+                    subsetSide = new ArrayList<>(RHS);
+                    subsetSide.remove(i);
+                    ClusterCombination subCC = new ClusterCombination(LHS, subsetSide);
+                    subCC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
+                    subsetSimilarity = subCC.getLB();
+                    if (Math.abs(subsetSimilarity - subCC.getUB()) > 0.001){
+                        par.LOGGER.fine("Subset similarity is not tight: " + subsetSimilarity + " " + subCC.getUB());
+                    }
+
+                    maxSubsetSimilarity = Math.max(maxSubsetSimilarity, subsetSimilarity);
+                    maxSubsetSimilarity = Math.max(maxSubsetSimilarity, subCC.getMaxSubsetSimilarity(par));
+                }
             }
         }
 
-        if (RHS.size() > 1){
-            for (int i = 0; i < RHS.size(); i++) {
-                subsetSide = new ArrayList<>(RHS);
-                subsetSide.remove(i);
-                ClusterCombination subCC = new ClusterCombination(LHS, subsetSide);
-                subCC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
-                subsetSimilarity = subCC.getLB();
-                if (Math.abs(subsetSimilarity - subCC.getUB()) > 0.001){
-                    par.LOGGER.fine("Subset similarity is not tight: " + subsetSimilarity + " " + subCC.getUB());
-                }
+        return maxSubsetSimilarity;
+    }
 
-                maxSim = Math.max(maxSim, subsetSimilarity);
-                maxSim = Math.max(maxSim, subCC.getMaxSubsetSimilarity(par));
-            }
+    public ResultTuple toResultTuple(String[] headers){
+//        Check if singleton, otherwise raise error
+        List<Integer> LHSIndices = LHS.stream().map(c -> c.pointsIdx.get(0)).collect(Collectors.toList());
+        List<Integer> RHSIndices = RHS.stream().map(c -> c.pointsIdx.get(0)).collect(Collectors.toList());
+
+        if (this.isSingleton()){
+            return new ResultTuple(
+                    LHSIndices,
+                    RHSIndices,
+                    LHSIndices.stream().map(i -> headers[i]).collect(Collectors.toList()),
+                    RHSIndices.stream().map(i -> headers[i]).collect(Collectors.toList()),
+                    this.getLB()
+            );
+        } else {
+            throw new IllegalArgumentException("Cluster combination is not a singleton");
         }
-        return maxSim;
+
     }
 }

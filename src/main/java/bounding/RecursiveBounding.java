@@ -2,6 +2,7 @@ package bounding;
 
 import _aux.Pair;
 import _aux.Parameters;
+import _aux.ResultTuple;
 import _aux.lib;
 import clustering.Cluster;
 import lombok.NonNull;
@@ -18,7 +19,7 @@ public class RecursiveBounding {
     @NonNull private Parameters par;
     @NonNull private ArrayList<ArrayList<Cluster>> clusterTree;
 
-    public List<Pair<int[], int[]>> run() {
+    public List<ResultTuple> run() {
         Cluster rootCluster = clusterTree.get(0).get(0);
 
 //        ------------------- STAGE 1 BOUND PAIRWISE ---------------------------------
@@ -26,7 +27,7 @@ public class RecursiveBounding {
         ArrayList<Cluster> rootLeft = new ArrayList<>();
         rootLeft.add(rootCluster);
         ArrayList<Cluster> rootRight = new ArrayList<>();
-        rootLeft.add(rootCluster);
+        rootRight.add(rootCluster);
 
         ClusterCombination pairwiseRootCandidate = new ClusterCombination(rootLeft, rootRight);
 
@@ -57,8 +58,8 @@ public class RecursiveBounding {
         List<ClusterCombination> positiveDCCs = DCCs.x;
         positiveDCCs.addAll(pairwiseDCCs.x);
 
-//        Dedupe positives and convert to tuples
-
+//        Convert to tuples
+        return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toList());
     }
 
 //    Start bounding from root candidate and filter positives based on minJump - output: <posDCCs, negDCCs>

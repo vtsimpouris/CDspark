@@ -1,8 +1,10 @@
 package similarities.functions;
 
+import _aux.Pair;
 import _aux.lib;
 import bounding.ClusterBounds;
 import clustering.Cluster;
+import lombok.RequiredArgsConstructor;
 import similarities.DistanceFunction;
 import similarities.MultivariateSimilarityFunction;
 
@@ -10,24 +12,31 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class PearsonCorrelation extends MultivariateSimilarityFunction {
-    private Double WlSqSum;
-    private Double WrSqSum;
+    //    WlSqSum for each subset of Wl (i.e. [0], [0,1], [0,1,2], ...)
+    private double[] WrSqSum;
+    private double[] WlSqSum;
     public ConcurrentHashMap<Long, double[]> theoreticalPairwiseClusterCache = new ConcurrentHashMap<>();
 
+    public PearsonCorrelation() {
+        this.distFunc = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b) / a.length, -1),1));
+    }
 
 
     @Override public boolean hasEmpiricalBounds() {return true;}
-
     @Override public double[][] preprocess(double[][] data) {
         return lib.znorm(data);
     }
 //    Angle distance
-    public DistanceFunction distFunc = (double[] a, double[] b) -> Math.acos(sim(a, b));
 
 //    Cosine similarity - normalized dot product
     @Override public double sim(double[] x, double[] y) {
-        return lib.dot(x, y);
+        return Math.min(Math.max(lib.dot(x, y) / x.length, -1),1);
     }
+
+    @Override public double simToDist(double sim) {
+        return Math.acos(sim);
+    }
+    @Override public double distToSim(double dist) {return Math.cos(dist);}
 
     public ClusterBounds getBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr, boolean empirical){
         double lower;
@@ -37,12 +46,13 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         double nominator_lower = 0;
         double nominator_upper = 0;
 
-        double[] weightSquares = getWeightSquaredSums(Wl, Wr);
+        Pair<double[],double[]> weightSquares = getWeightSquaredSums(Wl, Wr);
 
         //numerator: (nominator -- dyslexia strikes?!)
         for (int i = 0; i < LHS.size(); i++) {
             for (int j = 0; j < RHS.size(); j++) {
                 double[] bounds = empirical ? empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances): theoreticalBounds(LHS.get(i), RHS.get(j));
+//                TODO HOW DO YOU NORMALIZE THESE WEIGHTS IF WE ARE COMPARING SUBSET COMBINATIONS?
                 nominator_lower += Wl[i] * Wr[j] * bounds[0];
                 nominator_upper += Wl[i] * Wr[j] * bounds[1];
                 maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
@@ -50,8 +60,8 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         }
 
         //denominator: first sqrt
-        double denominator_lower_left = weightSquares[0];
-        double denominator_upper_left = weightSquares[0];
+        double denominator_lower_left = weightSquares.x[LHS.size() - 1];
+        double denominator_upper_left = weightSquares.x[LHS.size() - 1];
 
         for(int i=0; i< LHS.size(); i++){
             for(int j=i+1; j< LHS.size(); j++){
@@ -63,8 +73,8 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         }
 
         //denominator: second sqrt
-        double denominator_lower_right = weightSquares[1];
-        double denominator_upper_right = weightSquares[1];
+        double denominator_lower_right = weightSquares.y[RHS.size() - 1];
+        double denominator_upper_right = weightSquares.y[RHS.size() - 1];
 
         for(int i=0; i< RHS.size(); i++){
             for(int j=i+1; j< RHS.size(); j++){
@@ -114,30 +124,35 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
 
 //    Empirical bounds
     @Override public ClusterBounds empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr) {
-        return getBounds(LHS, RHS, pairwiseDistances, Wl, Wr, false);
+        return getBounds(LHS, RHS, pairwiseDistances, Wl, Wr, true);
     }
 
 //    Theoretical bounds
     @Override public ClusterBounds theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr) {
-        return getBounds(LHS, RHS, null, Wl, Wr, true);
+        return getBounds(LHS, RHS, null, Wl, Wr, false);
     }
 
 
 //    Get WlSqSum and WrSqSum if not already computed
-    public double[] getWeightSquaredSums(double[] Wl, double[] Wr) {
+    public Pair<double[], double[]> getWeightSquaredSums(double[] Wl, double[] Wr) {
         if (WlSqSum == null) {
-            WlSqSum = 0d;
-            for (double w : Wl) {
-                WlSqSum += w * w;
+            WlSqSum = new double[Wl.length];
+            double runSumSq = 0;
+            for (int i = 0; i < Wl.length; i++) {
+                runSumSq += Wl[i] * Wl[i];
+                WlSqSum[i] = runSumSq;
             }
         }
         if (WrSqSum == null) {
-            WrSqSum = 0d;
-            for (double w : Wr) {
-                WrSqSum += w * w;
+            WrSqSum = new double[Wr.length];
+            double runSumSq = 0;
+            for (int i = 0; i < Wr.length; i++) {
+                runSumSq += Wr[i] * Wr[i];
+                WrSqSum[i] = runSumSq;
             }
         }
-        return new double[]{WlSqSum, WrSqSum};
+
+        return new Pair<>(WlSqSum, WrSqSum);
     }
 
 }

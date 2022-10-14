@@ -11,7 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class MultivariateSimilarityFunction {
     @Setter int totalClusters;
-    @NonNull public DistanceFunction distFunc;
+    public DistanceFunction distFunc;
+    public double MAX_SIMILARITY = 1;
 
     public ConcurrentHashMap<Long, double[]> empiricalPairwiseClusterCache = new ConcurrentHashMap<>();
 
@@ -21,6 +22,8 @@ public abstract class MultivariateSimilarityFunction {
     public abstract double[][] preprocess(double[][] data);
 
     public abstract double sim(double[] x, double[] y);
+    public abstract double simToDist(double sim);
+    public abstract double distToSim(double dist);
     public abstract ClusterBounds empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr);
     public abstract ClusterBounds theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr);
 
@@ -34,9 +37,9 @@ public abstract class MultivariateSimilarityFunction {
             double ub = Double.MIN_VALUE;
             for (int i = 0; i < C1.size(); i++) {
                 for (int j = 0; j < C2.size(); j++) {
-                    double d = pairwiseDistances[C1.get(i)][C2.get(j)];
-                    lb = Math.min(lb, d);
-                    ub = Math.max(ub, d);
+                    double sim = distToSim(pairwiseDistances[C1.get(i)][C2.get(j)]);
+                    lb = Math.min(lb, sim);
+                    ub = Math.max(ub, sim);
                 }
             }
             double[] bounds = new double[]{lb, ub};

@@ -1,5 +1,6 @@
 import _aux.Pair;
 import _aux.Parameters;
+import _aux.ResultTuple;
 import algorithms.Algorithm;
 import algorithms.AlgorithmEnum;
 import algorithms.CorrelationDetective;
@@ -86,11 +87,12 @@ public class Main {
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
             simMetricName = SimEnum.PEARSON_CORRELATION;
-            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
+            aggPattern = "sum";
+//            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
             n = 1000;
-            m = 1000;
+            m = 100;
             partition = 0;
             tau = 0.9;
             minJump = 0.05;
@@ -113,6 +115,7 @@ public class Main {
         String dateTime = (new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")).format(new Date());
         int threads = ForkJoinPool.getCommonPoolParallelism();
         int defaultDesiredClusters = 10; // set to Integer.MAX_VALUE for unrestricted and clustering based on epsilon only
+
         double epsilonMultiplier = 0.8;
         int maxLevels = 20;
         ClusteringAlgorithmEnum clusteringAlgorithm = ClusteringAlgorithmEnum.KMEANS;
@@ -120,13 +123,13 @@ public class Main {
         int clusteringRetries = 50;
         double maxApproximationSize = Math.sqrt(2 * m * (1- (0.5)));
         int nPriorityBuckets = 50;
-        double startEpsilon = Math.sqrt(2*m*(1-0.8125));
 
         //        Get similarity function from enum
         MultivariateSimilarityFunction simMetric;
         switch (simMetricName){
             case PEARSON_CORRELATION: default: simMetric = new PearsonCorrelation(); break;
         }
+
 
         // Create aggregation function from pattern
         double[] Wl = new double[maxPLeft];
@@ -164,6 +167,9 @@ public class Main {
             empiricalBounding = false;
             LOGGER.info("Metric does not have empirical bounds, setting empiricalBounding to false");
         }
+
+        //        TODO THIS DEPENDS ON THE DISTANCE FUNCTION!
+        double startEpsilon = simMetric.simToDist(0.81*simMetric.MAX_SIMILARITY);
 
 //        read data
         Pair<String[], double[][]> dataPair = getData(dataType, inputPath, n, m, partition, LOGGER);
@@ -228,7 +234,7 @@ public class Main {
         switch (par.algorithm){
             case CD: default: algorithm = new CorrelationDetective(par); break;
         }
-        List<Pair<int[],int[]>> results = algorithm.run();
+        List<ResultTuple> results = algorithm.run();
 
         par.LOGGER.info(String.format("Ending time " + LocalDateTime.now()));
         par.LOGGER.info("Number of reported results: " + results.size());
@@ -299,7 +305,7 @@ public class Main {
         return dataPair;
     }
 
-    public static void saveResults(List<Pair<int[],int[]>> results, Parameters parameters){
+    public static void saveResults(List<ResultTuple> results, Parameters parameters){
         try {
 //            Make root dirs if necessary
             String rootdirname = Pattern.compile("\\/[a-z_0-9.]+.csv").matcher(parameters.resultPath).replaceAll("");
@@ -310,18 +316,20 @@ public class Main {
             FileWriter fw = new FileWriter(file, false);
 
 //            Write header
-            fw.write("lhs,rhs,headers1,headers2\n");
+            fw.write("lhs,rhs,headers1,headers2,sim\n");
 
             String[] headers = parameters.headers;
 
 //            Write results
             for (int i = 0; i < results.size(); i++) {
-                Pair<int[], int[]> resultPair = results.get(i);
-                fw.write(String.format("%s,%s,%s,%s%n",
-                        Arrays.stream(resultPair.x).mapToObj(String::valueOf).collect(Collectors.joining("-")),
-                        Arrays.stream(resultPair.y).mapToObj(String::valueOf).collect(Collectors.joining("-")),
-                        Arrays.stream(resultPair.x).mapToObj(s -> headers[s]).collect(Collectors.joining("-")),
-                        Arrays.stream(resultPair.y).mapToObj(s -> headers[s]).collect(Collectors.joining("-"))
+                ResultTuple result = results.get(i);
+
+                fw.write(String.format("%s,%s,%s,%s,%.4f%n",
+                        result.LHS.stream().map(Object::toString).collect(Collectors.joining("-")),
+                        result.RHS.stream().map(Object::toString).collect(Collectors.joining("-")),
+                        String.join("-", result.lHeaders),
+                        String.join("-", result.rHeaders),
+                        result.similarity
                 ));
             }
 

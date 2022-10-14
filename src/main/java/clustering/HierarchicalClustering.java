@@ -9,7 +9,6 @@ public class HierarchicalClustering {
     private Parameters par;
     public int globalClusterID = 0;
     public ArrayList<ArrayList<Cluster>> clusterTree;
-    public ArrayList<Cluster> allClusters = new ArrayList<>(20000);
 
     public HierarchicalClustering(Parameters par){
         this.par = par;
@@ -23,29 +22,34 @@ public class HierarchicalClustering {
         Cluster root = new Cluster(par.simMetric.distFunc, 0);
         root.setId(globalClusterID++);
         root.setLevel(0);
-        for (int i = 0; i < par.n; i++) {
+        for (int i = 1; i < par.n; i++) {
             root.addPoint(i);
         }
 
 //        Finalize root and add to cluster tree and allClusters
         root.finalize(par.data);
         clusterTree.get(0).add(root);
-        allClusters.add(root);
 
 //        Create clustering tree
         recursiveClustering(root, par.startEpsilon);
+
+//        Set total clusters for simmetric
+        par.simMetric.setTotalClusters(globalClusterID);
     }
 
     public void recursiveClustering(Cluster c, double distThreshold){
-
         ArrayList<Cluster> subClusters = makeAndGetSubClusters(c, distThreshold);
 
         double nextThreshold = 0d;
 
         for (Cluster sc : subClusters) {
         // If under maxlevel, keep multiplying epsilon, otherwise change threshold such that we only get singletons
-            if (sc.level < par.maxLevels - 1) nextThreshold = sc.radius * par.epsilonMultiplier;
-            recursiveClustering(sc,nextThreshold);
+            if (sc.level < par.maxLevels - 1) {
+                nextThreshold = sc.radius * par.epsilonMultiplier;
+            }
+            if (sc.level < par.maxLevels && sc.size() > 1) {
+                recursiveClustering(sc,nextThreshold);
+            }
         }
     }
 
@@ -55,7 +59,7 @@ public class HierarchicalClustering {
         double bestDistance = Double.MAX_VALUE;
 
         for (int i = 0; i < par.clusteringRetries; i++) {
-            Collections.shuffle(c.points, par.randomGenerator);
+            Collections.shuffle(c.pointsIdx, par.randomGenerator);
 
 //            Variable cluster parameters
             int nDesiredClusters = par.defaultDesiredClusters;
@@ -65,7 +69,7 @@ public class HierarchicalClustering {
             switch (par.clusteringAlgorithm) {
                 default:
                 case KMEANS:
-                    subClusters = Clustering.getKMeansMaxClusters(c.points, par.data, par.pairwiseDistances,
+                    subClusters = Clustering.getKMeansMaxClusters(c.pointsIdx, par.data, par.pairwiseDistances,
                             epsilon, nDesiredClusters, par.simMetric.distFunc);
                     break;
             }
@@ -86,8 +90,8 @@ public class HierarchicalClustering {
 //            Update tree statistics
             sc.setId(globalClusterID++);
             sc.setLevel(c.level + 1);
+
             this.clusterTree.get(sc.level).add(sc);
-            this.allClusters.add(sc);
         }
 
         return subClusters;

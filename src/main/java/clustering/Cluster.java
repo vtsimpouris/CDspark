@@ -9,21 +9,20 @@ import similarities.DistanceFunction;
 
 import java.util.*;
 
-@RequiredArgsConstructor
 public class Cluster {
     @Setter public int id;
-    @NonNull private DistanceFunction dist;
+    private DistanceFunction dist;
 
     //    Points
-    public ArrayList<Integer> tmpPoints = new ArrayList<>();
-    public ArrayList<Integer> points;
-    public HashMap<Integer, Double> distances;
+    public ArrayList<Integer> tmpPointsIdx = new ArrayList<>();
+    public ArrayList<Integer> pointsIdx;
+    @Getter HashMap<Integer, Double> distances;
     public boolean finalized = false;
 
 //    Hypersphere statistics
     @Setter @Getter public Double radius;
     public double[] centroid;
-    @NonNull public Integer centroidIdx;
+    public Integer centroidIdx;
 
     //    Relations
     @Setter @Getter public Cluster parent;
@@ -33,17 +32,23 @@ public class Cluster {
 //    Misc
     public Double score;
 
+    public Cluster(DistanceFunction dist, int centroidIdx) {
+        this.centroidIdx = centroidIdx;
+        this.dist = dist;
+        this.tmpPointsIdx = new ArrayList<>(Collections.singletonList(centroidIdx));
+    }
+
     public int size() {
-        return points.size();
+        return pointsIdx.size();
     }
 
     public int get(int i) {
-        return points.get(i);
+        return pointsIdx.get(i);
     }
 
     public void addPoint(int i){
         if (finalized) throw new RuntimeException("Cannot add points to a finalized cluster");
-        tmpPoints.add(i);
+        tmpPointsIdx.add(i);
     }
 
     public void addChild(Cluster sc){
@@ -52,7 +57,7 @@ public class Cluster {
 
     public ArrayList<double[]> getPoints(double[][] data){
         ArrayList<double[]> points = new ArrayList<>();
-        ArrayList<Integer> pointsIdx = this.finalized ? this.points : this.tmpPoints;
+        ArrayList<Integer> pointsIdx = this.finalized ? this.pointsIdx : this.tmpPointsIdx;
         for (int i = 0; i < pointsIdx.size(); i++) {
             points.add(data[pointsIdx.get(i)]);
         }
@@ -64,13 +69,13 @@ public class Cluster {
         double maxDist = 0;
 
 //        Remove floating point error
-        if (points.size() == 1){
+        if (pointsIdx.size() == 1){
             radius = 0.0;
             return;
         }
 
-        for (int i = 0; i < points.size(); i++) {
-            int pid = points.get(i);
+        for (int i = 0; i < pointsIdx.size(); i++) {
+            int pid = pointsIdx.get(i);
             double dist;
             if (!distances.containsKey(pid)) {
                 dist = this.dist.dist(centroid, data[this.get(i)]);
@@ -94,9 +99,8 @@ public class Cluster {
         if (finalized) throw new RuntimeException("Cluster already finalized");
 
 //        Create final content array
-        this.points = new ArrayList<>(tmpPoints);
-        this.tmpPoints = null;
-        this.distances = new HashMap<>(tmpPoints.size());
+        this.pointsIdx = new ArrayList<>(tmpPointsIdx);
+        this.distances = new HashMap<>(tmpPointsIdx.size());
 
 //        Initialize actual centroid
         computeGeometricCentroid(data);
@@ -105,7 +109,6 @@ public class Cluster {
         computeRadius(data);
 
 
-        tmpPoints = null;
         finalized = true;
     }
 
