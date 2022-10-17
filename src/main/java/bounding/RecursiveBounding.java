@@ -32,9 +32,14 @@ public class RecursiveBounding {
 //        ------------------- STAGE 1 BOUND PAIRWISE ---------------------------------
 //        First compute all pairwise cluster bounds to fill cache and increase threshold in case of topK
         ArrayList<Cluster> rootLeft = new ArrayList<>();
-        rootLeft.add(rootCluster);
         ArrayList<Cluster> rootRight = new ArrayList<>();
-        rootRight.add(rootCluster);
+        rootLeft.add(rootCluster);
+
+        if (par.simMetric.isTwoSided()){
+            rootRight.add(rootCluster);
+        } else {
+            rootLeft.add(rootCluster);
+        }
 
         ClusterCombination pairwiseRootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
 

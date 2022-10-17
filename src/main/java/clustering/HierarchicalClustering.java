@@ -45,7 +45,7 @@ public class HierarchicalClustering {
         for (Cluster sc : subClusters) {
         // If under maxlevel, keep multiplying epsilon, otherwise change threshold such that we only get singletons
             if (sc.level < par.maxLevels - 1) {
-                nextThreshold = sc.radius * par.epsilonMultiplier;
+                nextThreshold = sc.getRadius() * par.epsilonMultiplier;
             }
             if (sc.level < par.maxLevels && sc.size() > 1) {
                 recursiveClustering(sc,nextThreshold);

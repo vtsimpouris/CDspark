@@ -20,8 +20,8 @@ public class Cluster {
     public boolean finalized = false;
 
 //    Hypersphere statistics
-    @Setter @Getter public Double radius;
-    public double[] centroid;
+    @Setter @Getter private Double radius;
+    @Getter private double[] centroid;
     public Integer centroidIdx;
 
     //    Relations

@@ -2,6 +2,7 @@ package similarities;
 
 public enum SimEnum {
     PEARSON_CORRELATION,
+    MULTIPOLE,
     EUCLIDEAN_SIMILARITY,
     EUCLIDEAN_DISTANCE,
     MANHATTAN_SIMILARITY,

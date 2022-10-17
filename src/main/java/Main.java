@@ -8,6 +8,8 @@ import clustering.ClusteringAlgorithmEnum;
 import data_reading.DataReader;
 import lombok.NonNull;
 import similarities.MultivariateSimilarityFunction;
+import similarities.functions.EuclideanSimilarity;
+import similarities.functions.Multipole;
 import similarities.functions.PearsonCorrelation;
 import similarities.SimEnum;
 
@@ -86,7 +88,7 @@ public class Main {
             algorithm = AlgorithmEnum.CD;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
-            simMetricName = SimEnum.PEARSON_CORRELATION;
+            simMetricName = SimEnum.EUCLIDEAN_SIMILARITY;
             aggPattern = "sum";
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
@@ -94,7 +96,7 @@ public class Main {
             n = 500;
             m = (int) 1e7;
             partition = 0;
-            tau = 0.9;
+            tau = 0.6;
             minJump = 0.05;
             maxPLeft = 1;
             maxPRight = 2;
@@ -128,6 +130,15 @@ public class Main {
         MultivariateSimilarityFunction simMetric;
         switch (simMetricName){
             case PEARSON_CORRELATION: default: simMetric = new PearsonCorrelation(); break;
+            case MULTIPOLE: simMetric = new Multipole(); break;
+            case EUCLIDEAN_SIMILARITY: simMetric = new EuclideanSimilarity(); break;
+        }
+
+//        Check if pleft and pright are correctly chosen
+        if (!simMetric.isTwoSided() && maxPRight > 0){
+            LOGGER.severe("The chosen similarity metric is not two-sided, but pright is > 0, adding pright to pleft");
+            maxPLeft += maxPRight;
+            maxPRight = 0;
         }
 
 
@@ -226,8 +237,8 @@ public class Main {
     }
 
     private static void run(@NonNull Parameters par) {
-        par.LOGGER.info(String.format("----------- new run starting with %s on %s part %d, n=%d ---------------------",
-                par.algorithm, par.dataType, par.partition, par.n));
+        par.LOGGER.info(String.format("----------- new run starting; querying %s with %s on %s part %d, n=%d ---------------------",
+                par.simMetric, par.algorithm, par.dataType, par.partition, par.n));
         par.LOGGER.info("Starting time " + LocalDateTime.now());
 
         Algorithm algorithm;

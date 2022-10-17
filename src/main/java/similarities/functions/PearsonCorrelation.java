@@ -4,25 +4,17 @@ import _aux.Pair;
 import _aux.lib;
 import bounding.ClusterBounds;
 import clustering.Cluster;
-import lombok.RequiredArgsConstructor;
-import similarities.DistanceFunction;
 import similarities.MultivariateSimilarityFunction;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class PearsonCorrelation extends MultivariateSimilarityFunction {
-    //    WlSqSum for each subset of Wl (i.e. [0], [0,1], [0,1,2], ...)
-    private double[] WrSqSum;
-    private double[] WlSqSum;
-    public ConcurrentHashMap<Long, double[]> theoreticalPairwiseClusterCache = new ConcurrentHashMap<>();
-
     public PearsonCorrelation() {
         this.distFunc = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b) / a.length, -1),1));
     }
 
-
     @Override public boolean hasEmpiricalBounds() {return true;}
+    @Override public boolean isTwoSided() {return true;}
     @Override public double[][] preprocess(double[][] data) {
         return lib.znorm(data);
     }
@@ -107,15 +99,15 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         return new ClusterBounds(correctBound(lower), correctBound(upper), maxLowerBoundSubset);
     }
 
-    public double[] theoreticalBounds(Cluster C1, Cluster C2){
+    @Override public double[] theoreticalBounds(Cluster C1, Cluster C2){
         long ccID = getUniqueId(C1.id, C2.id);
 
         if (theoreticalPairwiseClusterCache.containsKey(ccID)) {
             return theoreticalPairwiseClusterCache.get(ccID);
         } else {
-            double centroidDistance = this.distFunc.dist(C1.centroid, C2.centroid);
-            double lb = Math.cos(Math.min(Math.PI, centroidDistance + C1.radius + C2.radius));
-            double ub = Math.cos(Math.max(0, centroidDistance - C1.radius - C2.radius));
+            double centroidDistance = this.distFunc.dist(C1.getCentroid(), C2.getCentroid());
+            double lb = Math.cos(Math.min(Math.PI, centroidDistance + C1.getRadius() + C2.getRadius()));
+            double ub = Math.cos(Math.max(0, centroidDistance - C1.getRadius() - C2.getRadius()));
             double[] bounds = new double[]{lb, ub};
             theoreticalPairwiseClusterCache.put(ccID, bounds);
             return bounds;
@@ -123,7 +115,7 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
     }
 
 //    Empirical bounds
-    @Override public ClusterBounds empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr) {
+    @Override public ClusterBounds empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances) {
         return getBounds(LHS, RHS, pairwiseDistances, Wl, Wr, true);
     }
 
@@ -131,28 +123,4 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
     @Override public ClusterBounds theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr) {
         return getBounds(LHS, RHS, null, Wl, Wr, false);
     }
-
-
-//    Get WlSqSum and WrSqSum if not already computed
-    public Pair<double[], double[]> getWeightSquaredSums(double[] Wl, double[] Wr) {
-        if (WlSqSum == null) {
-            WlSqSum = new double[Wl.length];
-            double runSumSq = 0;
-            for (int i = 0; i < Wl.length; i++) {
-                runSumSq += Wl[i] * Wl[i];
-                WlSqSum[i] = runSumSq;
-            }
-        }
-        if (WrSqSum == null) {
-            WrSqSum = new double[Wr.length];
-            double runSumSq = 0;
-            for (int i = 0; i < Wr.length; i++) {
-                runSumSq += Wr[i] * Wr[i];
-                WrSqSum[i] = runSumSq;
-            }
-        }
-
-        return new Pair<>(WlSqSum, WrSqSum);
-    }
-
 }

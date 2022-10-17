@@ -25,7 +25,12 @@ public class lib {
         return Math.sqrt(d);
     }
 
-    public static double[] sum(double[] in1, double[] in2) {
+    public static double euclideanSquared(double[] in1, double[] in2) {
+        double d = euclidean(in1, in2);
+        return d*d;
+    }
+
+    public static double[] add(double[] in1, double[] in2) {
         double[] res = new double[in1.length];
         for (int i=0;i<in1.length;i++) res[i]=in1[i]+in2[i];
         return res;
@@ -49,7 +54,7 @@ public class lib {
     }
 
     //    Multiply by scalar
-    public static double[] smul(double[] in1, double in2) {
+    public static double[] scale(double[] in1, double in2) {
         double[] res = new double[in1.length];
         for (int i=0;i<in1.length;i++) res[i]=in1[i]*in2;
         return res;
@@ -152,8 +157,15 @@ public class lib {
         z = lib.sadd(v,-1*avg);
         double sumSquare = Arrays.stream(z).reduce(0, (a,b) -> a+b*b);
         double norm = Math.sqrt(sumSquare);
-        z = lib.smul(z,1/norm);
+        z = lib.scale(z,1/norm);
         return z;
+    }
+
+    public static double[][] l2norm(double[][] Z) {
+        for (int i=0;i<Z.length;i++) {
+            Z[i]=l2norm(Z[i]);
+        }
+        return Z;
     }
 
     public static <T> Stream<T> getStream(Collection<T> collection, boolean parallel){
