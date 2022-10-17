@@ -13,6 +13,7 @@ public abstract class Algorithm {
 
     public abstract List<ResultTuple> run();
     public abstract void printStats(StatBag statBag);
+    public abstract void prepareStats();
 
     public void printStageDurations(StatBag statBag){
         lib.printBar(par.LOGGER);

@@ -11,7 +11,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -19,8 +21,12 @@ public class RecursiveBounding {
 
     @NonNull private Parameters par;
     @NonNull private ArrayList<ArrayList<Cluster>> clusterTree;
+    public AtomicLong nCCs = new AtomicLong(0);
+    public AtomicLong totalCCSize = new AtomicLong(0);
 
     public List<ResultTuple> run() {
+        double postProcessTime = 0;
+
         Cluster rootCluster = clusterTree.get(0).get(0);
 
 //        ------------------- STAGE 1 BOUND PAIRWISE ---------------------------------
@@ -30,12 +36,16 @@ public class RecursiveBounding {
         ArrayList<Cluster> rootRight = new ArrayList<>();
         rootRight.add(rootCluster);
 
-        ClusterCombination pairwiseRootCandidate = new ClusterCombination(rootLeft, rootRight);
+        ClusterCombination pairwiseRootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
 
         Map<Boolean, List<ClusterCombination>> pairwiseDCCs = recursiveBounding(pairwiseRootCandidate)
                 .stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
 
+        long start = System.nanoTime();
+
+//        Filter pairwise posDCCs
         List<ClusterCombination> positivePairwiseDCCs = unpackAndCheckMinJump(pairwiseDCCs.get(true), par);
+        postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
 
 //        Pair<List<ClusterCombination>, List<ClusterCombination>> pairwiseDCCs = getAndFilterDCCs(pairwiseRootCandidate);
@@ -54,23 +64,7 @@ public class RecursiveBounding {
             rootRight.add(rootCluster);
         }
 
-        ClusterCombination rootCandidate = new ClusterCombination(rootLeft, rootRight);
-
-        Pair<List<ClusterCombination>, List<ClusterCombination>> DCCs = getAndFilterDCCs(rootCandidate);
-
-//        TODO FILTER TOPK
-//        TODO PROGRESSIVE APPROXIMATION
-
-//        Get final positive DCCs
-        List<ClusterCombination> positiveDCCs = DCCs.x;
-        positiveDCCs.addAll(positivePairwiseDCCs);
-
-//        Convert to tuples
-        return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toList());
-    }
-
-//    Start bounding from root candidate and filter positives based on minJump - output: <posDCCs, negDCCs>
-    public Pair<List<ClusterCombination>, List<ClusterCombination>> getAndFilterDCCs(ClusterCombination rootCandidate){
+        ClusterCombination rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
 
         //        Make candidate list so that we can stream it
         List<ClusterCombination> rootCandidateList = new ArrayList<>(); rootCandidateList.add(rootCandidate);
@@ -81,10 +75,29 @@ public class RecursiveBounding {
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
 
 //        Filter minJump confirming positives
-        List<ClusterCombination> posDCCs = DCCs.get(true);
-        posDCCs = unpackAndCheckMinJump(posDCCs, par);
+        List<ClusterCombination> positiveDCCs = DCCs.get(true);
 
-        return new Pair<>(posDCCs, DCCs.get(false));
+        start = System.nanoTime();
+        positiveDCCs = unpackAndCheckMinJump(positiveDCCs, par);
+        postProcessTime += lib.nanoToSec(System.nanoTime() - start);
+
+//        TODO FILTER TOPK
+//        TODO PROGRESSIVE APPROXIMATION
+
+//        Get final DCCs
+        positiveDCCs.addAll(positivePairwiseDCCs);
+
+        List<ClusterCombination> negativeDCCs = DCCs.get(false);
+        negativeDCCs.addAll(pairwiseDCCs.get(false));
+
+//        Set statistics
+        par.statBag.addStat("nPosDCCs", positiveDCCs.size());
+        par.statBag.addStat("nNegDCCs", negativeDCCs.size());
+        par.statBag.addStat("nDCCs", positiveDCCs.size() + negativeDCCs.size());
+        par.statBag.addStat("postProcessTime", postProcessTime);
+
+//        Convert to tuples
+        return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toList());
     }
 
 //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
@@ -95,6 +108,10 @@ public class RecursiveBounding {
 
 //        Get bounds
         CC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
+
+//      Update statistics
+        nCCs.incrementAndGet();
+        totalCCSize.addAndGet(CC.size());
 
 //        Update threshold based on minJump if we have CC > 2
         double jumpBasedThreshold = CC.getMaxLowerBoundSubset() + par.minJump;

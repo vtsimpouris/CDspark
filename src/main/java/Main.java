@@ -91,7 +91,7 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 1000;
+            n = 500;
             m = (int) 1e7;
             partition = 0;
             tau = 0.9;
@@ -104,7 +104,7 @@ public class Main {
             seed = 0;
             parallel = true;
             random = false;
-            saveStats = false;
+            saveStats = true;
             saveResults = false;
         }
 
@@ -235,6 +235,8 @@ public class Main {
             case CD: default: algorithm = new CorrelationDetective(par); break;
         }
         List<ResultTuple> results = algorithm.run();
+        par.statBag.nResults = results.size();
+        algorithm.printStats(par.statBag);
 
         par.LOGGER.info(String.format("Ending time " + LocalDateTime.now()));
         par.LOGGER.info("Number of reported results: " + results.size());

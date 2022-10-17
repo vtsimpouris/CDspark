@@ -70,7 +70,11 @@ public class Parameters {
     public Random randomGenerator;
     @Setter public double[][] pairwiseDistances;
 
+
     public void init(){
         randomGenerator = random ? new Random(): new Random(seed);
     }
+
+
 }
+

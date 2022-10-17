@@ -8,16 +8,21 @@ import lombok.Setter;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class MultivariateSimilarityFunction {
     @Setter int totalClusters;
     public DistanceFunction distFunc;
     public double MAX_SIMILARITY = 1;
     public double MIN_SIMILARITY = -1;
+    public AtomicLong nLookups = new AtomicLong(0);
 
     public ConcurrentHashMap<Long, double[]> empiricalPairwiseClusterCache = new ConcurrentHashMap<>();
 
 //    ----------------------- METHODS --------------------------------
+    public String toString(){
+        return this.getClass().getSimpleName();
+    }
 
     public abstract boolean hasEmpiricalBounds();
     public abstract double[][] preprocess(double[][] data);
@@ -41,6 +46,7 @@ public abstract class MultivariateSimilarityFunction {
                     double sim = distToSim(pairwiseDistances[C1.get(i)][C2.get(j)]);
                     lb = Math.min(lb, sim);
                     ub = Math.max(ub, sim);
+                    nLookups.incrementAndGet();
                 }
             }
             double[] bounds = new double[]{correctBound(lb), correctBound(ub)};

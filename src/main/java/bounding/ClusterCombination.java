@@ -5,6 +5,7 @@ import _aux.ResultTuple;
 import clustering.Cluster;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import similarities.MultivariateSimilarityFunction;
 
@@ -12,9 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 public class ClusterCombination {
-    ArrayList<Cluster> LHS;
-    ArrayList<Cluster> RHS;
+    @NonNull ArrayList<Cluster> LHS;
+    @NonNull ArrayList<Cluster> RHS;
+    @NonNull int level;
 
     @Setter @Getter boolean isPositive = false;
     @Setter @Getter boolean isDecisive = false;
@@ -31,11 +34,6 @@ public class ClusterCombination {
 
 
 //    ------------------- METHODS -------------------
-    public ClusterCombination(@NonNull ArrayList<Cluster> LHS, @NonNull ArrayList<Cluster> RHS) {
-        this.LHS = LHS;
-        this.RHS = RHS;
-    }
-
     public int size(){
         return this.getClusters().stream().mapToInt(Cluster::size).sum();
     }
@@ -133,7 +131,7 @@ public class ClusterCombination {
             } else {
                 newRHS = new ArrayList<>(newSide);
             }
-            subCCs.add(new ClusterCombination(newLHS, newRHS));
+            subCCs.add(new ClusterCombination(newLHS, newRHS, this.level + 1));
 
             // remove the subcluster to make room for the next subcluster
             newSide.remove(newSidePosition);
@@ -169,7 +167,7 @@ public class ClusterCombination {
                 for (int i = 0; i < LHS.size(); i++) {
                     subsetSide = new ArrayList<>(LHS);
                     subsetSide.remove(i);
-                    ClusterCombination subCC = new ClusterCombination(subsetSide, RHS);
+                    ClusterCombination subCC = new ClusterCombination(subsetSide, RHS, level);
                     subCC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
                     subsetSimilarity = subCC.getLB();
                     if (Math.abs(subsetSimilarity - subCC.getUB()) > 0.001){
@@ -185,7 +183,7 @@ public class ClusterCombination {
                 for (int i = 0; i < RHS.size(); i++) {
                     subsetSide = new ArrayList<>(RHS);
                     subsetSide.remove(i);
-                    ClusterCombination subCC = new ClusterCombination(LHS, subsetSide);
+                    ClusterCombination subCC = new ClusterCombination(LHS, subsetSide, level);
                     subCC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
                     subsetSimilarity = subCC.getLB();
                     if (Math.abs(subsetSimilarity - subCC.getUB()) > 0.001){
