@@ -18,8 +18,8 @@ public class ClusterCombination {
 
     @Setter @Getter boolean isPositive = false;
     @Setter @Getter boolean isDecisive = false;
-    @Getter boolean isSingleton;
-    @Getter List<Cluster> clusters;
+    Boolean isSingleton;
+    private List<Cluster> clusters;
 
     @Getter double LB = -Double.MAX_VALUE;
     @Getter double UB = Double.MAX_VALUE;
@@ -34,8 +34,32 @@ public class ClusterCombination {
     public ClusterCombination(@NonNull ArrayList<Cluster> LHS, @NonNull ArrayList<Cluster> RHS) {
         this.LHS = LHS;
         this.RHS = RHS;
-        this.clusters = new ArrayList<>(); clusters.addAll(this.LHS); clusters.addAll(this.RHS);
-        this.isSingleton = this.getClusters().stream().anyMatch(c -> c.size() > 1);
+    }
+
+    public int size(){
+        return this.getClusters().stream().mapToInt(Cluster::size).sum();
+    }
+
+    public boolean isSingleton(){
+        if (this.isSingleton == null){
+            for (Cluster c : this.getClusters()){
+                if (c.size() > 1){
+                    this.isSingleton = false;
+                    return false;
+                }
+            }
+            this.isSingleton = true;
+        }
+        return this.isSingleton;
+    }
+
+    public List<Cluster> getClusters(){
+        if (this.clusters == null){
+            this.clusters = new ArrayList<>();
+            this.clusters.addAll(LHS);
+            this.clusters.addAll(RHS);
+        }
+        return this.clusters;
     }
 
     public void swapLeftRightSide(){
@@ -79,8 +103,8 @@ public class ClusterCombination {
         int cToBreak = 0;
         double maxRadius = -Double.MAX_VALUE;
 
-        for (int i = 0; i < clusters.size(); i++) {
-            Cluster c = clusters.get(i);
+        for (int i = 0; i < this.getClusters().size(); i++) {
+            Cluster c = this.getClusters().get(i);
             if (c.size() > 1 && c.getRadius() > 0 && c.getRadius() > maxRadius){
                 maxRadius = c.getRadius();
                 cToBreak = i;
@@ -88,18 +112,19 @@ public class ClusterCombination {
         }
 
 //        Split cluster into children
-        Cluster largest = clusters.get(cToBreak);
-        boolean isLHS = cToBreak < lSize;
 
-        List<Cluster> newSide = new ArrayList<>(isLHS ? LHS : RHS);
-        int newSidePositon = isLHS ? cToBreak : cToBreak - lSize;
+        boolean isLHS = cToBreak < lSize;
+        ArrayList<Cluster> newSide = new ArrayList<>(isLHS ? LHS : RHS);
+        int newSidePosition = isLHS ? cToBreak : cToBreak - lSize;
+
+        Cluster largest = newSide.remove(newSidePosition);
 
 //        For each subcluster, create a new cluster combination (unless it is already in the side and is singleton)
         for (Cluster sc : largest.getChildren()) {
             if (newSide.contains(sc) && sc.size() == 1){
                 continue;
             }
-            newSide.set(newSidePositon, sc);
+            newSide.add(newSidePosition, sc);
 
             ArrayList<Cluster> newLHS = new ArrayList<>(LHS);
             ArrayList<Cluster> newRHS = new ArrayList<>(RHS);
@@ -109,6 +134,12 @@ public class ClusterCombination {
                 newRHS = new ArrayList<>(newSide);
             }
             subCCs.add(new ClusterCombination(newLHS, newRHS));
+
+            // remove the subcluster to make room for the next subcluster
+            newSide.remove(newSidePosition);
+            if(newSide.contains(sc)){
+                break;
+            }
         }
         return subCCs;
     }
@@ -116,7 +147,7 @@ public class ClusterCombination {
 //    Unpack CC to all cluster combinations with singleton clusters
     public ArrayList<ClusterCombination> getSingletons(){
         ArrayList<ClusterCombination> out = new ArrayList<>();
-        if (this.isSingleton()) {
+        if (!this.isSingleton()) {
             ArrayList<ClusterCombination> splitted = this.split();
             for (ClusterCombination sc : splitted) {
                 out.addAll(sc.getSingletons());

@@ -2,11 +2,7 @@ package algorithms;
 
 import _aux.*;
 
-import java.util.BitSet;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public abstract class Algorithm {
     public Parameters par;
@@ -18,7 +14,7 @@ public abstract class Algorithm {
     public abstract List<ResultTuple> run();
     public abstract void printStats(StatBag statBag);
 
-    public void printDurations(StatBag statBag){
+    public void printStageDurations(StatBag statBag){
         lib.printBar(par.LOGGER);
         for (int i = 0; i < statBag.stageDurations.size(); i++) {
             Stage stageDuration = statBag.stageDurations.get(i);

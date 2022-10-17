@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -31,7 +32,13 @@ public class RecursiveBounding {
 
         ClusterCombination pairwiseRootCandidate = new ClusterCombination(rootLeft, rootRight);
 
-        Pair<List<ClusterCombination>, List<ClusterCombination>> pairwiseDCCs = getAndFilterDCCs(pairwiseRootCandidate);
+        Map<Boolean, List<ClusterCombination>> pairwiseDCCs = recursiveBounding(pairwiseRootCandidate)
+                .stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+
+        List<ClusterCombination> positivePairwiseDCCs = unpackAndCheckMinJump(pairwiseDCCs.get(true), par);
+
+
+//        Pair<List<ClusterCombination>, List<ClusterCombination>> pairwiseDCCs = getAndFilterDCCs(pairwiseRootCandidate);
 
 //        TODO FILTER TOPK
 
@@ -56,7 +63,7 @@ public class RecursiveBounding {
 
 //        Get final positive DCCs
         List<ClusterCombination> positiveDCCs = DCCs.x;
-        positiveDCCs.addAll(pairwiseDCCs.x);
+        positiveDCCs.addAll(positivePairwiseDCCs);
 
 //        Convert to tuples
         return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toList());

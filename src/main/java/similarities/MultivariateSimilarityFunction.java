@@ -13,6 +13,7 @@ public abstract class MultivariateSimilarityFunction {
     @Setter int totalClusters;
     public DistanceFunction distFunc;
     public double MAX_SIMILARITY = 1;
+    public double MIN_SIMILARITY = -1;
 
     public ConcurrentHashMap<Long, double[]> empiricalPairwiseClusterCache = new ConcurrentHashMap<>();
 
@@ -34,7 +35,7 @@ public abstract class MultivariateSimilarityFunction {
             return empiricalPairwiseClusterCache.get(ccID);
         } else {
             double lb = Double.MAX_VALUE;
-            double ub = Double.MIN_VALUE;
+            double ub = -Double.MAX_VALUE;
             for (int i = 0; i < C1.size(); i++) {
                 for (int j = 0; j < C2.size(); j++) {
                     double sim = distToSim(pairwiseDistances[C1.get(i)][C2.get(j)]);
@@ -42,7 +43,7 @@ public abstract class MultivariateSimilarityFunction {
                     ub = Math.max(ub, sim);
                 }
             }
-            double[] bounds = new double[]{lb, ub};
+            double[] bounds = new double[]{correctBound(lb), correctBound(ub)};
             empiricalPairwiseClusterCache.put(ccID, bounds);
             return bounds;
         }
@@ -54,6 +55,10 @@ public abstract class MultivariateSimilarityFunction {
         } else {
             return (long) id2 * this.totalClusters + id1;
         }
+    }
+
+    public double correctBound(double bound){
+        return Math.min(Math.max(bound, MIN_SIMILARITY), MAX_SIMILARITY);
     }
 
 }

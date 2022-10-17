@@ -65,9 +65,9 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
 
         for(int i=0; i< LHS.size(); i++){
             for(int j=i+1; j< LHS.size(); j++){
-                double[] bounds = empirical ? empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances): theoreticalBounds(LHS.get(i), RHS.get(j));
-                denominator_lower_left += Wl[i] * Wl[j] * bounds[0];
-                denominator_upper_left += Wl[i] * Wl[j] * bounds[1];
+                double[] bounds = empirical ? empiricalBounds(LHS.get(i), LHS.get(j), pairwiseDistances): theoreticalBounds(LHS.get(i), LHS.get(j));
+                denominator_lower_left += Wl[i] * Wl[j] * 2*bounds[0];
+                denominator_upper_left += Wl[i] * Wl[j] * 2*bounds[1];
                 maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
             }
         }
@@ -78,9 +78,9 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
 
         for(int i=0; i< RHS.size(); i++){
             for(int j=i+1; j< RHS.size(); j++){
-                double[] bounds = empirical ? empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances): theoreticalBounds(LHS.get(i), RHS.get(j));
-                denominator_lower_left += Wl[i] * Wl[j] * bounds[0];
-                denominator_upper_left += Wl[i] * Wl[j] * bounds[1];
+                double[] bounds = empirical ? empiricalBounds(RHS.get(i), RHS.get(j), pairwiseDistances): theoreticalBounds(RHS.get(i), RHS.get(j));
+                denominator_lower_right += Wr[i] * Wr[j] * 2*bounds[0];
+                denominator_upper_right += Wr[i] * Wr[j] * 2*bounds[1];
                 maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
             }
         }
@@ -104,7 +104,7 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
             upper = 1000;
         }
 
-        return new ClusterBounds(lower, upper, maxLowerBoundSubset);
+        return new ClusterBounds(correctBound(lower), correctBound(upper), maxLowerBoundSubset);
     }
 
     public double[] theoreticalBounds(Cluster C1, Cluster C2){

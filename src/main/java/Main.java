@@ -82,7 +82,7 @@ public class Main {
             saveStats = args[i].equals("true"); i++;
             saveResults = args[i].equals("true"); i++;
         } else {
-            logLevel = Level.INFO;
+            logLevel = Level.FINE;
             algorithm = AlgorithmEnum.CD;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
@@ -92,7 +92,7 @@ public class Main {
             empiricalBounding = true;
             dataType = "stock";
             n = 1000;
-            m = 100;
+            m = (int) 1e7;
             partition = 0;
             tau = 0.9;
             minJump = 0.05;
@@ -102,9 +102,9 @@ public class Main {
             k = -1;
             approximationStrategy = "simple";
             seed = 0;
-            parallel = false;
+            parallel = true;
             random = false;
-            saveStats = true;
+            saveStats = false;
             saveResults = false;
         }
 

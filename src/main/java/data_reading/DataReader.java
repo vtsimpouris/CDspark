@@ -84,7 +84,7 @@ public class DataReader {
             while (br.ready() & n < maxN) {
                 String[] line = br.readLine().split(delimiter);
 
-                maxDim = Math.min(line.length, maxDim);
+                maxDim = Math.min(line.length - 1, maxDim);
                 double[] row = IntStream.rangeClosed(partition*maxDim + 1,(partition+1)*maxDim).mapToDouble(i -> Double.parseDouble(line[i])).toArray();
 
 //                Get the middle of a row to test for variance because we take the lagged variant of the row
