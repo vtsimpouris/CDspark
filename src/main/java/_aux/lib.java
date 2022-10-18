@@ -16,19 +16,7 @@ public class lib {
         return t;
     }
 
-    public static double euclidean(double[] in1, double[] in2) {
-        double d = 0;
-        for (int i=0;i<in1.length;i++) {
-            double dd = in1[i]-in2[i];
-            d+=(dd*dd);
-        }
-        return Math.sqrt(d);
-    }
 
-    public static double euclideanSquared(double[] in1, double[] in2) {
-        double d = euclidean(in1, in2);
-        return d*d;
-    }
 
     public static double[] add(double[] in1, double[] in2) {
         double[] res = new double[in1.length];
@@ -111,6 +99,38 @@ public class lib {
 
     public static double angle(double[] in1, double[] in2) {
         return Math.acos(dot(in1, in2)/(l2(in1)*l2(in2)));
+    }
+
+    public static double euclidean(double[] in1, double[] in2) {
+        double d = 0;
+        for (int i=0;i<in1.length;i++) {
+            double dd = in1[i]-in2[i];
+            d+=(dd*dd);
+        }
+        return Math.sqrt(d);
+    }
+
+    public static double euclideanSquared(double[] in1, double[] in2) {
+        double d = euclidean(in1, in2);
+        return d*d;
+    }
+
+    public static double minkowski(double[] in1, double[] in2, double p) {
+        double d = 0;
+        for (int i=0;i<in1.length;i++) {
+            double dd = Math.pow(Math.abs(in1[i]-in2[i]), p);
+            d+=dd;
+        }
+        return Math.pow(d, 1/p);
+    }
+
+    public static double chebyshev(double[] in1, double[] in2) {
+        double d = 0;
+        for (int i=0;i<in1.length;i++) {
+            double dd = Math.abs(in1[i]-in2[i]);
+            if (dd>d) d=dd;
+        }
+        return d;
     }
 
     public static double[] mmul(double[] v, double[][] M) throws DimensionMismatchException {

@@ -8,9 +8,7 @@ import clustering.ClusteringAlgorithmEnum;
 import data_reading.DataReader;
 import lombok.NonNull;
 import similarities.MultivariateSimilarityFunction;
-import similarities.functions.EuclideanSimilarity;
-import similarities.functions.Multipole;
-import similarities.functions.PearsonCorrelation;
+import similarities.functions.*;
 import similarities.SimEnum;
 
 import java.io.File;
@@ -88,15 +86,15 @@ public class Main {
             algorithm = AlgorithmEnum.CD;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
-            simMetricName = SimEnum.EUCLIDEAN_SIMILARITY;
+            simMetricName = SimEnum.CHEBYSHEV_SIMILARITY;
             aggPattern = "sum";
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
-            empiricalBounding = true;
+            empiricalBounding = false;
             dataType = "stock";
-            n = 100;
+            n = 500;
             m = (int) 1e7;
             partition = 0;
-            tau = 0.8;
+            tau = .9;
             minJump = 0.05;
             maxPLeft = 1;
             maxPRight = 2;
@@ -132,6 +130,8 @@ public class Main {
             case PEARSON_CORRELATION: default: simMetric = new PearsonCorrelation(); break;
             case MULTIPOLE: simMetric = new Multipole(); break;
             case EUCLIDEAN_SIMILARITY: simMetric = new EuclideanSimilarity(); break;
+            case MANHATTAN_SIMILARITY: simMetric = new MinkowskiSimilarity(1); break;
+            case CHEBYSHEV_SIMILARITY: simMetric = new ChebyshevSimilarity(); break;
         }
 
 //        Check if pleft and pright are correctly chosen
@@ -139,6 +139,12 @@ public class Main {
             LOGGER.severe("The chosen similarity metric is not two-sided, but pright is > 0, adding pright to pleft");
             maxPLeft += maxPRight;
             maxPRight = 0;
+        }
+
+//        Check if emprical bounding is possible
+        if (empiricalBounding && !simMetric.hasEmpiricalBounds()){
+            LOGGER.severe("The chosen similarity metric does not support empirical bounding, setting empirical bounding to false");
+            empiricalBounding = false;
         }
 
 

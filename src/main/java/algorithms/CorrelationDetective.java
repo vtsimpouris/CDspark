@@ -5,6 +5,7 @@ import bounding.RecursiveBounding;
 import clustering.HierarchicalClustering;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class CorrelationDetective extends Algorithm {
     public HierarchicalClustering HC;
@@ -43,13 +44,13 @@ public class CorrelationDetective extends Algorithm {
     public void computePairwiseDistances() {
         int n = par.n;
         double[][] pairwiseDistances = new double[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = i; j < n; j++) {
+        lib.getStream(IntStream.range(0, n).boxed(), par.parallel).forEach(i -> {
+            lib.getStream(IntStream.range(i+1, n).boxed(), par.parallel).forEach(j -> {
                 double dist = par.simMetric.distFunc.dist(par.data[i], par.data[j]);
                 pairwiseDistances[i][j] = dist;
                 pairwiseDistances[j][i] = dist;
-            }
-        }
+            });
+        });
         par.setPairwiseDistances(pairwiseDistances);
     }
 

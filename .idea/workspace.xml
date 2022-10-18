@@ -4,17 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Implemented Euclidean Similarity. Still have to debug">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Fixed Euclidean Similarity">
+      <change afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/ChebyshevSimilarity.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/MinkowskiSimilarity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Sandbox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Sandbox.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/CorrelationDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/CorrelationDetective.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +102,7 @@
       <workItem from="1665603613203" duration="42337000" />
       <workItem from="1665748769579" duration="3947000" />
       <workItem from="1665991508467" duration="27255000" />
-      <workItem from="1666082073678" duration="10901000" />
+      <workItem from="1666082073678" duration="13686000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -156,7 +153,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666039896038</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Fixed Euclidean Similarity">
+      <created>1666100006867</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1666100006867</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -181,7 +185,8 @@
     <MESSAGE value="Debugged Pearson. now working" />
     <MESSAGE value="Added some simple stats to CD code" />
     <MESSAGE value="Implemented Euclidean Similarity. Still have to debug" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented Euclidean Similarity. Still have to debug" />
+    <MESSAGE value="Fixed Euclidean Similarity" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed Euclidean Similarity" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -194,6 +199,11 @@
           <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
           <line>84</line>
           <option name="timeStamp" value="85" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/MinkowskiSimilarity.java</url>
+          <line>54</line>
+          <option name="timeStamp" value="88" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

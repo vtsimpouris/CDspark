@@ -8,6 +8,9 @@ import similarities.MultivariateSimilarityFunction;
 
 import java.util.List;
 
+import static similarities.functions.MinkowskiSimilarity.aggCentroid;
+import static similarities.functions.MinkowskiSimilarity.aggRadius;
+
 public class EuclideanSimilarity extends MultivariateSimilarityFunction {
     public EuclideanSimilarity() {
 //        Angle is distance function
@@ -138,21 +141,5 @@ public class EuclideanSimilarity extends MultivariateSimilarityFunction {
 
 
 
-    private double[] aggCentroid(List<Cluster> clusters, double[] weights){
-        double[] centroid = new double[clusters.get(0).getCentroid().length];
-        for (int i = 0; i < clusters.size(); i++) {
-            double w = weights[i];
-            double[] wc = w == 1 ? clusters.get(i).getCentroid() : lib.scale(clusters.get(i).getCentroid(), w);
-            centroid = lib.add(centroid, wc);
-        }
-        return centroid;
-    }
 
-    private double aggRadius(List<Cluster> clusters, double[] weights){
-        double radius = 0;
-        for (int i = 0; i < clusters.size(); i++) {
-            radius += weights[i] * clusters.get(i).getRadius();
-        }
-        return radius;
-    }
 }
