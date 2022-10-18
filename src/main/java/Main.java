@@ -86,15 +86,15 @@ public class Main {
             algorithm = AlgorithmEnum.CD;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
-            simMetricName = SimEnum.CHEBYSHEV_SIMILARITY;
+            simMetricName = SimEnum.SPEARMAN_CORRELATION;
             aggPattern = "sum";
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
-            empiricalBounding = false;
+            empiricalBounding = true;
             dataType = "stock";
             n = 500;
             m = (int) 1e7;
             partition = 0;
-            tau = .9;
+            tau = 0.95;
             minJump = 0.05;
             maxPLeft = 1;
             maxPRight = 2;
@@ -128,6 +128,7 @@ public class Main {
         MultivariateSimilarityFunction simMetric;
         switch (simMetricName){
             case PEARSON_CORRELATION: default: simMetric = new PearsonCorrelation(); break;
+            case SPEARMAN_CORRELATION: simMetric = new SpearmanCorrelation(); break;
             case MULTIPOLE: simMetric = new Multipole(); break;
             case EUCLIDEAN_SIMILARITY: simMetric = new EuclideanSimilarity(); break;
             case MANHATTAN_SIMILARITY: simMetric = new MinkowskiSimilarity(1); break;

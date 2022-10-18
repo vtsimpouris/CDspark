@@ -17,7 +17,6 @@ public class lib {
     }
 
 
-
     public static double[] add(double[] in1, double[] in2) {
         double[] res = new double[in1.length];
         for (int i=0;i<in1.length;i++) res[i]=in1[i]+in2[i];
@@ -86,6 +85,20 @@ public class lib {
             d+=dd;
         }
         return d;
+    }
+
+    public static double[] rank(double[] in) {
+        Integer[] indexes = new Integer[in.length];
+        for (int i = 0; i < indexes.length; i++) {
+            indexes[i] = i;
+        }
+        Arrays.sort(indexes, new Comparator<Integer>() {
+            @Override
+            public int compare(final Integer i1, final Integer i2) {
+                return Double.compare(in[i1], in[i2]);
+            }
+        });
+        return IntStream.range(0, indexes.length).mapToDouble(i -> indexes[i]).toArray();
     }
 
     public static double dot(double[] in1, double[] in2) {
