@@ -126,8 +126,8 @@ public class EuclideanSimilarity extends MultivariateSimilarityFunction {
             }
         }
 
-        Pair<double[],double[]> weightSquares = getWeightSquaredSums(Wl, Wr);
-        double wSqSum = weightSquares.x[LHS.size() - 1] + weightSquares.y[RHS.size() - 1];
+        Pair<Double, Double> weightSquares = getWeightSquaredSums(Wl, Wr);
+        double wSqSum = weightSquares.x + weightSquares.y;
 
 //        Compute bounds
         double lowerD = Math.sqrt(Math.max(0,wSqSum + Math.min(betweenLowerDot, betweenUpperDot) + Math.min(withinLowerDot, withinUpperDot)));

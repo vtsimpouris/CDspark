@@ -119,7 +119,7 @@ public class ClusterCombination {
 
 //        For each subcluster, create a new cluster combination (unless it is already in the side and is singleton)
         for (Cluster sc : largest.getChildren()) {
-            if (newSide.contains(sc) && sc.size() == 1){
+            if (sc.size() == 1 && (LHS.contains(sc) || RHS.contains(sc))){
                 continue;
             }
             newSide.add(newSidePosition, sc);
@@ -135,7 +135,7 @@ public class ClusterCombination {
 
             // remove the subcluster to make room for the next subcluster
             newSide.remove(newSidePosition);
-            if(newSide.contains(sc)){
+            if (newSide.contains(sc)){
                 break;
             }
         }
@@ -168,7 +168,8 @@ public class ClusterCombination {
                     subsetSide = new ArrayList<>(LHS);
                     subsetSide.remove(i);
                     ClusterCombination subCC = new ClusterCombination(subsetSide, RHS, level);
-                    subCC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
+                    subCC.bound(par.simMetric, par.empiricalBounding, par.Wl.get(subsetSide.size() - 1),
+                            subCC.RHS.size() > 0 ? par.Wr.get(subCC.RHS.size() - 1): null, par.pairwiseDistances);
                     subsetSimilarity = subCC.getLB();
                     if (Math.abs(subsetSimilarity - subCC.getUB()) > 0.001){
                         par.LOGGER.fine("Subset similarity is not tight: " + subsetSimilarity + " " + subCC.getUB());
@@ -184,7 +185,8 @@ public class ClusterCombination {
                     subsetSide = new ArrayList<>(RHS);
                     subsetSide.remove(i);
                     ClusterCombination subCC = new ClusterCombination(LHS, subsetSide, level);
-                    subCC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
+                    subCC.bound(par.simMetric, par.empiricalBounding, par.Wl.get(LHS.size() - 1),
+                            par.Wr.get(subsetSide.size() - 1), par.pairwiseDistances);
                     subsetSimilarity = subCC.getLB();
                     if (Math.abs(subsetSimilarity - subCC.getUB()) > 0.001){
                         par.LOGGER.fine("Subset similarity is not tight: " + subsetSimilarity + " " + subCC.getUB());

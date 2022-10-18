@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -86,8 +87,8 @@ public class Main {
             algorithm = AlgorithmEnum.CD;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
-            simMetricName = SimEnum.SPEARMAN_CORRELATION;
-            aggPattern = "sum";
+            simMetricName = SimEnum.PEARSON_CORRELATION;
+            aggPattern = "avg";
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
@@ -149,18 +150,35 @@ public class Main {
         }
 
 
-        // Create aggregation function from pattern
-        double[] Wl = new double[maxPLeft];
-        double[] Wr = new double[maxPRight];
+        // Create aggregation function from pattern.
+        // Is list because it also needs to consider subset correlations (i.e. mc(1,1), mc(1,2), mc(2,2))
+        List<double[]> Wl = new ArrayList<>(maxPLeft);
+        List<double[]> Wr = new ArrayList<>(maxPRight);
         switch (aggPattern){
             case "avg": {
-                Arrays.fill(Wl, 1.0/maxPLeft);
-                Arrays.fill(Wr, 1.0/maxPRight);
+                for (int i = 1; i < maxPLeft + 1; i++) {
+                    double[] w = new double[i];
+                    Arrays.fill(w, 1d/i);
+                    Wl.add(w);
+                }
+                for (int i = 1; i < maxPRight + 1; i++) {
+                    double[] w = new double[i];
+                    Arrays.fill(w, 1d/i);
+                    Wr.add(w);
+                }
                 break;
             }
             case "sum": {
-                Arrays.fill(Wl, 1.0);
-                Arrays.fill(Wr, 1.0);
+                for (int i = 1; i < maxPLeft + 1; i++) {
+                    double[] w = new double[i];
+                    Arrays.fill(w, 1d);
+                    Wl.add(w);
+                }
+                for (int i = 1; i < maxPRight + 1; i++) {
+                    double[] w = new double[i];
+                    Arrays.fill(w, 1d);
+                    Wr.add(w);
+                }
                 break;
             }
             default: {
@@ -170,13 +188,19 @@ public class Main {
                     String[] leftRight = matcher.group(1).split("\\)\\(");
                     String[] left = leftRight[0].substring(1).split("-");
                     String[] right = leftRight[1].substring(0, leftRight[1].length()-1).split("-");
-                    Wl = Arrays.stream(left).mapToDouble(Double::parseDouble).toArray();
-                    Wr = Arrays.stream(right).mapToDouble(Double::parseDouble).toArray();
+                    double[] fullLeft =Arrays.stream(left).mapToDouble(Double::parseDouble).toArray();
+                    double[] fullRight =Arrays.stream(right).mapToDouble(Double::parseDouble).toArray();
+                    for (int i = 1; i < maxPLeft + 1; i++) {
+                        Wl.add(Arrays.copyOfRange(fullLeft, 0, i));
+                    }
+                    for (int i = 1; i < maxPRight + 1; i++) {
+                        Wr.add(Arrays.copyOfRange(fullRight, 0, i));
+                    }
                 } else {
                     LOGGER.severe("Aggregation pattern not recognized, should be 'avg', 'sum' or 'custom(u0-u1-...-uPLeft)(w0-w1-...-wPRight)'");
                     System.exit(1);
                 }
-
+                break;
             }
         }
 

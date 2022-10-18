@@ -112,7 +112,8 @@ public class RecursiveBounding {
         double threshold = par.tau;
 
 //        Get bounds
-        CC.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
+        CC.bound(par.simMetric, par.empiricalBounding, par.Wl.get(CC.LHS.size() - 1), CC.RHS.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null,
+                par.pairwiseDistances);
 
 //      Update statistics
         nCCs.incrementAndGet();
@@ -156,7 +157,8 @@ public class RecursiveBounding {
                     return true;
                 })
                 .filter(cc -> {
-                    cc.bound(par.simMetric, par.empiricalBounding, par.Wl, par.Wr, par.pairwiseDistances);
+                    cc.bound(par.simMetric, par.empiricalBounding, par.Wl.get(cc.LHS.size() - 1),
+                            cc.RHS.size() > 0 ? par.Wr.get(cc.RHS.size() - 1): null, par.pairwiseDistances);
                     if (Math.abs(cc.getLB() - cc.getUB()) > 0.001) {
                         par.LOGGER.info("postprocessing: found a singleton CC with LB != UB");
                     }

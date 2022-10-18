@@ -5,7 +5,9 @@ import bounding.ClusterBounds;
 import clustering.Cluster;
 import lombok.Setter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -20,8 +22,8 @@ public abstract class MultivariateSimilarityFunction {
     public ConcurrentHashMap<Long, double[]> theoreticalPairwiseClusterCache = new ConcurrentHashMap<>();
 
     //    WlSqSum for each subset of Wl (i.e. [0], [0,1], [0,1,2], ...)
-    private double[] WrSqSum;
-    private double[] WlSqSum;
+    private Map<Integer, Double> WlSqSum = new HashMap<>(4);
+    private Map<Integer, Double> WrSqSum = new HashMap<>(4);
 
 //    ----------------------- METHODS --------------------------------
     public String toString(){
@@ -49,9 +51,9 @@ public abstract class MultivariateSimilarityFunction {
             double ub = -Double.MAX_VALUE;
             for (int i = 0; i < C1.size(); i++) {
                 for (int j = 0; j < C2.size(); j++) {
-                    double sim = pairwiseDistances[C1.get(i)][C2.get(j)];
-                    lb = Math.min(lb, sim);
-                    ub = Math.max(ub, sim);
+                    double dist = pairwiseDistances[C1.get(i)][C2.get(j)];
+                    lb = Math.min(lb, dist);
+                    ub = Math.max(ub, dist);
                     nLookups.incrementAndGet();
                 }
             }
@@ -75,25 +77,24 @@ public abstract class MultivariateSimilarityFunction {
 
 
 //    TODO COULD PUSH DOWN TO ADDITIONAL ABSTRACTION
-    public Pair<double[], double[]> getWeightSquaredSums(double[] Wl, double[] Wr) {
-        if (WlSqSum == null) {
-            WlSqSum = new double[Wl.length];
+    public Pair<Double,Double> getWeightSquaredSums(double[] Wl, double[] Wr) {
+        if (!WlSqSum.containsKey(Wl.length)) {
             double runSumSq = 0;
             for (int i = 0; i < Wl.length; i++) {
                 runSumSq += Wl[i] * Wl[i];
-                WlSqSum[i] = runSumSq;
             }
+            WlSqSum.put(Wl.length, runSumSq);
         }
-        if (WrSqSum == null) {
-            WrSqSum = new double[Wr.length];
+
+        if (!WrSqSum.containsKey(Wr.length)) {
             double runSumSq = 0;
             for (int i = 0; i < Wr.length; i++) {
                 runSumSq += Wr[i] * Wr[i];
-                WrSqSum[i] = runSumSq;
             }
+            WrSqSum.put(Wr.length, runSumSq);
         }
 
-        return new Pair<>(WlSqSum, WrSqSum);
+        return new Pair<>(WlSqSum.get(Wl.length), WrSqSum.get(Wr.length));
     }
 }
 

@@ -4,12 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Implemented manhattan and chebyshev similarities">
-      <change afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/SpearmanCorrelation.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Implemented spearman correlation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/SimEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/SimEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/Parameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/Parameters.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +104,8 @@
       <workItem from="1665603613203" duration="42337000" />
       <workItem from="1665748769579" duration="3947000" />
       <workItem from="1665991508467" duration="27255000" />
-      <workItem from="1666082073678" duration="14731000" />
+      <workItem from="1666082073678" duration="14933000" />
+      <workItem from="1666116562963" duration="5656000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -165,7 +170,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666103113896</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Implemented spearman correlation">
+      <created>1666103928147</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1666103928147</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -192,7 +204,8 @@
     <MESSAGE value="Implemented Euclidean Similarity. Still have to debug" />
     <MESSAGE value="Fixed Euclidean Similarity" />
     <MESSAGE value="Implemented manhattan and chebyshev similarities" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented manhattan and chebyshev similarities" />
+    <MESSAGE value="Implemented spearman correlation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented spearman correlation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -202,14 +215,29 @@
           <option name="timeStamp" value="12" />
         </breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
-          <line>84</line>
-          <option name="timeStamp" value="85" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/MinkowskiSimilarity.java</url>
           <line>54</line>
           <option name="timeStamp" value="88" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java</url>
+          <line>77</line>
+          <option name="timeStamp" value="103" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
+          <line>84</line>
+          <option name="timeStamp" value="110" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java</url>
+          <line>40</line>
+          <option name="timeStamp" value="111" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
+          <line>48</line>
+          <option name="timeStamp" value="112" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

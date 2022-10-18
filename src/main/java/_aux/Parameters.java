@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import similarities.MultivariateSimilarityFunction;
 
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -30,8 +31,8 @@ public class Parameters {
     //    Query
     @NonNull public MultivariateSimilarityFunction simMetric;
     @NonNull public String aggPattern;
-    @NonNull public double[] Wl;
-    @NonNull public double[] Wr;
+    @NonNull public List<double[]> Wl;
+    @NonNull public List<double[]> Wr;
     @NonNull public int maxPLeft;
     @NonNull public int maxPRight;
 

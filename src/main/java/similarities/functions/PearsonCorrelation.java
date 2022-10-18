@@ -32,6 +32,15 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
     @Override public double distToSim(double dist) {return Math.cos(dist);}
 
     public ClusterBounds getBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr, boolean empirical){
+//        TODO DEBUG
+        if(RHS.size() == 2 &&
+                LHS.get(0).size() + RHS.get(0).size() + RHS.get(1).size() == 3 &&
+                LHS.get(0).get(0) == 95 &&
+                RHS.get(0).get(0) == 127 &&
+                RHS.get(1).get(0) == 79){
+            System.out.println("DEBUG");
+        }
+
         double lower;
         double upper;
         double maxLowerBoundSubset = -1;
@@ -39,45 +48,44 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         double nominator_lower = 0;
         double nominator_upper = 0;
 
-        Pair<double[],double[]> weightSquares = getWeightSquaredSums(Wl, Wr);
+        Pair<Double, Double> weightSquares = getWeightSquaredSums(Wl, Wr);
 
         //numerator: (nominator -- dyslexia strikes?!)
         for (int i = 0; i < LHS.size(); i++) {
             for (int j = 0; j < RHS.size(); j++) {
-                double[] bounds = empirical ? empiricalDistanceBounds(LHS.get(i), RHS.get(j), pairwiseDistances): theoreticalDistanceBounds(LHS.get(i), RHS.get(j));
-//                TODO HOW DO YOU NORMALIZE THESE WEIGHTS IF WE ARE COMPARING SUBSET COMBINATIONS?
-                double lowerBound = distToSim(bounds[1]); // larger angles are smaller correlations
-                nominator_lower += Wl[i] * Wr[j] * lowerBound;
-                nominator_upper += Wl[i] * Wr[j] * distToSim(bounds[0]);
-                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, lowerBound);
+                double[] angleBounds = empirical ? empiricalDistanceBounds(LHS.get(i), RHS.get(j), pairwiseDistances): theoreticalDistanceBounds(LHS.get(i), RHS.get(j));
+                double[] simBounds = new double[]{distToSim(angleBounds[1]), distToSim(angleBounds[0])};
+                nominator_lower += Wl[i] * Wr[j] * simBounds[0];
+                nominator_upper += Wl[i] * Wr[j] * simBounds[1];
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, simBounds[0]);
             }
         }
 
         //denominator: first sqrt
-        double denominator_lower_left = weightSquares.x[LHS.size() - 1];
-        double denominator_upper_left = weightSquares.x[LHS.size() - 1];
+        double denominator_lower_left = weightSquares.x;
+        double denominator_upper_left = weightSquares.x;
 
         for(int i=0; i< LHS.size(); i++){
             for(int j=i+1; j< LHS.size(); j++){
-                double[] bounds = empirical ? empiricalDistanceBounds(LHS.get(i), LHS.get(j), pairwiseDistances): theoreticalDistanceBounds(LHS.get(i), LHS.get(j));
-                double lowerBound = distToSim(bounds[1]); // larger angles are smaller correlations
-                denominator_lower_left += Wl[i] * Wl[j] * lowerBound;
-                denominator_upper_left += Wl[i] * Wl[j] * distToSim(bounds[0]);
-                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, lowerBound);
+                double[] angleBounds = empirical ? empiricalDistanceBounds(LHS.get(i), LHS.get(j), pairwiseDistances): theoreticalDistanceBounds(LHS.get(i), LHS.get(j));
+                double[] simBounds = new double[]{distToSim(angleBounds[1]), distToSim(angleBounds[0])};
+                denominator_lower_left += 2 * Wl[i] * Wl[j] * simBounds[0];
+                denominator_upper_left += 2 * Wl[i] * Wl[j] * simBounds[1];
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, simBounds[0]);
             }
         }
 
         //denominator: second sqrt
-        double denominator_lower_right = weightSquares.y[RHS.size() - 1];
-        double denominator_upper_right = weightSquares.y[RHS.size() - 1];
+        double denominator_lower_right = weightSquares.y;
+        double denominator_upper_right = weightSquares.y;
 
         for(int i=0; i< RHS.size(); i++){
             for(int j=i+1; j< RHS.size(); j++){
-                double[] bounds = empirical ? empiricalDistanceBounds(RHS.get(i), RHS.get(j), pairwiseDistances): theoreticalDistanceBounds(RHS.get(i), RHS.get(j));
-                double lowerBound = distToSim(bounds[1]); // larger angles are smaller correlations
-                denominator_lower_right += Wr[i] * Wr[j] * lowerBound;
-                denominator_upper_right += Wr[i] * Wr[j] * distToSim(bounds[0]);
-                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, lowerBound);
+                double[] angleBounds = empirical ? empiricalDistanceBounds(RHS.get(i), RHS.get(j), pairwiseDistances): theoreticalDistanceBounds(RHS.get(i), RHS.get(j));
+                double[] simBounds = new double[]{distToSim(angleBounds[1]), distToSim(angleBounds[0])};
+                denominator_lower_right += 2 * Wr[i] * Wr[j] * simBounds[0];
+                denominator_upper_right += 2 * Wr[i] * Wr[j] * simBounds[1];
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, simBounds[0]);
             }
         }
 

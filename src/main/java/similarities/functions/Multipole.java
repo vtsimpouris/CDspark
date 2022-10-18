@@ -74,19 +74,20 @@ public class Multipole extends MultivariateSimilarityFunction {
             Cluster c1 = LHS.get(i);
             for (int j = i + 1; j < LHS.size(); j++) {
                 Cluster c2 = LHS.get(j);
-                double[] bounds = empirical ? empiricalDistanceBounds(c1, c2, pairwiseDistances) : theoreticalDistanceBounds(c1, c2);
+                double[] angleBounds = empirical ? empiricalDistanceBounds(c1, c2, pairwiseDistances) : theoreticalDistanceBounds(c1, c2);
+                double[] simBounds = new double[]{distToSim(angleBounds[1]), distToSim(angleBounds[0])};
 
-                if (bounds[0] > 0) {
-                    highestAbsLowerBound = Math.max(highestAbsLowerBound, distToSim(bounds[1])); // smaller angle = higher similarity
-                } else if (bounds[1] < 0) {
-                    highestAbsLowerBound = Math.max(highestAbsLowerBound, Math.abs(distToSim(bounds[0])));
+                if (simBounds[0] > 0) {
+                    highestAbsLowerBound = Math.max(highestAbsLowerBound, simBounds[0]); // smaller angle = higher similarity
+                } else if (simBounds[1] < 0) {
+                    highestAbsLowerBound = Math.max(highestAbsLowerBound, Math.abs(simBounds[1]));
                 }
 
-                lowerBoundsArray[i][j] = bounds[0];
-                lowerBoundsArray[j][i] = bounds[0];
+                lowerBoundsArray[i][j] = simBounds[0];
+                lowerBoundsArray[j][i] = simBounds[0];
 
-                upperBoundsArray[i][j] = bounds[1];
-                upperBoundsArray[j][i] = bounds[1];
+                upperBoundsArray[i][j] = simBounds[1];
+                upperBoundsArray[j][i] = simBounds[1];
             }
         }
 
