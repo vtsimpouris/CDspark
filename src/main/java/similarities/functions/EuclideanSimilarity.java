@@ -10,8 +10,8 @@ import java.util.List;
 
 public class EuclideanSimilarity extends MultivariateSimilarityFunction {
     public EuclideanSimilarity() {
-//        Use dotprod as distance function (has to do with empirical bounding)
-        this.distFunc = lib::dot;
+//        Angle is distance function
+        this.distFunc = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b), -1),1));
 
         this.MIN_SIMILARITY = 0;
         this.MAX_SIMILARITY = 1;
@@ -24,35 +24,38 @@ public class EuclideanSimilarity extends MultivariateSimilarityFunction {
     }
 
     @Override public double sim(double[] x, double[] y) {
-        return 1 / (1 + Math.sqrt(2 - 2*this.distFunc.dist(x, y)));
+        return 1 / (1 + Math.sqrt(2 - 2*Math.cos(this.distFunc.dist(x, y))));
     }
 
     @Override public double simToDist(double sim) {
         double d = 1 / sim - 1;
 
 //        d2 to dot
-        return 1 - ((d*d) / 2);
-    }
-    @Override public double distToSim(double dist) {
-        return 1 / (1 + Math.sqrt(2 - 2*dist));
+        return Math.acos(1 - ((d*d) / 2));
     }
 
-    @Override public double[] theoreticalBounds(Cluster C1, Cluster C2){
+    @Override public double distToSim(double dist) {
+        return 1 / (1 + Math.sqrt(2 - 2*Math.cos(dist)));
+    }
+
+//    Computes actual euclidean distance, not the angle (distfunc) in this case
+    @Override public double[] theoreticalDistanceBounds(Cluster C1, Cluster C2){
         long ccID = getUniqueId(C1.id, C2.id);
 
         if (theoreticalPairwiseClusterCache.containsKey(ccID)) {
             return theoreticalPairwiseClusterCache.get(ccID);
         } else {
-            double centroidDistance = this.distFunc.dist(C1.getCentroid(), C2.getCentroid());
-            double lb = 1 / (1 + centroidDistance + C1.getRadius() + C2.getRadius());
-            double ub = 1 / (1 + centroidDistance - C1.getRadius() - C2.getRadius());
-            double[] bounds = new double[]{correctBound(lb), correctBound(ub)};
+            double centroidDistance = lib.euclidean(C1.getCentroid(), C2.getCentroid());
+
+            double lowerDist = centroidDistance - C1.getRadius() - C2.getRadius();
+            double upperDist = centroidDistance + C1.getRadius() + C2.getRadius();
+            double[] bounds = new double[]{lowerDist, upperDist};
             theoreticalPairwiseClusterCache.put(ccID, bounds);
             return bounds;
         }
     }
 
-    @Override public ClusterBounds theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr){
+    @Override public ClusterBounds theoreticalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr){
 //        Get representation of aggregated clusters
         double[] CXc = aggCentroid(LHS, Wl);
         double CXr = aggRadius(LHS, Wl);
@@ -60,77 +63,75 @@ public class EuclideanSimilarity extends MultivariateSimilarityFunction {
         double[] CYc = aggCentroid(RHS, Wr);
         double CYr = aggRadius(RHS, Wr);
 
-        double lowerDist = lib.euclidean(CXc, CYc) - CXr - CYr;
-        double upperDist = lib.euclidean(CXc, CYc) + CXr + CYr;
+        double centroidDistance = lib.euclidean(CXc, CYc);
 
-        double lower = 1 / (1 + upperDist);
-        double upper = 1 / (1 + lowerDist);
+        double lowerDist = Math.max(0,centroidDistance - CXr - CYr);
+        double upperDist = Math.max(0,centroidDistance + CXr + CYr);
+
+        double lowerSim = 1 / (1 + upperDist);
+        double upperSim = 1 / (1 + lowerDist);
 
 //        Now get maxLowerBoundSubset
         double maxLowerBoundSubset = this.MIN_SIMILARITY;
         for (int i = 0; i < LHS.size(); i++) {
             for (int j = 0; j < RHS.size(); j++) {
-                double[] bounds = theoreticalBounds(LHS.get(i), RHS.get(j));
-                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
+                double[] bounds = theoreticalDistanceBounds(LHS.get(i), RHS.get(j));
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, 1 / (1 + bounds[1]));
             }
         }
 
-        return new ClusterBounds(correctBound(lower), correctBound(upper), maxLowerBoundSubset);
+        return new ClusterBounds(correctBound(lowerSim), correctBound(upperSim), maxLowerBoundSubset);
     }
 
-    @Override public ClusterBounds empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances){
-        double betweenLower = 0;
-        double betweenUpper = 0;
+    @Override public ClusterBounds empiricalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances){
+        double betweenLowerDot = 0;
+        double betweenUpperDot = 0;
+
+        double withinLowerDot = 0;
+        double withinUpperDot = 0;
+
         double maxLowerBoundSubset = this.MIN_SIMILARITY;
 
 //        Get all pairwise between cluster distances
         for (int i = 0; i < LHS.size(); i++) {
             for (int j = 0; j < RHS.size(); j++) {
-                double[] bounds = empiricalBounds(LHS.get(i), RHS.get(j), pairwiseDistances);
-                betweenLower += bounds[0] * Wl[i] * Wr[j];
-                betweenUpper += bounds[1] * Wl[i] * Wr[j];
-                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
+                double[] bounds = empiricalDistanceBounds(LHS.get(i), RHS.get(j), pairwiseDistances);
+                betweenLowerDot -= 2 * Wl[i] * Wr[j] * Math.cos(bounds[0]);
+                betweenUpperDot -= 2 * Wl[i] * Wr[j] * Math.cos(bounds[1]);
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, distToSim(bounds[0]));
             }
         }
 
-//        Get all pairwise within cluster (side) distances LHS
-        double withinLowerLHS = 0;
-        double withinUpperLHS = 0;
 
-//        Get all pairwise between cluster distances
+//        Get all pairwise within cluster (side) distances LHS
         for (int i = 0; i < LHS.size(); i++) {
             for (int j = i+1; j < LHS.size(); j++) {
-                double[] bounds = empiricalBounds(LHS.get(i), LHS.get(j), pairwiseDistances);
-                withinLowerLHS += bounds[0] * Wl[i] * Wl[j];
-                withinUpperLHS += bounds[1] * Wl[i] * Wl[j];
-                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
+                double[] bounds = empiricalDistanceBounds(LHS.get(i), LHS.get(j), pairwiseDistances);
+                withinLowerDot += 2 * Wl[i] * Wl[j] * Math.cos(bounds[0]);
+                withinUpperDot += 2 * Wl[i] * Wl[j] * Math.cos(bounds[1]);
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, distToSim(bounds[0]));
             }
         }
 
         //        Get all pairwise within cluster (side) distances RHS
-        double withinLowerRHS = 0;
-        double withinUpperRHS = 0;
-
-//        Get all pairwise between cluster distances
         for (int i = 0; i < RHS.size(); i++) {
             for (int j = i+1; j < RHS.size(); j++) {
-                double[] bounds = empiricalBounds(RHS.get(i), RHS.get(j), pairwiseDistances);
-                withinLowerRHS += bounds[0] * Wr[i] * Wr[j];
-                withinUpperRHS += bounds[1] * Wr[i] * Wr[j];
-                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, bounds[0]);
+                double[] bounds = empiricalDistanceBounds(RHS.get(i), RHS.get(j), pairwiseDistances);
+                withinLowerDot += 2 * Wr[i] * Wr[j] * Math.cos(bounds[0]);
+                withinUpperDot += 2 * Wr[i] * Wr[j] * Math.cos(bounds[1]);
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, distToSim(bounds[0]));
             }
         }
 
         Pair<double[],double[]> weightSquares = getWeightSquaredSums(Wl, Wr);
-        double WlSqSum = weightSquares.x[LHS.size() - 1];
-        double WrSqSum = weightSquares.y[RHS.size() - 1];
+        double wSqSum = weightSquares.x[LHS.size() - 1] + weightSquares.y[RHS.size() - 1];
 
 //        Compute bounds
-        double lowerD2 = WlSqSum + WrSqSum + 2*(withinLowerLHS + withinLowerRHS - betweenUpper);
-        double upperD2 = WlSqSum + WrSqSum + 2*(withinUpperLHS + withinUpperRHS - betweenLower);
+        double lowerD = Math.sqrt(Math.max(0,wSqSum + Math.min(betweenLowerDot, betweenUpperDot) + Math.min(withinLowerDot, withinUpperDot)));
+        double upperD = Math.sqrt(Math.max(0,wSqSum + Math.max(betweenLowerDot, betweenUpperDot) + Math.max(withinLowerDot, withinUpperDot)));
 
-        double lower = 1 / (1 + Math.sqrt(upperD2));
-        double upper = 1 / (1 + Math.sqrt(lowerD2));
+        double lower = 1 / (1 + upperD);
+        double upper = 1 / (1 + lowerD);
 
         return new ClusterBounds(correctBound(lower), correctBound(upper), maxLowerBoundSubset);
     }

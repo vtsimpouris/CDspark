@@ -7,7 +7,6 @@ import clustering.Cluster;
 import similarities.MultivariateSimilarityFunction;
 
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Multipole extends MultivariateSimilarityFunction {
 
@@ -31,24 +30,24 @@ public class Multipole extends MultivariateSimilarityFunction {
     }
     @Override public double distToSim(double dist) {return Math.cos(dist);}
 
-    @Override public ClusterBounds empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances) {
+    @Override public ClusterBounds empiricalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances) {
         return getBounds(LHS, RHS, pairwiseDistances, Wl, Wr, true);
     }
 
     //    Theoretical bounds
-    @Override public ClusterBounds theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr) {
+    @Override public ClusterBounds theoreticalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr) {
         return getBounds(LHS, RHS, null, Wl, Wr, false);
     }
 
-    @Override public double[] theoreticalBounds(Cluster C1, Cluster C2){
+    @Override public double[] theoreticalDistanceBounds(Cluster C1, Cluster C2){
         long ccID = getUniqueId(C1.id, C2.id);
 
         if (theoreticalPairwiseClusterCache.containsKey(ccID)) {
             return theoreticalPairwiseClusterCache.get(ccID);
         } else {
             double centroidDistance = this.distFunc.dist(C1.getCentroid(), C2.getCentroid());
-            double lb = Math.cos(Math.min(Math.PI, centroidDistance + C1.getRadius() + C2.getRadius()));
-            double ub = Math.cos(Math.max(0, centroidDistance - C1.getRadius() - C2.getRadius()));
+            double lb = Math.max(0, centroidDistance - C1.getRadius() - C2.getRadius());
+            double ub = Math.min(Math.PI, centroidDistance + C1.getRadius() + C2.getRadius());
             double[] bounds = new double[]{lb, ub};
             theoreticalPairwiseClusterCache.put(ccID, bounds);
             return bounds;
@@ -75,12 +74,12 @@ public class Multipole extends MultivariateSimilarityFunction {
             Cluster c1 = LHS.get(i);
             for (int j = i + 1; j < LHS.size(); j++) {
                 Cluster c2 = LHS.get(j);
-                double[] bounds = empirical ? empiricalBounds(c1, c2, pairwiseDistances) : theoreticalBounds(c1, c2);
+                double[] bounds = empirical ? empiricalDistanceBounds(c1, c2, pairwiseDistances) : theoreticalDistanceBounds(c1, c2);
 
                 if (bounds[0] > 0) {
-                    highestAbsLowerBound = Math.max(highestAbsLowerBound, bounds[0]);
+                    highestAbsLowerBound = Math.max(highestAbsLowerBound, distToSim(bounds[1])); // smaller angle = higher similarity
                 } else if (bounds[1] < 0) {
-                    highestAbsLowerBound = Math.max(highestAbsLowerBound, -bounds[1]);
+                    highestAbsLowerBound = Math.max(highestAbsLowerBound, Math.abs(distToSim(bounds[0])));
                 }
 
                 lowerBoundsArray[i][j] = bounds[0];

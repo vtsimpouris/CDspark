@@ -4,20 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Added some simple stats to CD code">
-      <change afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Implemented Euclidean Similarity. Still have to debug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Sandbox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Sandbox.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/CorrelationDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/CorrelationDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/clustering/Cluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clustering/Cluster.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/clustering/HierarchicalClustering.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clustering/HierarchicalClustering.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/SimEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/SimEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,19 +42,19 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Global Libraries",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Global Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
@@ -108,7 +104,8 @@
       <updated>1665603611943</updated>
       <workItem from="1665603613203" duration="42337000" />
       <workItem from="1665748769579" duration="3947000" />
-      <workItem from="1665991508467" duration="26448000" />
+      <workItem from="1665991508467" duration="27255000" />
+      <workItem from="1666082073678" duration="10901000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -152,7 +149,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666010597281</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Implemented Euclidean Similarity. Still have to debug">
+      <created>1666039896038</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1666039896038</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -176,7 +180,8 @@
     <MESSAGE value="Checing and debugging WIP" />
     <MESSAGE value="Debugged Pearson. now working" />
     <MESSAGE value="Added some simple stats to CD code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added some simple stats to CD code" />
+    <MESSAGE value="Implemented Euclidean Similarity. Still have to debug" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented Euclidean Similarity. Still have to debug" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -186,15 +191,17 @@
           <option name="timeStamp" value="12" />
         </breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java</url>
-          <line>64</line>
-          <option name="timeStamp" value="70" />
+          <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
+          <line>84</line>
+          <option name="timeStamp" value="85" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
         <watch expression="CC.size()" language="JAVA" />
+        <watch expression="CC.getLB()" language="JAVA" />
+        <watch expression="CC.getUB()" language="JAVA" />
       </configuration>
     </watches-manager>
   </component>

@@ -2,9 +2,7 @@ package similarities;
 
 import _aux.Pair;
 import bounding.ClusterBounds;
-import bounding.ClusterCombination;
 import clustering.Cluster;
-import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.List;
@@ -37,11 +35,11 @@ public abstract class MultivariateSimilarityFunction {
     public abstract double sim(double[] x, double[] y);
     public abstract double simToDist(double sim);
     public abstract double distToSim(double dist);
-    public abstract ClusterBounds empiricalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances);
-    public abstract ClusterBounds theoreticalBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr);
-    public abstract double[] theoreticalBounds(Cluster C1, Cluster C2);
+    public abstract ClusterBounds empiricalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances);
+    public abstract ClusterBounds theoreticalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr);
+    public abstract double[] theoreticalDistanceBounds(Cluster C1, Cluster C2);
 
-    public double[] empiricalBounds(Cluster C1, Cluster C2, double[][] pairwiseDistances){
+    public double[] empiricalDistanceBounds(Cluster C1, Cluster C2, double[][] pairwiseDistances){
         long ccID = getUniqueId(C1.id, C2.id);
 
         if (empiricalPairwiseClusterCache.containsKey(ccID)) {
@@ -51,13 +49,13 @@ public abstract class MultivariateSimilarityFunction {
             double ub = -Double.MAX_VALUE;
             for (int i = 0; i < C1.size(); i++) {
                 for (int j = 0; j < C2.size(); j++) {
-                    double sim = distToSim(pairwiseDistances[C1.get(i)][C2.get(j)]);
+                    double sim = pairwiseDistances[C1.get(i)][C2.get(j)];
                     lb = Math.min(lb, sim);
                     ub = Math.max(ub, sim);
                     nLookups.incrementAndGet();
                 }
             }
-            double[] bounds = new double[]{correctBound(lb), correctBound(ub)};
+            double[] bounds = new double[]{lb, ub};
             empiricalPairwiseClusterCache.put(ccID, bounds);
             return bounds;
         }

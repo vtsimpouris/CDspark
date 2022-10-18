@@ -109,6 +109,10 @@ public class lib {
         return d;
     }
 
+    public static double angle(double[] in1, double[] in2) {
+        return Math.acos(dot(in1, in2)/(l2(in1)*l2(in2)));
+    }
+
     public static double[] mmul(double[] v, double[][] M) throws DimensionMismatchException {
         if (v.length != M[0].length){throw new DimensionMismatchException(v.length, M[0].length);}
 

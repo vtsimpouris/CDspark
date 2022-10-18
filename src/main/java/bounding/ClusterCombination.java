@@ -82,9 +82,9 @@ public class ClusterCombination {
         ClusterBounds bounds;
 
         if (empiricalBounding){
-            bounds = simMetric.empiricalBounds(LHS, RHS, Wl, Wr, pairwiseDistances);
+            bounds = simMetric.empiricalSimilarityBounds(LHS, RHS, Wl, Wr, pairwiseDistances);
         } else {
-            bounds = simMetric.theoreticalBounds(LHS, RHS, Wl, Wr);
+            bounds = simMetric.theoreticalSimilarityBounds(LHS, RHS, Wl, Wr);
         }
         this.checkAndSetLB(bounds.getLB());
         this.checkAndSetUB(bounds.getUB());

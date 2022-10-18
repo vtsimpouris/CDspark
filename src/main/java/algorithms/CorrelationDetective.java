@@ -44,8 +44,7 @@ public class CorrelationDetective extends Algorithm {
         int n = par.n;
         double[][] pairwiseDistances = new double[n][n];
         for (int i = 0; i < n; i++) {
-            pairwiseDistances[i][i] = 0;
-            for (int j = i+1; j < n; j++) {
+            for (int j = i; j < n; j++) {
                 double dist = par.simMetric.distFunc.dist(par.data[i], par.data[j]);
                 pairwiseDistances[i][j] = dist;
                 pairwiseDistances[j][i] = dist;
