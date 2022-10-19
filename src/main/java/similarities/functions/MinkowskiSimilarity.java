@@ -41,8 +41,8 @@ public class MinkowskiSimilarity extends MultivariateSimilarityFunction {
         } else {
             double centroidDistance = this.distFunc.dist(C1.getCentroid(), C2.getCentroid());
 
-            double lowerDist = centroidDistance - C1.getRadius() - C2.getRadius();
-            double upperDist = centroidDistance + C1.getRadius() + C2.getRadius();
+            double lowerDist = Math.max(0,centroidDistance - C1.getRadius() - C2.getRadius());
+            double upperDist = Math.max(0,centroidDistance + C1.getRadius() + C2.getRadius());
             double[] bounds = new double[]{lowerDist, upperDist};
             theoreticalPairwiseClusterCache.put(ccID, bounds);
             return bounds;
