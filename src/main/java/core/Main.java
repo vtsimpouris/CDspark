@@ -5,6 +5,7 @@ import _aux.Parameters;
 import _aux.ResultTuple;
 import algorithms.Algorithm;
 import algorithms.AlgorithmEnum;
+import algorithms.Baseline;
 import algorithms.CorrelationDetective;
 import clustering.ClusteringAlgorithmEnum;
 import data_reading.DataReader;
@@ -86,20 +87,20 @@ public class Main {
             saveResults = args[i].equals("true"); i++;
         } else {
             logLevel = Level.FINE;
-            algorithm = AlgorithmEnum.CD;
+            algorithm = AlgorithmEnum.BASELINE;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
             simMetricName = SimEnum.PEARSON_CORRELATION;
-            aggPattern = "avg";
-//            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
+//            aggPattern = "avg";
+            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "random";
-            n = 10;
-            m = (int) 10;
+            n = 100;
+            m = (int) 1e7;
             partition = 0;
             tau = 0.95;
             minJump = 0.05;
-            maxPLeft = 1;
+            maxPLeft = 2;
             maxPRight = 2;
             shrinkFactor = 1;
             k = -1;
@@ -107,7 +108,7 @@ public class Main {
             seed = 0;
             parallel = true;
             random = false;
-            saveStats = true;
+            saveStats = false;
             saveResults = false;
         }
 
@@ -277,6 +278,7 @@ public class Main {
         Algorithm algorithm;
         switch (par.algorithm){
             case CD: default: algorithm = new CorrelationDetective(par); break;
+            case BASELINE: algorithm = new Baseline(par); break;
         }
         List<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();

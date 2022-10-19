@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Added unit-tests for MinkowskiSimilarity">
-      <change afterPath="$PROJECT_DIR$/src/test/java/similarities/ChebyshevSimilarityTest.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Added unit-tests for ChebyshevSimilarity">
+      <change afterPath="$PROJECT_DIR$/src/main/java/algorithms/Baseline.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +41,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/home/jens/tue/1.SimilarityDetective/SimilarityDetective",
+    "last_opened_file_path": "/home/jens/tue/1.SimilarityDetective/CorrelationDetective",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Global Libraries",
     "project.structure.proportion": "0.15",
@@ -60,7 +61,20 @@
       <recent name="data_reading" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.All in SimilarityDetective">
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="core.Main" />
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="core.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="All in SimilarityDetective" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <option name="PACKAGE_NAME" value="" />
@@ -115,36 +129,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ManhattanSimilarityTest.testEmpiricalDistanceBounds" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SimilarityDetective" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="similarities.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="similarities" />
-      <option name="MAIN_CLASS_NAME" value="similarities.ManhattanSimilarityTest" />
-      <option name="METHOD_NAME" value="testEmpiricalDistanceBounds" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <list>
+      <item itemvalue="Application.Main" />
       <item itemvalue="JUnit.All in SimilarityDetective" />
       <item itemvalue="JUnit.ChebyshevSimilarityTest" />
       <item itemvalue="JUnit.ChebyshevSimilarityTest.testEmpiricalDistanceBounds" />
       <item itemvalue="JUnit.ManhattanSimilarityTest" />
-      <item itemvalue="JUnit.ManhattanSimilarityTest.testEmpiricalDistanceBounds" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.All in SimilarityDetective" />
         <item itemvalue="JUnit.ChebyshevSimilarityTest" />
         <item itemvalue="JUnit.ChebyshevSimilarityTest.testEmpiricalDistanceBounds" />
         <item itemvalue="JUnit.ManhattanSimilarityTest" />
-        <item itemvalue="JUnit.ManhattanSimilarityTest.testEmpiricalDistanceBounds" />
       </list>
     </recent_temporary>
   </component>
@@ -162,7 +160,7 @@
       <workItem from="1666082073678" duration="14933000" />
       <workItem from="1666116562963" duration="6150000" />
       <workItem from="1666163484273" duration="201000" />
-      <workItem from="1666163997926" duration="21188000" />
+      <workItem from="1666163997926" duration="29895000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -276,7 +274,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666190044128</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Added unit-tests for ChebyshevSimilarity">
+      <created>1666190179862</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1666190179862</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -310,7 +315,8 @@
     <MESSAGE value="Added unit-tests for Multipole" />
     <MESSAGE value="Added unit-tests for EuclideanSimilarity" />
     <MESSAGE value="Added unit-tests for MinkowskiSimilarity" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added unit-tests for MinkowskiSimilarity" />
+    <MESSAGE value="Added unit-tests for ChebyshevSimilarity" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added unit-tests for ChebyshevSimilarity" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -319,11 +325,6 @@
           <properties class="java.lang.IndexOutOfBoundsException" package="java.lang" />
           <option name="timeStamp" value="12" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/MinkowskiSimilarity.java</url>
-          <line>54</line>
-          <option name="timeStamp" value="88" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java</url>
           <line>34</line>
@@ -340,19 +341,9 @@
           <option name="timeStamp" value="113" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/core/Main.java</url>
-          <line>223</line>
-          <option name="timeStamp" value="114" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java</url>
           <line>74</line>
           <option name="timeStamp" value="149" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/similarities/ChebyshevSimilarityTest.java</url>
-          <line>36</line>
-          <option name="timeStamp" value="162" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
