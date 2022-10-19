@@ -1,22 +1,19 @@
 package similarities;
 
-import _aux.Pair;
 import _aux.lib;
-import algorithms.CorrelationDetective;
 import bounding.ClusterBounds;
 import clustering.Cluster;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import similarities.functions.Multipole;
 import similarities.functions.PearsonCorrelation;
 import tools.ClusterKit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-public class PearsonCorrelationTest {
-    private MultivariateSimilarityFunction simMetric = new PearsonCorrelation();
+public class MultipoleTest {
+    private MultivariateSimilarityFunction simMetric = new Multipole();
     private ClusterKit kit = new ClusterKit(simMetric);
 
     @Test
@@ -45,13 +42,13 @@ public class PearsonCorrelationTest {
     }
 
     @Test
-    public void testEmpiricalSimilarityBounds3(){
-        double lb = -.5334716909527332;
-        double ub = 1;
-        double maxLBSubset = -0.2732308830183487;
+    public void testEmpiricalSimilarityBounds1(){
+        double lb = 0;
+        double ub = 0;
+        double maxLBSubset = 0;
 
         ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(kit.C1));
-        ArrayList<Cluster> RHS = new ArrayList<>(Arrays.asList(kit.C3, kit.C4));
+        ArrayList<Cluster> RHS = new ArrayList<>();
         ClusterBounds bounds = simMetric.empiricalSimilarityBounds(LHS, RHS, kit.Wl.get(0), kit.Wr.get(1), kit.pairwiseDistances);
 
         Assert.assertEquals(lb, bounds.LB, 0.0001);
@@ -60,13 +57,13 @@ public class PearsonCorrelationTest {
     }
 
     @Test
-    public void testEmpiricalSimilarityBounds4(){
-        double lb = -1;
-        double ub = 1;
-        double maxLBSubset = -0.2732308830183487;
+    public void testEmpiricalSimilarityBounds2(){
+        double lb = -0.3226004270862144;
+        double ub =0.8898022724944828;
+        double maxLBSubset = 0;
 
-        ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(kit.C1,kit.C2));
-        ArrayList<Cluster> RHS = new ArrayList<>(Arrays.asList(kit.C3, kit.C4));
+        ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(kit.C1, kit.C2));
+        ArrayList<Cluster> RHS = new ArrayList<>();
         ClusterBounds bounds = simMetric.empiricalSimilarityBounds(LHS, RHS, kit.Wl.get(1), kit.Wr.get(1), kit.pairwiseDistances);
 
         Assert.assertEquals(lb, bounds.LB, 0.0001);
@@ -88,13 +85,13 @@ public class PearsonCorrelationTest {
     }
 
     @Test
-    public void testTheoreticalSimilarityBounds3(){
-        double lb = -1;
-        double ub = 1;
-        double maxLBSubset = -1;
+    public void testTheoreticalSimilarityBounds1(){
+        double lb = 0;
+        double ub = 0;
+        double maxLBSubset = 0;
 
         ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(kit.C1));
-        ArrayList<Cluster> RHS = new ArrayList<>(Arrays.asList(kit.C3, kit.C4));
+        ArrayList<Cluster> RHS = new ArrayList<>();
         ClusterBounds bounds = simMetric.theoreticalSimilarityBounds(LHS, RHS, kit.Wl.get(0), kit.Wr.get(1));
 
         Assert.assertEquals(lb, bounds.LB, 0.0001);
@@ -103,13 +100,13 @@ public class PearsonCorrelationTest {
     }
 
     @Test
-    public void testTheoreticalSimilarityBounds4(){
+    public void testTheoreticalSimilarityBounds2(){
         double lb = -1;
         double ub = 1;
-        double maxLBSubset = -1;
+        double maxLBSubset = 0;
 
         ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(kit.C1, kit.C2));
-        ArrayList<Cluster> RHS = new ArrayList<>(Arrays.asList(kit.C3, kit.C4));
+        ArrayList<Cluster> RHS = new ArrayList<>();
         ClusterBounds bounds = simMetric.theoreticalSimilarityBounds(LHS, RHS, kit.Wl.get(1), kit.Wr.get(1));
 
         Assert.assertEquals(lb, bounds.LB, 0.0001);
