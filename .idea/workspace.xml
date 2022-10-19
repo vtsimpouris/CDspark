@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Added unit-tests for pearson correlation">
-      <change afterPath="$PROJECT_DIR$/src/test/java/similarities/MultipoleTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/tools/ClusterKit.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Added unit-tests for Multipole">
+      <change afterPath="$PROJECT_DIR$/src/test/java/similarities/EuclideanSimilarityTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/PearsonCorrelationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/similarities/PearsonCorrelationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,8 +60,8 @@
       <recent name="data_reading" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.MultipoleTest">
-    <configuration name="MultipoleTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.EuclideanSimilarityTest">
+    <configuration name="EuclideanSimilarityTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
@@ -72,13 +70,13 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="similarities" />
-      <option name="MAIN_CLASS_NAME" value="similarities.MultipoleTest" />
+      <option name="MAIN_CLASS_NAME" value="similarities.EuclideanSimilarityTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MultipoleTest.testEmpiricalSimilarityBounds2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="EuclideanSimilarityTest.testEmpiricalSimilarityBounds4" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
@@ -87,14 +85,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="similarities" />
-      <option name="MAIN_CLASS_NAME" value="similarities.MultipoleTest" />
-      <option name="METHOD_NAME" value="testEmpiricalSimilarityBounds2" />
+      <option name="MAIN_CLASS_NAME" value="similarities.EuclideanSimilarityTest" />
+      <option name="METHOD_NAME" value="testEmpiricalSimilarityBounds4" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MultipoleTest.testEmpiricalSimilarityBounds3" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="EuclideanSimilarityTest.testTheoreticalDistanceBounds" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
@@ -103,14 +101,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="similarities" />
-      <option name="MAIN_CLASS_NAME" value="similarities.MultipoleTest" />
-      <option name="METHOD_NAME" value="testEmpiricalSimilarityBounds3" />
+      <option name="MAIN_CLASS_NAME" value="similarities.EuclideanSimilarityTest" />
+      <option name="METHOD_NAME" value="testTheoreticalDistanceBounds" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MultipoleTest.testTheoreticalSimilarityBounds1" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="EuclideanSimilarityTest.testTheoreticalSimilarityBounds3" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
@@ -119,14 +117,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="similarities" />
-      <option name="MAIN_CLASS_NAME" value="similarities.MultipoleTest" />
-      <option name="METHOD_NAME" value="testTheoreticalSimilarityBounds1" />
+      <option name="MAIN_CLASS_NAME" value="similarities.EuclideanSimilarityTest" />
+      <option name="METHOD_NAME" value="testTheoreticalSimilarityBounds3" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="MultipoleTest.testTheoreticalSimilarityBounds2" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="EuclideanSimilarityTest.testTheoreticalSimilarityBounds4" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
@@ -135,27 +133,27 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="similarities" />
-      <option name="MAIN_CLASS_NAME" value="similarities.MultipoleTest" />
-      <option name="METHOD_NAME" value="testTheoreticalSimilarityBounds2" />
+      <option name="MAIN_CLASS_NAME" value="similarities.EuclideanSimilarityTest" />
+      <option name="METHOD_NAME" value="testTheoreticalSimilarityBounds4" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>
-      <item itemvalue="JUnit.MultipoleTest" />
-      <item itemvalue="JUnit.MultipoleTest.testEmpiricalSimilarityBounds2" />
-      <item itemvalue="JUnit.MultipoleTest.testEmpiricalSimilarityBounds3" />
-      <item itemvalue="JUnit.MultipoleTest.testTheoreticalSimilarityBounds1" />
-      <item itemvalue="JUnit.MultipoleTest.testTheoreticalSimilarityBounds2" />
+      <item itemvalue="JUnit.EuclideanSimilarityTest" />
+      <item itemvalue="JUnit.EuclideanSimilarityTest.testEmpiricalSimilarityBounds4" />
+      <item itemvalue="JUnit.EuclideanSimilarityTest.testTheoreticalDistanceBounds" />
+      <item itemvalue="JUnit.EuclideanSimilarityTest.testTheoreticalSimilarityBounds3" />
+      <item itemvalue="JUnit.EuclideanSimilarityTest.testTheoreticalSimilarityBounds4" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.MultipoleTest" />
-        <item itemvalue="JUnit.MultipoleTest.testTheoreticalSimilarityBounds2" />
-        <item itemvalue="JUnit.MultipoleTest.testTheoreticalSimilarityBounds1" />
-        <item itemvalue="JUnit.MultipoleTest.testEmpiricalSimilarityBounds2" />
-        <item itemvalue="JUnit.MultipoleTest.testEmpiricalSimilarityBounds3" />
+        <item itemvalue="JUnit.EuclideanSimilarityTest" />
+        <item itemvalue="JUnit.EuclideanSimilarityTest.testTheoreticalSimilarityBounds4" />
+        <item itemvalue="JUnit.EuclideanSimilarityTest.testTheoreticalSimilarityBounds3" />
+        <item itemvalue="JUnit.EuclideanSimilarityTest.testTheoreticalDistanceBounds" />
+        <item itemvalue="JUnit.EuclideanSimilarityTest.testEmpiricalSimilarityBounds4" />
       </list>
     </recent_temporary>
   </component>
@@ -173,7 +171,7 @@
       <workItem from="1666082073678" duration="14933000" />
       <workItem from="1666116562963" duration="6150000" />
       <workItem from="1666163484273" duration="201000" />
-      <workItem from="1666163997926" duration="18931000" />
+      <workItem from="1666163997926" duration="20543000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -266,7 +264,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666186297671</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Added unit-tests for Multipole">
+      <created>1666188009683</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1666188009683</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -297,7 +302,8 @@
     <MESSAGE value="Implemented subset weights, debugged multipole and pearson metric" />
     <MESSAGE value="Created unit-tets for datareader&#10;and lib. Also fixed some bugs in methods as a result from it" />
     <MESSAGE value="Added unit-tests for pearson correlation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added unit-tests for pearson correlation" />
+    <MESSAGE value="Added unit-tests for Multipole" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added unit-tests for Multipole" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -335,11 +341,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java</url>
           <line>74</line>
           <option name="timeStamp" value="149" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/test/java/similarities/MultipoleTest.java</url>
-          <line>53</line>
-          <option name="timeStamp" value="150" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
