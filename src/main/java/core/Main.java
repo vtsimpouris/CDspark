@@ -1,3 +1,5 @@
+package core;
+
 import _aux.Pair;
 import _aux.Parameters;
 import _aux.ResultTuple;
@@ -91,9 +93,9 @@ public class Main {
             aggPattern = "avg";
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
-            dataType = "stock";
-            n = 500;
-            m = (int) 1e7;
+            dataType = "random";
+            n = 10;
+            m = (int) 10;
             partition = 0;
             tau = 0.95;
             minJump = 0.05;
@@ -295,7 +297,7 @@ public class Main {
 
     }
 
-    private static Pair<String[], double[][]> getData(String dataType, String inputPath, int n, int m, int partition, Logger LOGGER) {
+    public static Pair<String[], double[][]> getData(String dataType, String inputPath, int n, int m, int partition, Logger LOGGER) {
         String dataPath;
         Pair<String[], double[][]> dataPair;
 
@@ -304,16 +306,12 @@ public class Main {
         LOGGER.info("--------------------- Loading data ---------------------");
         switch (dataType){
             case "weather_slp": {
-                dataPath = String.format("%s/weather/thesis/slp_base_3m.csv", inputPath);
-                dataPair = DataReader.readColumnMajorCSV(dataPath, n, m+1, true, partition);
+                dataPath = String.format("%s/weather/1620_daily/slp_1620daily_filled_T.csv", inputPath);
+                dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
             case "weather_tmp": {
-                dataPath = String.format("%s/weather/thesis/tmp_base_3m.csv", inputPath);
-                dataPair = DataReader.readColumnMajorCSV(dataPath, n, m+1, true, partition);
-            } break;
-            case "crypto": {
-                dataPath = String.format("%s/crypto/thesis/base.csv", inputPath);
-                dataPair = DataReader.readColumnMajorCSV(dataPath, n, m+1, true, partition);
+                dataPath = String.format("%s/weather/1620_daily/tmp_1620daily_filled_T.csv", inputPath);
+                dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
             case "fmri": {
                 int[] n_steps = new int[]{237, 509, 1440, 3152, 9700};
@@ -328,21 +326,21 @@ public class Main {
                 dataPath = dataPaths[Math.min(n+1, 4)];
 
                 n = n_steps[n];
-                dataPair = DataReader.readColumnMajorCSV(dataPath, n, m+1, n < 9700, partition);
+                dataPair = DataReader.readColumnMajorCSV(dataPath, n, m, n < 9700, partition);
 
             } break;
             case "random": {
                 dataPath = String.format("%s/random/random_n50000_m1000_seed0.csv", inputPath);
-                dataPair = DataReader.readRowMajorCSV(dataPath, n, m+1, true, partition);
+                dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
             case "stock_log": {
                 dataPath = String.format("%s/stock/stocks_2020_04_10min_logreturn_full.csv", inputPath);
-                dataPair = DataReader.readColumnMajorCSV(dataPath, n, m+1, true, partition);
+                dataPair = DataReader.readColumnMajorCSV(dataPath, n, m, true, partition);
             } break;
             case "stock":
             default: {
-                dataPath = String.format("%s/stock/1620daily/stocks_1620daily_interpolated_nogaps.csv", inputPath);
-                dataPair = DataReader.readRowMajorCSV(dataPath, n, m+1, true, partition);
+                dataPath = String.format("%s/stock/0021daily/stocks_0021daily_interpolated_full.csv", inputPath);
+                dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
         }
 
@@ -384,7 +382,7 @@ public class Main {
         }
     }
 
-    private static Logger getLogger(Level logLevel){
+    public static Logger getLogger(Level logLevel){
         Logger mainLogger = Logger.getLogger("com.logicbig");
         mainLogger.setUseParentHandlers(false);
 

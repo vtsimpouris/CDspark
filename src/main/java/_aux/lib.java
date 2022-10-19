@@ -26,13 +26,17 @@ public class lib {
     public static double avg(double[] z){
         return Arrays.stream(z).reduce(0, Double::sum)/z.length;
     }
-
     public static double var(double[] z){
         double sum = Arrays.stream(z).reduce(0, Double::sum);
         double sumSquare = Arrays.stream(z).reduce(0, (a,b) -> a+b*b);
         double avg = sum/z.length;
         return sumSquare/z.length - avg*avg;
     }
+
+    public static double std(double [] z){return Math.sqrt(var(z));}
+
+    public static double min(double[] z){return Arrays.stream(z).min().getAsDouble();}
+    public static double max(double[] z){return Arrays.stream(z).max().getAsDouble();}
 
     public static double[] sub(double[] in1, double[] in2) {
         double[] res = new double[in1.length];
@@ -158,7 +162,8 @@ public class lib {
         return out;
     }
 
-    public static double[] znorm(double[] z) {
+    public static double[] znorm(double[] v) {
+        double[] z = v.clone();
         double sum = 0;
         double sumSquare = 0;
         for (int i=0;i<z.length;i++) {

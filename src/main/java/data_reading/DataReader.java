@@ -11,21 +11,20 @@ import java.util.stream.IntStream;
 
 public class DataReader {
 
-    public static Pair<String[], double[][]> readColumnMajorCSV(String path, int maxN, int maxDim, boolean skipVar, int partition) {
+//    TODO MAKE THIS ADAPTIVE -- AUTOMATICALLY DETECT COLUMN/ROW MAJOR DATA
+    public static Pair<String[], double[][]> readColumnMajorCSV(String path, int n, int maxDim, boolean skipVar, int partition) {
         String delimiter = ",";
-        int tmpN = skipVar ? maxN*2: maxN;
-
         try {
             BufferedReader br = new BufferedReader(new FileReader(path));
 
 //            Get Header
             String firstLine = br.readLine();
             String[] header = firstLine.split(delimiter);
-            int n = header.length;
-            int effN = Math.min(n, tmpN);
+            int maxN = header.length;
+            int effN = Math.min(maxN, n);
 
 //            Parse data
-            double[][] rows = new double[effN][maxDim];
+            double[][] rows = new double[maxN][maxDim];
 
 //            Skip all non-partition rows
             for (int i = 0; i < maxDim*partition; i++) {
@@ -35,7 +34,7 @@ public class DataReader {
             while (br.ready() & m < maxDim) {
                 String[] line = br.readLine().split(delimiter);
 //                Distribute values over columns
-                for (int i = 0; i < effN; i++) {
+                for (int i = 0; i < maxN; i++) {
                     if (line[i].equals("nan")) {
                         System.out.println("nan value");
                     }
@@ -46,14 +45,13 @@ public class DataReader {
             }
 
 //            Remove the rows that have too low variance (if skipvar on)
-            double[][] finalRows = new double[maxN][maxDim];
+            double[][] finalRows = new double[effN][maxDim];
             if (skipVar) {
                 int i=0;
                 int j=0;
-                while (i < maxN) {
+                while (i < effN) {
                     double[] row = rows[j]; j++;
-                    double[] rowCore = Arrays.copyOfRange(row, 1, row.length-1);
-                    if (lib.var(rowCore) >= 1e-3) {
+                    if (lib.std(row) >= 1e-3) {
                         finalRows[i] = row; i++;
                     }
                 }
@@ -91,7 +89,7 @@ public class DataReader {
                 double[] rowCore = Arrays.copyOfRange(row, 1, row.length-1);
 
 //                Skip rows if variance is too low
-                if (!skipVar || lib.var(rowCore) >= 1e-3){
+                if (!skipVar || lib.std(rowCore) >= 1e-3){
                     rows.add(row);
                     headers[n] = line[0];
                     n++;

@@ -4,16 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Implemented spearman correlation">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Implemented subset weights, debugged multipole and pearson metric">
+      <change afterPath="$PROJECT_DIR$/src/test/java/_aux/LibTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/data_reading/DataReaderTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/Parameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/Parameters.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Sandbox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Sandbox.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/data_reading/DataReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/data_reading/DataReader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,19 +40,20 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Global Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/jens/tue/1.SimilarityDetective/SimilarityDetective",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Global Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
@@ -65,16 +65,7 @@
       <recent name="data_reading" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
-    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="ALTERNATIVE_JRE_PATH" value="11" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
-      <option name="MAIN_CLASS_NAME" value="Main" />
-      <module name="SimilarityDetective" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.LibTest">
     <configuration name="Sandbox" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Sandbox" />
       <module name="SimilarityDetective" />
@@ -82,14 +73,82 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="DataReaderTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="data_reading.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="data_reading" />
+      <option name="MAIN_CLASS_NAME" value="data_reading.DataReaderTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LibTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="_aux.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="_aux" />
+      <option name="MAIN_CLASS_NAME" value="_aux.LibTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LibTest.testElementwiseAvg" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="_aux.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="_aux" />
+      <option name="MAIN_CLASS_NAME" value="_aux.LibTest" />
+      <option name="METHOD_NAME" value="testElementwiseAvg" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LibTest.testMmul" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="_aux.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="_aux" />
+      <option name="MAIN_CLASS_NAME" value="_aux.LibTest" />
+      <option name="METHOD_NAME" value="testMmul" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
-      <item itemvalue="Application.Main" />
       <item itemvalue="Application.Sandbox" />
+      <item itemvalue="JUnit.DataReaderTest" />
+      <item itemvalue="JUnit.LibTest" />
+      <item itemvalue="JUnit.LibTest.testElementwiseAvg" />
+      <item itemvalue="JUnit.LibTest.testMmul" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.LibTest" />
+        <item itemvalue="JUnit.DataReaderTest" />
         <item itemvalue="Application.Sandbox" />
+        <item itemvalue="JUnit.LibTest.testElementwiseAvg" />
+        <item itemvalue="JUnit.LibTest.testMmul" />
       </list>
     </recent_temporary>
   </component>
@@ -105,7 +164,9 @@
       <workItem from="1665748769579" duration="3947000" />
       <workItem from="1665991508467" duration="27255000" />
       <workItem from="1666082073678" duration="14933000" />
-      <workItem from="1666116562963" duration="5656000" />
+      <workItem from="1666116562963" duration="6150000" />
+      <workItem from="1666163484273" duration="201000" />
+      <workItem from="1666163997926" duration="9466000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -177,7 +238,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666103928147</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Implemented subset weights, debugged multipole and pearson metric">
+      <created>1666122545339</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1666122545339</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -205,7 +273,8 @@
     <MESSAGE value="Fixed Euclidean Similarity" />
     <MESSAGE value="Implemented manhattan and chebyshev similarities" />
     <MESSAGE value="Implemented spearman correlation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented spearman correlation" />
+    <MESSAGE value="Implemented subset weights, debugged multipole and pearson metric" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented subset weights, debugged multipole and pearson metric" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -225,11 +294,6 @@
           <option name="timeStamp" value="103" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
-          <line>84</line>
-          <option name="timeStamp" value="110" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java</url>
           <line>40</line>
           <option name="timeStamp" value="111" />
@@ -239,13 +303,22 @@
           <line>48</line>
           <option name="timeStamp" value="112" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
+          <line>84</line>
+          <option name="timeStamp" value="113" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/core/Main.java</url>
+          <line>223</line>
+          <option name="timeStamp" value="114" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
-        <watch expression="CC.size()" language="JAVA" />
-        <watch expression="CC.getLB()" language="JAVA" />
-        <watch expression="CC.getUB()" language="JAVA" />
+        <watch expression="lib.var(row)" language="JAVA" />
+        <watch expression="lib.var(row) / (lib.max(row) - lib.min(row))" language="JAVA" />
       </configuration>
     </watches-manager>
   </component>
