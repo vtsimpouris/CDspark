@@ -1,7 +1,11 @@
 package _aux;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import similarities.DistanceFunction;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
@@ -210,6 +214,19 @@ public class lib {
         return Z;
     }
 
+    public static double[][] computePairwiseDistances(double[][] data, DistanceFunction distFunc, boolean parallel) {
+        int n = data.length;
+        double[][] pairwiseDistances = new double[n][n];
+        lib.getStream(IntStream.range(0, n).boxed(), parallel).forEach(i -> {
+            lib.getStream(IntStream.range(i+1, n).boxed(), parallel).forEach(j -> {
+                double dist = distFunc.dist(data[i], data[j]);
+                pairwiseDistances[i][j] = dist;
+                pairwiseDistances[j][i] = dist;
+            });
+        });
+        return pairwiseDistances;
+    }
+
     public static <T> Stream<T> getStream(Collection<T> collection, boolean parallel){
         if(parallel){
             return collection.parallelStream().parallel();
@@ -240,4 +257,23 @@ public class lib {
         logger.fine("-------------------------------------");
     }
 
+    public static double[][] readMatrix(String filename){
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(filename));
+            String line;
+            List<double[]> matrix = new ArrayList<>();
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                double[] row = new double[values.length];
+                for (int i = 0; i < values.length; i++) {
+                    row[i] = Double.parseDouble(values[i]);
+                }
+                matrix.add(row);
+            }
+            return matrix.toArray(new double[matrix.size()][]);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

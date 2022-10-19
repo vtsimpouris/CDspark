@@ -3,6 +3,7 @@ package algorithms;
 import _aux.*;
 import bounding.RecursiveBounding;
 import clustering.HierarchicalClustering;
+import similarities.DistanceFunction;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -24,7 +25,10 @@ public class CorrelationDetective extends Algorithm {
         par.statBag.stopWatch.start();
 
 //        STAGE 1 - Compute pairwise distances if using empirical bounds
-        stageRunner.run("Compute pairwise distances", this::computePairwiseDistances, par.statBag.stopWatch);
+        par.setPairwiseDistances(
+                stageRunner.run("Compute pairwise distances",
+                        () -> lib.computePairwiseDistances(par.data, par.simMetric.distFunc, par.parallel), par.statBag.stopWatch)
+        );
 
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
@@ -41,18 +45,7 @@ public class CorrelationDetective extends Algorithm {
         return results;
     }
 
-    public void computePairwiseDistances() {
-        int n = par.n;
-        double[][] pairwiseDistances = new double[n][n];
-        lib.getStream(IntStream.range(0, n).boxed(), par.parallel).forEach(i -> {
-            lib.getStream(IntStream.range(i+1, n).boxed(), par.parallel).forEach(j -> {
-                double dist = par.simMetric.distFunc.dist(par.data[i], par.data[j]);
-                pairwiseDistances[i][j] = dist;
-                pairwiseDistances[j][i] = dist;
-            });
-        });
-        par.setPairwiseDistances(pairwiseDistances);
-    }
+
 
     @Override
     public void prepareStats(){

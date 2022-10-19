@@ -4,15 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Implemented subset weights, debugged multipole and pearson metric">
-      <change afterPath="$PROJECT_DIR$/src/test/java/_aux/LibTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/data_reading/DataReaderTest.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Created unit-tets for datareader&#10;and lib. Also fixed some bugs in methods as a result from it">
+      <change afterPath="$PROJECT_DIR$/src/test/java/similarities/PearsonCorrelationTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Sandbox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Sandbox.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/data_reading/DataReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/data_reading/DataReader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/CorrelationDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/CorrelationDetective.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,90 +64,100 @@
       <recent name="data_reading" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.LibTest">
-    <configuration name="Sandbox" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Sandbox" />
-      <module name="SimilarityDetective" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="DataReaderTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.PearsonCorrelationTest">
+    <configuration name="PearsonCorrelationTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="data_reading.*" />
+          <option name="PATTERN" value="similarities.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="data_reading" />
-      <option name="MAIN_CLASS_NAME" value="data_reading.DataReaderTest" />
+      <option name="PACKAGE_NAME" value="similarities" />
+      <option name="MAIN_CLASS_NAME" value="similarities.PearsonCorrelationTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="LibTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="PearsonCorrelationTest.testEmpiricalDistanceBounds" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="_aux.*" />
+          <option name="PATTERN" value="similarities.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="_aux" />
-      <option name="MAIN_CLASS_NAME" value="_aux.LibTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="LibTest.testElementwiseAvg" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SimilarityDetective" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="_aux.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="_aux" />
-      <option name="MAIN_CLASS_NAME" value="_aux.LibTest" />
-      <option name="METHOD_NAME" value="testElementwiseAvg" />
+      <option name="PACKAGE_NAME" value="similarities" />
+      <option name="MAIN_CLASS_NAME" value="similarities.PearsonCorrelationTest" />
+      <option name="METHOD_NAME" value="testEmpiricalDistanceBounds" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="LibTest.testMmul" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="PearsonCorrelationTest.testEmpiricalSimilarityBounds3" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="_aux.*" />
+          <option name="PATTERN" value="similarities.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="_aux" />
-      <option name="MAIN_CLASS_NAME" value="_aux.LibTest" />
-      <option name="METHOD_NAME" value="testMmul" />
+      <option name="PACKAGE_NAME" value="similarities" />
+      <option name="MAIN_CLASS_NAME" value="similarities.PearsonCorrelationTest" />
+      <option name="METHOD_NAME" value="testEmpiricalSimilarityBounds3" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PearsonCorrelationTest.testSim" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="similarities.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="similarities" />
+      <option name="MAIN_CLASS_NAME" value="similarities.PearsonCorrelationTest" />
+      <option name="METHOD_NAME" value="testSim" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PearsonCorrelationTest.testTheoreticalSimilarityBounds3" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="similarities.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="similarities" />
+      <option name="MAIN_CLASS_NAME" value="similarities.PearsonCorrelationTest" />
+      <option name="METHOD_NAME" value="testTheoreticalSimilarityBounds3" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>
-      <item itemvalue="Application.Sandbox" />
-      <item itemvalue="JUnit.DataReaderTest" />
-      <item itemvalue="JUnit.LibTest" />
-      <item itemvalue="JUnit.LibTest.testElementwiseAvg" />
-      <item itemvalue="JUnit.LibTest.testMmul" />
+      <item itemvalue="JUnit.PearsonCorrelationTest" />
+      <item itemvalue="JUnit.PearsonCorrelationTest.testEmpiricalDistanceBounds" />
+      <item itemvalue="JUnit.PearsonCorrelationTest.testEmpiricalSimilarityBounds3" />
+      <item itemvalue="JUnit.PearsonCorrelationTest.testSim" />
+      <item itemvalue="JUnit.PearsonCorrelationTest.testTheoreticalSimilarityBounds3" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.LibTest" />
-        <item itemvalue="JUnit.DataReaderTest" />
-        <item itemvalue="Application.Sandbox" />
-        <item itemvalue="JUnit.LibTest.testElementwiseAvg" />
-        <item itemvalue="JUnit.LibTest.testMmul" />
+        <item itemvalue="JUnit.PearsonCorrelationTest" />
+        <item itemvalue="JUnit.PearsonCorrelationTest.testTheoreticalSimilarityBounds3" />
+        <item itemvalue="JUnit.PearsonCorrelationTest.testEmpiricalSimilarityBounds3" />
+        <item itemvalue="JUnit.PearsonCorrelationTest.testSim" />
+        <item itemvalue="JUnit.PearsonCorrelationTest.testEmpiricalDistanceBounds" />
       </list>
     </recent_temporary>
   </component>
@@ -166,7 +175,7 @@
       <workItem from="1666082073678" duration="14933000" />
       <workItem from="1666116562963" duration="6150000" />
       <workItem from="1666163484273" duration="201000" />
-      <workItem from="1666163997926" duration="9466000" />
+      <workItem from="1666163997926" duration="17305000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -245,7 +254,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666122545339</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Created unit-tets for datareader&#10;and lib. Also fixed some bugs in methods as a result from it">
+      <created>1666174737448</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1666174737448</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -274,7 +290,8 @@
     <MESSAGE value="Implemented manhattan and chebyshev similarities" />
     <MESSAGE value="Implemented spearman correlation" />
     <MESSAGE value="Implemented subset weights, debugged multipole and pearson metric" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implemented subset weights, debugged multipole and pearson metric" />
+    <MESSAGE value="Created unit-tets for datareader&#10;and lib. Also fixed some bugs in methods as a result from it" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created unit-tets for datareader&#10;and lib. Also fixed some bugs in methods as a result from it" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -295,7 +312,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java</url>
-          <line>40</line>
+          <line>34</line>
           <option name="timeStamp" value="111" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -312,6 +329,11 @@
           <url>file://$PROJECT_DIR$/src/main/java/core/Main.java</url>
           <line>223</line>
           <option name="timeStamp" value="114" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java</url>
+          <line>76</line>
+          <option name="timeStamp" value="141" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

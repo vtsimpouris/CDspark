@@ -12,17 +12,17 @@ public class Multipole extends MultivariateSimilarityFunction {
 
     public Multipole() {
 //        Cluster based on angles
-        this.distFunc = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b) / a.length, -1),1));
+        this.distFunc = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b), -1),1));
     }
 
     @Override public boolean hasEmpiricalBounds() {return true;}
     @Override public boolean isTwoSided() {return false;}
     @Override public double[][] preprocess(double[][] data) {
-        return lib.znorm(data);
+        return lib.l2norm(data);
     }
 
     @Override public double sim(double[] x, double[] y) {
-        return Math.min(Math.max(lib.dot(x, y) / x.length, -1),1);
+        return Math.min(Math.max(lib.dot(x, y), -1),1);
     }
 
     @Override public double simToDist(double sim) {

@@ -11,19 +11,19 @@ import java.util.List;
 public class PearsonCorrelation extends MultivariateSimilarityFunction {
     public PearsonCorrelation() {
 //        Angle is distance function
-        this.distFunc = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b) / a.length, -1),1));
+        this.distFunc = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b), -1),1));
     }
 
     @Override public boolean hasEmpiricalBounds() {return true;}
     @Override public boolean isTwoSided() {return true;}
     @Override public double[][] preprocess(double[][] data) {
-        return lib.znorm(data);
+        return lib.l2norm(data);
     }
 //    Angle distance
 
 //    Cosine similarity - normalized dot product
     @Override public double sim(double[] x, double[] y) {
-        return Math.min(Math.max(lib.dot(x, y) / x.length, -1),1);
+        return Math.min(Math.max(lib.dot(x, y),-1),1);
     }
 
     @Override public double simToDist(double sim) {
@@ -32,15 +32,6 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
     @Override public double distToSim(double dist) {return Math.cos(dist);}
 
     public ClusterBounds getBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr, boolean empirical){
-//        TODO DEBUG
-        if(RHS.size() == 2 &&
-                LHS.get(0).size() + RHS.get(0).size() + RHS.get(1).size() == 3 &&
-                LHS.get(0).get(0) == 95 &&
-                RHS.get(0).get(0) == 127 &&
-                RHS.get(1).get(0) == 79){
-            System.out.println("DEBUG");
-        }
-
         double lower;
         double upper;
         double maxLowerBoundSubset = -1;
