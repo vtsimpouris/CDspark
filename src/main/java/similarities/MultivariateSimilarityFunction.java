@@ -3,6 +3,7 @@ package similarities;
 import _aux.Pair;
 import bounding.ClusterBounds;
 import clustering.Cluster;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
@@ -13,7 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class MultivariateSimilarityFunction {
     @Setter int totalClusters;
-    public DistanceFunction distFunc;
+    @Getter public DistanceFunction distFunc;
     public double MAX_SIMILARITY = 1;
     public double MIN_SIMILARITY = -1;
     public AtomicLong nLookups = new AtomicLong(0);

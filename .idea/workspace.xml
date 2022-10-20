@@ -4,19 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Finished both baselines">
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/Parameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Parameters.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/baselines/Baseline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/Baseline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/baselines/CandidateGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/CandidateGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SimpleBaseline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SimpleBaseline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SmartBaseline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SmartBaseline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Fixed candidate generation for CD. Now considers potential side overlap">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/clustering/ClusteringTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/clustering/HierarchicalClusteringTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/clustering/HierarchicalClustering.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clustering/HierarchicalClustering.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Parameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Parameters.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/data_reading/DataReaderTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/data_reading/DataReaderTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,14 +59,14 @@
       <recent name="" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="clustering" />
       <recent name="algorithms.baselines" />
       <recent name="similarities" />
       <recent name="bounding" />
       <recent name="_aux" />
-      <recent name="algorithms" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="JUnit.HierarchicalClusteringTest">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="core.Main" />
       <module name="SimilarityDetective" />
@@ -84,47 +80,63 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Sandbox" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Sandbox" />
-      <module name="SimilarityDetective" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="All in SimilarityDetective" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SimilarityDetective" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="TEST_OBJECT" value="package" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="ChebyshevSimilarityTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="ClusteringTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="similarities.*" />
+          <option name="PATTERN" value="clustering.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="similarities" />
-      <option name="MAIN_CLASS_NAME" value="similarities.ChebyshevSimilarityTest" />
+      <option name="PACKAGE_NAME" value="clustering" />
+      <option name="MAIN_CLASS_NAME" value="clustering.ClusteringTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ChebyshevSimilarityTest.testEmpiricalDistanceBounds" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="ClusteringTest.testKmeansEuclidean" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="similarities.*" />
+          <option name="PATTERN" value="clustering.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="similarities" />
-      <option name="MAIN_CLASS_NAME" value="similarities.ChebyshevSimilarityTest" />
-      <option name="METHOD_NAME" value="testEmpiricalDistanceBounds" />
+      <option name="PACKAGE_NAME" value="clustering" />
+      <option name="MAIN_CLASS_NAME" value="clustering.ClusteringTest" />
+      <option name="METHOD_NAME" value="testKmeansEuclidean" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HierarchicalClusteringTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="clustering.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="clustering" />
+      <option name="MAIN_CLASS_NAME" value="clustering.HierarchicalClusteringTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="HierarchicalClusteringTest.testRootCluster" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="clustering.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="clustering" />
+      <option name="MAIN_CLASS_NAME" value="clustering.HierarchicalClusteringTest" />
+      <option name="METHOD_NAME" value="testRootCluster" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -132,18 +144,18 @@
     </configuration>
     <list>
       <item itemvalue="Application.Main" />
-      <item itemvalue="Application.Sandbox" />
-      <item itemvalue="JUnit.All in SimilarityDetective" />
-      <item itemvalue="JUnit.ChebyshevSimilarityTest" />
-      <item itemvalue="JUnit.ChebyshevSimilarityTest.testEmpiricalDistanceBounds" />
+      <item itemvalue="JUnit.ClusteringTest" />
+      <item itemvalue="JUnit.ClusteringTest.testKmeansEuclidean" />
+      <item itemvalue="JUnit.HierarchicalClusteringTest" />
+      <item itemvalue="JUnit.HierarchicalClusteringTest.testRootCluster" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.HierarchicalClusteringTest" />
+        <item itemvalue="JUnit.HierarchicalClusteringTest.testRootCluster" />
+        <item itemvalue="JUnit.ClusteringTest" />
+        <item itemvalue="JUnit.ClusteringTest.testKmeansEuclidean" />
         <item itemvalue="Application.Main" />
-        <item itemvalue="JUnit.All in SimilarityDetective" />
-        <item itemvalue="Application.Sandbox" />
-        <item itemvalue="JUnit.ChebyshevSimilarityTest" />
-        <item itemvalue="JUnit.ChebyshevSimilarityTest.testEmpiricalDistanceBounds" />
       </list>
     </recent_temporary>
   </component>
@@ -161,7 +173,7 @@
       <workItem from="1666082073678" duration="14933000" />
       <workItem from="1666116562963" duration="6150000" />
       <workItem from="1666163484273" duration="201000" />
-      <workItem from="1666163997926" duration="39123000" />
+      <workItem from="1666163997926" duration="44712000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -303,7 +315,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666257246360</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Fixed candidate generation for CD. Now considers potential side overlap">
+      <created>1666258805223</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1666258805223</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -341,7 +360,8 @@
     <MESSAGE value="Worked on slow baseline candidate generation" />
     <MESSAGE value="Created Baseline algorithm" />
     <MESSAGE value="Finished both baselines" />
-    <option name="LAST_COMMIT_MESSAGE" value="Finished both baselines" />
+    <MESSAGE value="Fixed candidate generation for CD. Now considers potential side overlap" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed candidate generation for CD. Now considers potential side overlap" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -3,6 +3,7 @@ package core;
 import _aux.StatBag;
 import algorithms.AlgorithmEnum;
 import clustering.ClusteringAlgorithmEnum;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -15,63 +16,63 @@ import java.util.logging.Logger;
 @RequiredArgsConstructor
 public class Parameters {
 //    Logging
-    @NonNull public Logger LOGGER;
-    @NonNull public String dateTime;
-    @NonNull public String codeVersion;
-    @NonNull public boolean saveStats;
-    @NonNull public boolean saveResults;
-    @NonNull public String resultPath;
-    @NonNull public int threads;
+    @NonNull @Getter public Logger LOGGER;
+    @NonNull @Getter public String dateTime;
+    @NonNull @Getter public String codeVersion;
+    @NonNull @Getter public boolean saveStats;
+    @NonNull @Getter public boolean saveResults;
+    @NonNull @Getter public String resultPath;
+    @NonNull @Getter public int threads;
 
     //    Run details
-    @NonNull public AlgorithmEnum algorithm;
-    @NonNull public boolean parallel;
-    @NonNull public boolean random;
-    @NonNull public int seed;
+    @NonNull @Getter public AlgorithmEnum algorithm;
+    @NonNull @Getter public boolean parallel;
+    @NonNull @Getter public boolean random;
+    @NonNull @Getter public int seed;
 
     //    Query
-    @NonNull public MultivariateSimilarityFunction simMetric;
-    @NonNull public String aggPattern;
-    @NonNull public List<double[]> Wl;
-    @NonNull public List<double[]> Wr;
-    @NonNull public int maxPLeft;
-    @NonNull public int maxPRight;
-    @NonNull public boolean allowSideOverlap;
+    @NonNull @Getter public MultivariateSimilarityFunction simMetric;
+    @NonNull @Getter public String aggPattern;
+    @NonNull @Getter public List<double[]> Wl;
+    @NonNull @Getter public List<double[]> Wr;
+    @NonNull @Getter public int maxPLeft;
+    @NonNull @Getter public int maxPRight;
+    @NonNull @Getter public boolean allowSideOverlap;
 
     //    Data
-    @NonNull public String dataType;
-    @NonNull public String outputPath;
-    @NonNull public String[] headers;
-    @NonNull public double[][] data;
-    @NonNull public int n;
-    @NonNull public int m;
-    @NonNull public int partition;
+    @NonNull @Getter public String dataType;
+    @NonNull @Getter public String outputPath;
+    @NonNull @Getter public String[] headers;
+    @NonNull @Getter public double[][] data;
+    @NonNull @Getter public int n;
+    @NonNull @Getter public int m;
+    @NonNull @Getter public int partition;
 
     //    Bounding
-    @NonNull public boolean empiricalBounding;
+    @NonNull @Getter public boolean empiricalBounding;
 
     //    Clustering
-    @NonNull public double tau;
-    @NonNull public double minJump;
-    @NonNull public double startEpsilon;
-    @NonNull public double epsilonMultiplier;
-    @NonNull public int maxLevels;
-    @NonNull public int defaultDesiredClusters;
-    @NonNull public ClusteringAlgorithmEnum clusteringAlgorithm;
-    @NonNull public int breakFirstKLevelsToMoreClusters;
-    @NonNull public int clusteringRetries;
+    @NonNull @Getter public double tau;
+    @NonNull @Getter public double minJump;
+    @NonNull @Getter public double startEpsilon;
+    @NonNull @Getter public double epsilonMultiplier;
+    @NonNull @Getter public int maxLevels;
+    @NonNull @Getter public int defaultDesiredClusters;
+    @NonNull @Getter public ClusteringAlgorithmEnum clusteringAlgorithm;
+    @NonNull @Getter public int breakFirstKLevelsToMoreClusters;
+    @NonNull @Getter public int clusteringRetries;
 
     //    Top-k
-    @NonNull public double shrinkFactor;
-    @NonNull public double maxApproximationSize;
-    @NonNull public int nPriorityBuckets;
-    @NonNull public int k;
-    @NonNull public String approximationStrategy;
+    @NonNull @Getter public double shrinkFactor;
+    @NonNull @Getter public double maxApproximationSize;
+    @NonNull @Getter public int nPriorityBuckets;
+    @NonNull @Getter public int k;
+    @NonNull @Getter public String approximationStrategy;
 
 //    Misc
-    public StatBag statBag = new StatBag();
-    public Random randomGenerator;
-    @Setter public double[][] pairwiseDistances;
+    @Getter public StatBag statBag = new StatBag();
+    @Getter public Random randomGenerator;
+    @Setter @Getter public double[][] pairwiseDistances;
 
 
     public void init(){

@@ -17,10 +17,6 @@ public class DataReaderTest {
     private static int n = 100;
     private static int m = 10;
 
-    @Before
-    public void setUp() throws Exception {
-
-    }
 
     private void testDataSet(String dataType, int n, double[] targetVector0, double[] targetVector1, String targetHeader){
         //      ----------------------------------------- TESTS ---------------------------------------------

@@ -12,8 +12,8 @@ public class HierarchicalClustering {
 
     public HierarchicalClustering(Parameters par){
         this.par = par;
-        this.clusterTree = new ArrayList<>(par.maxLevels + 1);
-        for (int i = 0; i <= par.maxLevels + 1; i++) {
+        this.clusterTree = new ArrayList<>(par.maxLevels);
+        for (int i = 0; i < par.maxLevels; i++) {
             this.clusterTree.add(new ArrayList<>());
         }
     }
