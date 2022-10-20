@@ -7,6 +7,7 @@ import core.Main;
 import core.Parameters;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,6 +46,8 @@ public class HierarchicalClusteringTest {
     private HierarchicalClustering HC;
     private Parameters par;
 
+    private static boolean setUpIsDone = false;
+
     private void getParameters(){
         par = new Parameters(
                 LOG, "", "", false, false, "", 1, AlgorithmEnum.SIMILARITY_DETECTIVE,
@@ -58,7 +61,10 @@ public class HierarchicalClusteringTest {
 
 
     @Before
-    public void setUp(){
+    public void setUpClass(){
+        if (setUpIsDone){
+            return;
+        }
         Pair<String[], double[][]> dataPair = Main.getData("stock", inputPath, n, m, 0, LOG);
         double[][] rawData = dataPair.y;
         data = lib.l2norm(rawData);
@@ -69,11 +75,20 @@ public class HierarchicalClusteringTest {
 //        Make hierarchical clustering
         HC = new HierarchicalClustering(par);
         HC.run();
+        setUpIsDone = true;
     }
 
-
-//    Test root cluster size
+//    Run all tests (with setup once)
     @Test
+    public void testHierarchicalClustering(){
+        testRootCluster();
+        testFirstLevelsClusterBreak();
+        testNumberOfClustersPerLevel();
+        testMaxClusterLevels();
+        testLeaves();
+    }
+
+    //    Test root cluster size
     public void testRootCluster(){
         Assert.assertNotNull(HC.clusterTree.get(0));
         Assert.assertNotNull(HC.clusterTree.get(0).get(0));
@@ -83,7 +98,6 @@ public class HierarchicalClusteringTest {
     }
 
 //    Test first k levels cluster breaks
-    @Test
     public void testFirstLevelsClusterBreak(){
         for(int i=0; i<breakFirstKLevelsToMoreClusters; i++){
             List<Cluster> currentKCLevel = HC.clusterTree.get(i);
@@ -94,7 +108,6 @@ public class HierarchicalClusteringTest {
     }
 
 //    Test number of clusters per level
-    @Test
     public void testNumberOfClustersPerLevel(){
         for(int i=breakFirstKLevelsToMoreClusters; i<HC.clusterTree.size(); i++){
             List<Cluster> currentKCLevel = HC.clusterTree.get(i);
@@ -106,13 +119,11 @@ public class HierarchicalClusteringTest {
     }
 
 //    Test max cluster levels
-    @Test
     public void testMaxClusterLevels(){
         Assert.assertTrue(HC.clusterTree.size() <= maxLevels);
     }
 
 //    Test all leaves are singletons
-    @Test
     public void testLeaves(){
         List<Cluster> lastLevel = HC.clusterTree.get(HC.clusterTree.size()-1);
         for (Cluster cluster: lastLevel){
