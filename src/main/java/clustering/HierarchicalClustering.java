@@ -1,6 +1,6 @@
 package clustering;
 
-import _aux.Parameters;
+import core.Parameters;
 
 import java.util.ArrayList;
 import java.util.Collections;

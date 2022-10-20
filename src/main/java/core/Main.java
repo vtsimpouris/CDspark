@@ -1,7 +1,6 @@
 package core;
 
 import _aux.Pair;
-import _aux.Parameters;
 import _aux.ResultTuple;
 import algorithms.Algorithm;
 import algorithms.AlgorithmEnum;
@@ -45,6 +44,7 @@ public class Main {
         String aggPattern;
         int maxPLeft;
         int maxPRight;
+        boolean allowSideOverlap;
         String dataType;
         String inputPath;
         String outputPath;
@@ -78,6 +78,7 @@ public class Main {
             minJump = Double.parseDouble(args[i]); i++;
             maxPLeft = Integer.parseInt(args[i]); i++;
             maxPRight = Integer.parseInt(args[i]); i++;
+            allowSideOverlap = args[i].equals("true"); i++;
             shrinkFactor = Double.parseDouble(args[i]); i++;
             k = Integer.parseInt(args[i]); i++;
             approximationStrategy = args[i]; i++;
@@ -92,17 +93,18 @@ public class Main {
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
             simMetricName = SimEnum.PEARSON_CORRELATION;
-//            aggPattern = "avg";
-            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
+            aggPattern = "avg";
+//            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
-            dataType = "random";
-            n = 200;
+            dataType = "stock";
+            n = 500;
             m = (int) 1e7;
             partition = 0;
             tau = 0.90;
             minJump = 0.05;
             maxPLeft = 1;
             maxPRight = 2;
+            allowSideOverlap = false;
             shrinkFactor = 1;
             k = -1;
             approximationStrategy = "simple";
@@ -247,6 +249,7 @@ public class Main {
                 Wr,
                 maxPLeft,
                 maxPRight,
+                allowSideOverlap,
                 dataType,
                 outputPath,
                 headers,

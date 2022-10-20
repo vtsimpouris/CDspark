@@ -1,6 +1,6 @@
 package bounding;
 
-import _aux.Parameters;
+import core.Parameters;
 import _aux.ResultTuple;
 import clustering.Cluster;
 import lombok.Getter;
@@ -92,7 +92,7 @@ public class ClusterCombination {
     }
 
 //    Split cluster combination into 'smaller' combinations by replacing the largest cluster with its children
-    public ArrayList<ClusterCombination> split(){
+    public ArrayList<ClusterCombination> split(double[] Wl, double[] Wr, boolean allowSideOverlap){
         ArrayList<ClusterCombination> subCCs = new ArrayList<>();
 
         int lSize = LHS.size();
@@ -109,17 +109,20 @@ public class ClusterCombination {
             }
         }
 
-//        Split cluster into children
-
         boolean isLHS = cToBreak < lSize;
         ArrayList<Cluster> newSide = new ArrayList<>(isLHS ? LHS : RHS);
         int newSidePosition = isLHS ? cToBreak : cToBreak - lSize;
+        ArrayList<Cluster> otherSide = isLHS ? RHS : LHS;
 
+//        Cluster to split
         Cluster largest = newSide.remove(newSidePosition);
 
-//        For each subcluster, create a new cluster combination (unless it is already in the side and is singleton)
+//        For each subcluster, create a new cluster combination  (considering potential sideOverlap and weightOverlap)
         for (Cluster sc : largest.getChildren()) {
-            if (sc.size() == 1 && (LHS.contains(sc) || RHS.contains(sc))){
+            if (sc.size() == 1 &&
+                    ((!allowSideOverlap && otherSide.contains(sc)) || // side overlap
+                            weightOverlap(sc, newSidePosition, isLHS ? LHS: RHS, isLHS ? Wl: Wr)) // weight overlap
+            ){
                 continue;
             }
             newSide.add(newSidePosition, sc);
@@ -135,20 +138,30 @@ public class ClusterCombination {
 
             // remove the subcluster to make room for the next subcluster
             newSide.remove(newSidePosition);
-            if (newSide.contains(sc)){
-                break;
-            }
         }
         return subCCs;
     }
 
+    private boolean weightOverlap(Cluster cToAdd, int posToAdd, List<Cluster> sideToAdd, double[] weights){
+        for (int i = 0; i < sideToAdd.size(); i++) {
+            if (i == posToAdd){
+                continue;
+            }
+            Cluster c = sideToAdd.get(i);
+            if (weights[posToAdd] == weights[i] && c.id <= cToAdd.id){
+                return true;
+            }
+        }
+        return false;
+    }
+
 //    Unpack CC to all cluster combinations with singleton clusters
-    public ArrayList<ClusterCombination> getSingletons(){
+    public ArrayList<ClusterCombination> getSingletons(double[] Wl, double[] Wr, boolean allowSideOverlap){
         ArrayList<ClusterCombination> out = new ArrayList<>();
         if (!this.isSingleton()) {
-            ArrayList<ClusterCombination> splitted = this.split();
+            ArrayList<ClusterCombination> splitted = this.split(Wl, Wr, allowSideOverlap);
             for (ClusterCombination sc : splitted) {
-                out.addAll(sc.getSingletons());
+                out.addAll(sc.getSingletons(Wl, Wr, allowSideOverlap));
             }
         }else{
             out.add(this);

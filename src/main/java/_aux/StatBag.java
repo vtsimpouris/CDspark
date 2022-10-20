@@ -1,5 +1,6 @@
 package _aux;
 
+import core.Parameters;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.File;

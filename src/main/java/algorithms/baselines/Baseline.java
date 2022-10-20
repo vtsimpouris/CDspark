@@ -3,6 +3,7 @@ package algorithms.baselines;
 import _aux.*;
 import algorithms.Algorithm;
 import algorithms.StageRunner;
+import core.Parameters;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +37,8 @@ public abstract class Baseline extends Algorithm {
         // --> STAGE 2 - Get candidate pairs
         List<Pair<List<Integer>, List<Integer>>> candidates =
                 stageRunner.run("Generate candidates",
-                        () -> CandidateGenerator.getCandidates(par.n, par.maxPLeft, par.maxPRight, WlFull, WrFull, par.parallel),
+                        () -> CandidateGenerator.getCandidates(par.n, par.maxPLeft, par.maxPRight, par.allowSideOverlap,
+                                WlFull, WrFull, par.parallel),
                         par.statBag.stopWatch);
         par.LOGGER.info("Number of candidates: " + candidates.size());
 

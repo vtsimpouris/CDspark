@@ -1,11 +1,10 @@
 package algorithms.baselines;
 
-import _aux.Parameters;
+import core.Parameters;
 import _aux.lib;
 import bounding.ClusterBounds;
 import clustering.Cluster;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

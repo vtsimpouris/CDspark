@@ -5,6 +5,7 @@ import algorithms.Algorithm;
 import algorithms.StageRunner;
 import bounding.RecursiveBounding;
 import clustering.HierarchicalClustering;
+import core.Parameters;
 
 import java.util.List;
 

@@ -1,5 +1,6 @@
-package _aux;
+package core;
 
+import _aux.StatBag;
 import algorithms.AlgorithmEnum;
 import clustering.ClusteringAlgorithmEnum;
 import lombok.NonNull;
@@ -35,6 +36,7 @@ public class Parameters {
     @NonNull public List<double[]> Wr;
     @NonNull public int maxPLeft;
     @NonNull public int maxPRight;
+    @NonNull public boolean allowSideOverlap;
 
     //    Data
     @NonNull public String dataType;

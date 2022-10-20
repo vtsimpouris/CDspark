@@ -12,17 +12,26 @@ import java.util.stream.IntStream;
 
 public class CandidateGenerator {
     //        Get all permutations of vector indices of size maxPLeft + maxPRight
-    public static List<Pair<List<Integer>, List<Integer>>> getCandidates(int n, int maxPLeft, int maxPRight,
+    public static List<Pair<List<Integer>, List<Integer>>> getCandidates(int n, int maxPLeft, int maxPRight, boolean allowSideOverlap,
                                                                          double[] WlFull, double[] WrFull,
                                                                          boolean parallel) {
         List<List<Integer>> candidatesLeft = getCandidatesSide(n, maxPLeft, WlFull, parallel);
         List<List<Integer>> candidatesRight = getCandidatesSide(n, maxPRight, WrFull, parallel);
 
-        List<Pair<List<Integer>, List<Integer>>> candidates = lib.getStream(candidatesLeft, parallel)
-                .flatMap(l -> lib.getStream(candidatesRight, parallel)
-                        .filter(r -> !isDuplicateTwoSide(l,r))
-                        .map(r -> new Pair<>(l, r)))
-                .collect(Collectors.toList());
+        List<Pair<List<Integer>, List<Integer>>> candidates;
+        if (allowSideOverlap){
+            candidates = lib.getStream(candidatesLeft, parallel)
+                    .flatMap(l -> lib.getStream(candidatesRight, parallel)
+                            .map(r -> new Pair<>(l, r)))
+                    .collect(Collectors.toList());
+        } else {
+            candidates = lib.getStream(candidatesLeft, parallel)
+                    .flatMap(l -> lib.getStream(candidatesRight, parallel)
+                            .filter(r -> !isDuplicateTwoSide(l,r))
+                            .map(r -> new Pair<>(l, r)))
+                    .collect(Collectors.toList());
+        }
+
         return candidates;
     }
 

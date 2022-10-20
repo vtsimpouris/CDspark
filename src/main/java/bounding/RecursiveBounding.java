@@ -1,7 +1,6 @@
 package bounding;
 
-import _aux.Pair;
-import _aux.Parameters;
+import core.Parameters;
 import _aux.ResultTuple;
 import _aux.lib;
 import clustering.Cluster;
@@ -11,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -129,7 +126,8 @@ public class RecursiveBounding {
         if ((CC.getLB() < threshold) && (CC.getUB() >= threshold)){
             CC.setDecisive(false);
 
-            ArrayList<ClusterCombination> subCCs = CC.split();
+//            Get splitted CCs
+            ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.get(CC.RHS.size() - 1), par.allowSideOverlap);
 
             return lib.getStream(subCCs, par.parallel).unordered()
                     .flatMap(subCC -> recursiveBounding(subCC).stream())
@@ -147,7 +145,7 @@ public class RecursiveBounding {
         List<ClusterCombination> out;
 
         out = lib.getStream(positiveDCCs, par.parallel).unordered()
-                .flatMap(cc -> cc.getSingletons().stream())
+                .flatMap(cc -> cc.getSingletons(par.Wl.get(cc.LHS.size() - 1), par.Wr.get(cc.RHS.size() - 1), par.allowSideOverlap).stream())
                 .filter(cc -> { // remove cases where LHS and RHS overlap
                     for(Cluster c : cc.LHS){
                         if(cc.RHS.contains(c)){
