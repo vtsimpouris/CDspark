@@ -3,17 +3,20 @@ package algorithms;
 import _aux.*;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Baseline extends Algorithm{
     double[] WlFull;
     double[] WrFull;
+    ConcurrentHashMap<Long, Double> similarityCache;
     
     public Baseline(Parameters par) {
         super(par);
         WlFull = par.Wl.get(par.Wl.size()-1);
         WrFull = par.Wr.get(par.Wr.size()-1);
+        similarityCache = new ConcurrentHashMap<>((int) Math.pow(par.n, par.maxPLeft + par.maxPRight), .4f);
     }
 
     @Override
@@ -23,170 +26,111 @@ public class Baseline extends Algorithm{
         //        Start the timer
         par.statBag.stopWatch.start();
 
-//        Test which getCandidates is faster
-        List<Pair<List<Integer>, List<Integer>>> candidates = stageRunner.run("Get candidates1", this::getCandidates, par.statBag.stopWatch);
+        // --> STAGE 1 - Get candidate pairs
+        List<Pair<List<Integer>, List<Integer>>> candidates =
+                stageRunner.run("Generate candidates",
+                        () -> CandidateGenerator.getCandidates(par.n, par.maxPLeft, par.maxPRight, WlFull, WrFull, par.parallel),
+                        par.statBag.stopWatch);
         par.LOGGER.info("Number of candidates: " + candidates.size());
 
-        List<Pair<List<Integer>, List<Integer>>> candidates2 = stageRunner.run("Get candidates2", this::getCandidates2, par.statBag.stopWatch);
-        par.LOGGER.info("Number of candidates: " + candidates2.size());
+        // --> STAGE 2 - Compute similarities
+        List<ResultTuple> results = stageRunner.run("Compute similarities", () -> iterateCandidates(candidates), par.statBag.stopWatch);
 
         par.statBag.stopWatch.stop();
         par.statBag.totalDuration = lib.nanoToSec(par.statBag.stopWatch.getNanoTime());
         par.statBag.stageDurations = stageRunner.stageDurations;
-        return new ArrayList<>();
+        return results;
     }
 
     
-    private List<ResultTuple> findSimilarities(){
-        return null;
+    private List<ResultTuple> iterateCandidates(List<Pair<List<Integer>, List<Integer>>> candidates){
+        return lib.getStream(candidates, par.parallel).flatMap(c ->
+            this.assessCandidate(c).stream()
+        ).collect(Collectors.toList());
     }
 
-    private List<List<Integer>> getCandidatesSide(boolean left){
-        double[] WFull = left ? WlFull : WrFull;
-        int maxSize = left ? par.maxPLeft : par.maxPRight;
+//    Go over candidate and check if it (or its subsets) has a significant similarity
+    private List<ResultTuple> assessCandidate(Pair<List<Integer>, List<Integer>> candidate){
+        List<ResultTuple> out = new ArrayList<>();
 
-        List<List<Integer>> baseCandidates = new ArrayList<>(par.n);
-        for (int i = 0; i < par.n; i++) {
-            baseCandidates.add(new ArrayList<>(Collections.singletonList(i)));
+//        Get own similarity
+        double sim = computeSimilarity(candidate.x, candidate.y);
+
+//        Get significant similarities of subsets
+        List<Integer> LHS = candidate.x;
+        List<Integer> RHS = candidate.y;
+
+//        First LHS
+        if (LHS.size() > 1) {
+            out.addAll(lib.getStream(IntStream.range(0, LHS.size()).boxed(), par.parallel).flatMap(i -> {
+                int j = i; // otherwise remove will remove the object, not the index
+                List<Integer> LHSsub = new ArrayList<>(LHS);
+                LHSsub.remove(j);
+                return assessCandidate(new Pair<>(LHSsub, RHS)).stream();
+            }).collect(Collectors.toList()));
         }
 
-        for (int i = 1; i < maxSize; i++) {
-            baseCandidates = lib.getStream(baseCandidates, par.parallel)
-                    .flatMap(c -> IntStream.range(0, par.n)
-                            .mapToObj(j -> {
-                                List<Integer> newC = new ArrayList<>(c);
-                                newC.add(j);
-                                return newC;
-                            })
-                            .filter(newC -> !this.isDuplicateOneSide(newC, WFull)))
-                    .collect(Collectors.toList());
+//        Then RHS
+        if (RHS.size() > 1) {
+            out.addAll(lib.getStream(IntStream.range(0, RHS.size()).boxed(), par.parallel).flatMap(i -> {
+                int j = i; // otherwise remove will remove the object, not the index
+                List<Integer> RHSsub = new ArrayList<>(RHS);
+                RHSsub.remove(j);
+                return assessCandidate(new Pair<>(LHS, RHSsub)).stream();
+            }).collect(Collectors.toList()));
         }
 
-//        for (int i = 1; i < maxSize; i++) {
-//            List<List<Integer>> newCandidates = new ArrayList<>(baseCandidates.size() * par.n);
-//            for (List<Integer> comb : baseCandidates) {
-//                for (int j = 0; j < par.n; j++) {
-//                    List<Integer> newComb = new ArrayList<>(comb);
-//                    newComb.add(j);
-//                    if(!this.isDuplicateOneSide(newComb, WFull)){
-//                        newCandidates.add(newComb);
-//                    }
-//                }
-//            }
-//            baseCandidates = newCandidates;
-//        }
-
-        return baseCandidates;
-    }
-
-    //        Get all permutations of vector indices of size maxPLeft + maxPRight
-    private List<Pair<List<Integer>, List<Integer>>> getCandidates(){
-        List<List<Integer>> candidatesLeft = getCandidatesSide(true);
-        List<List<Integer>> candidatesRight = getCandidatesSide(false);
-
-        List<Pair<List<Integer>, List<Integer>>> candidates = lib.getStream(candidatesLeft, par.parallel)
-                .flatMap(l -> lib.getStream(candidatesRight, par.parallel)
-                        .filter(r -> !this.isDuplicateTwoSide(l,r))
-                        .map(r -> new Pair<>(l, r)))
-                .collect(Collectors.toList());
-
-//        List<Pair<List<Integer>, List<Integer>>> candidates = new ArrayList<>(candidatesLeft.size() * candidatesRight.size());
-//        for (List<Integer> combLeft : candidatesLeft) {
-//            for (List<Integer> combRight : candidatesRight) {
-//                if (!this.isDuplicateTwoSide(combLeft, combRight)) {
-//                    candidates.add(new Pair<>(combLeft, combRight));
-//                }
-//            }
-//        }
-
-        return candidates;
-    }
-
-//    Tested speed, but is slower than getCandidates
-    private List<Pair<List<Integer>, List<Integer>>> getCandidates2(){
-        int nCombs = (int) Math.pow(par.n, par.maxPLeft + par.maxPRight);
-        List<Pair<List<Integer>, List<Integer>>> candidates =
-                lib.getStream(IntStream.range(0,nCombs).boxed(), par.parallel).unordered().map(i -> {
-                    List<Integer> LHS = new ArrayList<>(par.maxPLeft);
-                    List<Integer> RHS = new ArrayList<>(par.maxPRight);
-
-                    for (int k = 0; k < par.maxPLeft; k++) {
-                        LHS.add((int) (i / Math.pow(par.n, k)) % par.n);
-                    }
-                    for (int k = 0; k < par.maxPRight; k++) {
-                        RHS.add((int) (i / Math.pow(par.n, k + par.maxPLeft)) % par.n);
-                    }
-                    if (!this.isDuplicateFull(LHS, RHS)) {
-                        return new Pair<>(LHS, RHS);
-                    } else {
-                        return null;
-                    }
-                }).filter(Objects::nonNull).collect(Collectors.toList());
-
-//        for (int i = 0; i < nCombs; i++) {
-//            List<Integer> LHS = new ArrayList<>(par.maxPLeft);
-//            List<Integer> RHS = new ArrayList<>(par.maxPRight);
-//
-//            for (int k = 0; k < par.maxPLeft; k++) {
-//                LHS.add((int) (i / Math.pow(par.n, k)) % par.n);
-//            }
-//            for (int k = 0; k < par.maxPRight; k++) {
-//                RHS.add((int) (i / Math.pow(par.n, k + par.maxPLeft)) % par.n);
-//            }
-//
-//            if (!this.isDuplicateFull(LHS, RHS)){
-//                candidates.add(new Pair<>(LHS, RHS));
-//            }
-//        }
-        return candidates;
-    }
-
-    private boolean isDuplicateOneSide(List<Integer> candidateSide, double[] WFull){
-        for (int i = 0; i < candidateSide.size(); i++) {
-            for (int j = i + 1; j < candidateSide.size(); j++) {
-                if(candidateSide.get(i) >= candidateSide.get(j) && WFull[i] == WFull[j]){
-                    return true;
+//        Minjump check on direct subsets
+        if (sim > par.tau){
+            boolean add = true;
+//            Iterate over all (direct) significant subsets
+            for (ResultTuple subset : out) {
+                if (subset.LHS.size() >= LHS.size() - 1 && subset.RHS.size() >= RHS.size() - 1
+                        && subset.similarity + par.minJump >= sim) {
+                    add = false;
+                    break;
                 }
             }
-        }
-        return false;
-    }
+            if (add){
+//                    Make headers
+                List<String> lHeader = LHS.stream().map(i -> par.headers[i]).collect(Collectors.toList());
+                List<String> rHeader = RHS.stream().map(i -> par.headers[i]).collect(Collectors.toList());
 
-    private boolean isDuplicateTwoSide(List<Integer> left, List<Integer> right){
-        for (int i = 0; i < left.size(); i++) {
-            if (right.contains(left.get(i))){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isDuplicateFull(List<Integer> left, List<Integer> right){
-//        Check LHS for duplicates
-        for (int i = 0; i < par.maxPLeft; i++) {
-//            Vectors cannot be on both sides
-            if (left.contains(right.get(i))) {
-                return true;
-            }
-//            Use combinations if weights are equal per position in side
-            for (int j = i+1; j < par.maxPLeft; j++) {
-                if (left.get(i) >= left.get(j) && WlFull[i] >= WlFull[j]) {
-                    return true;
-                }
+//                    Add to output
+                out.add(new ResultTuple(LHS, RHS, lHeader, rHeader, sim));
             }
         }
 
-//        Do the same for RHS
-        for (int i = 0; i < par.maxPRight; i++) {
-//            Use combinations if weights are equal per position in side
-            for (int j = i+1; j < par.maxPRight; j++) {
-                if (right.get(i) >= right.get(j) && WrFull[i] >= WrFull[j]) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return out;
     }
+
+    private double computeSimilarity(List<Integer> left, List<Integer> right){
+        long hash = hashCandidate(left, right);
+        if(similarityCache.containsKey(hash)){
+            return similarityCache.get(hash);
+        }
+        else{
+//            Make linear combinations
+            double[] v1 = par.simMetric.preprocess(linearCombination(left, WlFull));
+            double[] v2 = par.simMetric.preprocess(linearCombination(right, WrFull));
+            double sim = par.simMetric.sim(v1,v2);
+            similarityCache.put(hash, sim);
+            return sim;
+        }
+    }
+
+    private double[] linearCombination(List<Integer> idx, double[] W){
+        double[] v = new double[par.m];
+        for (int i = 0; i < idx.size(); i++) {
+            v = lib.add(v, lib.scale(par.data[idx.get(0)], W[i]));
+        }
+        return v;
+    }
+
+    private long hashCandidate(List<Integer> left, List<Integer> right){
+        return 1013L * left.hashCode() ^ 1009L * right.hashCode();
+    }
+
 
     @Override
     public void prepareStats(){

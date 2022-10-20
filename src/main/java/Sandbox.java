@@ -15,13 +15,12 @@ import java.util.Random;
 
 public class Sandbox {
     public static void main(String[] args) {
-        double[] a = new double[]{1, 2, 3};
-        double[] z = a.clone();
-        a[0] = 0;
-        z[1] = 0;
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        List<Integer> list2 = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        List<Integer> list3 = Arrays.asList(2, 1, 3, 4, 5, 6, 7, 8, 9, 10);
 
-        System.out.println(Arrays.toString(a));
-        System.out.println(Arrays.toString(z));
+        System.out.println(list.hashCode() == list2.hashCode());
+        System.out.println(list.hashCode() == list3.hashCode());
 
     }
 

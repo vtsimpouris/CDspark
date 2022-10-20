@@ -22,8 +22,8 @@ public class EuclideanSimilarity extends MultivariateSimilarityFunction {
 
     @Override public boolean hasEmpiricalBounds() {return true;}
     @Override public boolean isTwoSided() {return true;}
-    @Override public double[][] preprocess(double[][] data) {
-        return lib.l2norm(data);
+    @Override public double[] preprocess(double[] vector) {
+        return lib.l2norm(vector);
     }
 
     @Override public double sim(double[] x, double[] y) {

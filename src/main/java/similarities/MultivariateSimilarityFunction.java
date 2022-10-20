@@ -32,9 +32,16 @@ public abstract class MultivariateSimilarityFunction {
 
     public abstract boolean hasEmpiricalBounds();
     public abstract boolean isTwoSided();
-    public abstract double[][] preprocess(double[][] data);
-
     public abstract double sim(double[] x, double[] y);
+
+    public double[][] preprocess(double[][] data){
+        for (int i = 0; i < data.length; i++) {
+            data[i] = preprocess(data[i]);
+        }
+        return data;
+    };
+    public abstract double[] preprocess(double[] vector);
+
     public abstract double simToDist(double sim);
     public abstract double distToSim(double dist);
     public abstract ClusterBounds empiricalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances);

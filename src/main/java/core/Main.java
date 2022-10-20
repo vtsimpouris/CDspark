@@ -95,12 +95,12 @@ public class Main {
             aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "random";
-            n = 100;
+            n = 200;
             m = (int) 1e7;
             partition = 0;
-            tau = 0.95;
+            tau = 0.90;
             minJump = 0.05;
-            maxPLeft = 2;
+            maxPLeft = 1;
             maxPRight = 2;
             shrinkFactor = 1;
             k = -1;
@@ -220,6 +220,10 @@ public class Main {
         Pair<String[], double[][]> dataPair = getData(dataType, inputPath, n, m, partition, LOGGER);
         headers = dataPair.x;
         data = dataPair.y;
+
+//        update parameters if we got less data
+        n = data.length;
+        m = data[0].length;
 
 //        preprocess (if necessary)
         data = simMetric.preprocess(data);
