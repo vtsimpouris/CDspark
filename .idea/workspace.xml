@@ -4,17 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Worked on slow baseline candidate generation">
-      <change afterPath="$PROJECT_DIR$/src/main/java/algorithms/CandidateGenerator.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Created Baseline algorithm">
+      <change afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SimpleBaseline.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SmartBaseline.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Sandbox.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Sandbox.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/Baseline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/Baseline.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/AlgorithmEnum.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/AlgorithmEnum.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/Baseline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/Baseline.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/CandidateGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/CandidateGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/CorrelationDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/EuclideanSimilarity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/MinkowskiSimilarity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/MinkowskiSimilarity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/Multipole.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/PearsonCorrelationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/similarities/PearsonCorrelationTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,11 +60,11 @@
       <recent name="" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="algorithms.baselines" />
       <recent name="similarities" />
       <recent name="bounding" />
       <recent name="_aux" />
       <recent name="algorithms" />
-      <recent name="data_reading" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Main">
@@ -159,7 +158,7 @@
       <workItem from="1666082073678" duration="14933000" />
       <workItem from="1666116562963" duration="6150000" />
       <workItem from="1666163484273" duration="201000" />
-      <workItem from="1666163997926" duration="36361000" />
+      <workItem from="1666163997926" duration="37466000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -287,7 +286,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666214447182</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Created Baseline algorithm">
+      <created>1666256072668</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1666256072668</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -323,7 +329,8 @@
     <MESSAGE value="Added unit-tests for MinkowskiSimilarity" />
     <MESSAGE value="Added unit-tests for ChebyshevSimilarity" />
     <MESSAGE value="Worked on slow baseline candidate generation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Worked on slow baseline candidate generation" />
+    <MESSAGE value="Created Baseline algorithm" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created Baseline algorithm" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -333,11 +340,6 @@
           <option name="timeStamp" value="12" />
         </breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java</url>
-          <line>34</line>
-          <option name="timeStamp" value="111" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
           <line>48</line>
           <option name="timeStamp" value="112" />
@@ -346,24 +348,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
           <line>84</line>
           <option name="timeStamp" value="113" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java</url>
-          <line>74</line>
-          <option name="timeStamp" value="149" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/algorithms/Baseline.java</url>
-          <line>36</line>
-          <properties>
-            <option name="lambda-ordinal" value="-1" />
-          </properties>
-          <option name="timeStamp" value="167" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/algorithms/Baseline.java</url>
-          <line>59</line>
-          <option name="timeStamp" value="170" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

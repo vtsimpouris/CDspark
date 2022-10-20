@@ -1,13 +1,15 @@
-package algorithms;
+package algorithms.baselines;
 
 import _aux.*;
+import algorithms.Algorithm;
+import algorithms.StageRunner;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Baseline extends Algorithm{
+public abstract class Baseline extends Algorithm {
     double[] WlFull;
     double[] WrFull;
     ConcurrentHashMap<Long, Double> similarityCache;
@@ -19,6 +21,8 @@ public class Baseline extends Algorithm{
         similarityCache = new ConcurrentHashMap<>((int) Math.pow(par.n, par.maxPLeft + par.maxPRight), .4f);
     }
 
+    public abstract void prepare();
+
     @Override
     public List<ResultTuple> run() {
         StageRunner stageRunner = new StageRunner(par.LOGGER);
@@ -26,14 +30,17 @@ public class Baseline extends Algorithm{
         //        Start the timer
         par.statBag.stopWatch.start();
 
-        // --> STAGE 1 - Get candidate pairs
+        // --> STAGE 1 - Prepare
+        stageRunner.run("Preparation phase", this::prepare, par.statBag.stopWatch);
+
+        // --> STAGE 2 - Get candidate pairs
         List<Pair<List<Integer>, List<Integer>>> candidates =
                 stageRunner.run("Generate candidates",
                         () -> CandidateGenerator.getCandidates(par.n, par.maxPLeft, par.maxPRight, WlFull, WrFull, par.parallel),
                         par.statBag.stopWatch);
         par.LOGGER.info("Number of candidates: " + candidates.size());
 
-        // --> STAGE 2 - Compute similarities
+        // --> STAGE 3 - Compute similarities
         List<ResultTuple> results = stageRunner.run("Compute similarities", () -> iterateCandidates(candidates), par.statBag.stopWatch);
 
         par.statBag.stopWatch.stop();
@@ -104,22 +111,9 @@ public class Baseline extends Algorithm{
         return out;
     }
 
-    private double computeSimilarity(List<Integer> left, List<Integer> right){
-        long hash = hashCandidate(left, right);
-        if(similarityCache.containsKey(hash)){
-            return similarityCache.get(hash);
-        }
-        else{
-//            Make linear combinations
-            double[] v1 = par.simMetric.preprocess(linearCombination(left, WlFull));
-            double[] v2 = par.simMetric.preprocess(linearCombination(right, WrFull));
-            double sim = par.simMetric.sim(v1,v2);
-            similarityCache.put(hash, sim);
-            return sim;
-        }
-    }
+    public abstract double computeSimilarity(List<Integer> left, List<Integer> right);
 
-    private double[] linearCombination(List<Integer> idx, double[] W){
+    public double[] linearCombination(List<Integer> idx, double[] W){
         double[] v = new double[par.m];
         for (int i = 0; i < idx.size(); i++) {
             v = lib.add(v, lib.scale(par.data[idx.get(0)], W[i]));
@@ -127,7 +121,7 @@ public class Baseline extends Algorithm{
         return v;
     }
 
-    private long hashCandidate(List<Integer> left, List<Integer> right){
+    public long hashCandidate(List<Integer> left, List<Integer> right){
         return 1013L * left.hashCode() ^ 1009L * right.hashCode();
     }
 

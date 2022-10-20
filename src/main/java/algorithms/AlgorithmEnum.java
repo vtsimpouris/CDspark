@@ -1,5 +1,5 @@
 package algorithms;
 
 public enum AlgorithmEnum {
-    CD, FASTBASELINE, BASELINE
+    SIMILARITY_DETECTIVE, SMART_BASELINE, SIMPLE_BASELINE
 }

@@ -5,8 +5,9 @@ import _aux.Parameters;
 import _aux.ResultTuple;
 import algorithms.Algorithm;
 import algorithms.AlgorithmEnum;
-import algorithms.Baseline;
-import algorithms.CorrelationDetective;
+import algorithms.baselines.SimpleBaseline;
+import algorithms.baselines.SmartBaseline;
+import algorithms.performance.SimilarityDetective;
 import clustering.ClusteringAlgorithmEnum;
 import data_reading.DataReader;
 import lombok.NonNull;
@@ -87,7 +88,7 @@ public class Main {
             saveResults = args[i].equals("true"); i++;
         } else {
             logLevel = Level.FINE;
-            algorithm = AlgorithmEnum.BASELINE;
+            algorithm = AlgorithmEnum.SIMILARITY_DETECTIVE;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
             simMetricName = SimEnum.PEARSON_CORRELATION;
@@ -281,8 +282,9 @@ public class Main {
 
         Algorithm algorithm;
         switch (par.algorithm){
-            case CD: default: algorithm = new CorrelationDetective(par); break;
-            case BASELINE: algorithm = new Baseline(par); break;
+            case SIMILARITY_DETECTIVE: default: algorithm = new SimilarityDetective(par); break;
+            case SIMPLE_BASELINE: algorithm = new SimpleBaseline(par); break;
+            case SMART_BASELINE: algorithm = new SmartBaseline(par); break;
         }
         List<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();

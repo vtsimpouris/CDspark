@@ -1,4 +1,4 @@
-package algorithms;
+package algorithms.baselines;
 
 import _aux.Pair;
 import _aux.lib;

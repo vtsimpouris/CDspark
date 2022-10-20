@@ -1,18 +1,18 @@
-package algorithms;
+package algorithms.performance;
 
 import _aux.*;
+import algorithms.Algorithm;
+import algorithms.StageRunner;
 import bounding.RecursiveBounding;
 import clustering.HierarchicalClustering;
-import similarities.DistanceFunction;
 
 import java.util.List;
-import java.util.stream.IntStream;
 
-public class CorrelationDetective extends Algorithm {
+public class SimilarityDetective extends Algorithm {
     public HierarchicalClustering HC;
     public RecursiveBounding RB;
 
-    public CorrelationDetective(Parameters par) {
+    public SimilarityDetective(Parameters par) {
         super(par);
         HC = new HierarchicalClustering(par);
     }

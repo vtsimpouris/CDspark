@@ -1,19 +1,15 @@
 package similarities;
 
-import _aux.Pair;
 import _aux.lib;
-import algorithms.CorrelationDetective;
 import bounding.ClusterBounds;
 import clustering.Cluster;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import similarities.functions.PearsonCorrelation;
 import tools.ClusterKit;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class PearsonCorrelationTest {
     private MultivariateSimilarityFunction simMetric = new PearsonCorrelation();
