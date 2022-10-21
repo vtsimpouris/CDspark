@@ -25,7 +25,7 @@ public abstract class Baseline extends Algorithm {
     public abstract void prepare();
 
     @Override
-    public List<ResultTuple> run() {
+    public Set<ResultTuple> run() {
         StageRunner stageRunner = new StageRunner(par.LOGGER);
 
         //        Start the timer
@@ -43,7 +43,7 @@ public abstract class Baseline extends Algorithm {
         par.LOGGER.info("Number of candidates: " + candidates.size());
 
         // --> STAGE 3 - Compute similarities
-        List<ResultTuple> results = stageRunner.run("Compute similarities", () -> iterateCandidates(candidates), par.statBag.stopWatch);
+        Set<ResultTuple> results = stageRunner.run("Compute similarities", () -> iterateCandidates(candidates), par.statBag.stopWatch);
 
         par.statBag.stopWatch.stop();
         par.statBag.totalDuration = lib.nanoToSec(par.statBag.stopWatch.getNanoTime());
@@ -52,10 +52,10 @@ public abstract class Baseline extends Algorithm {
     }
 
     
-    private List<ResultTuple> iterateCandidates(List<Pair<List<Integer>, List<Integer>>> candidates){
+    private Set<ResultTuple> iterateCandidates(List<Pair<List<Integer>, List<Integer>>> candidates){
         return lib.getStream(candidates, par.parallel).flatMap(c ->
             this.assessCandidate(c).stream()
-        ).collect(Collectors.toList());
+        ).collect(Collectors.toSet());
     }
 
 //    Go over candidate and check if it (or its subsets) has a significant similarity

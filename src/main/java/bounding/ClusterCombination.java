@@ -10,6 +10,7 @@ import lombok.Setter;
 import similarities.MultivariateSimilarityFunction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +27,7 @@ public class ClusterCombination {
 
     @Getter double LB = -Double.MAX_VALUE;
     @Getter double UB = Double.MAX_VALUE;
-    @Getter double maxLowerBoundSubset = -Double.MAX_VALUE;
+    @Getter double maxPairwiseLB = -Double.MAX_VALUE;
 
 
     Double maxSubsetSimilarity;
@@ -36,6 +37,11 @@ public class ClusterCombination {
 //    ------------------- METHODS -------------------
     public int size(){
         return this.getClusters().stream().mapToInt(Cluster::size).sum();
+    }
+
+    public String toString(){
+        return LHS.stream().map(Cluster::toString).collect(Collectors.joining(",")) + " | " +
+                RHS.stream().map(Cluster::toString).collect(Collectors.joining(","));
     }
 
     public boolean isSingleton(){
@@ -75,7 +81,7 @@ public class ClusterCombination {
     }
 
     public void checkAndSetMaxSubsetLowerBoundSubset(double lowerBoundSubset){
-        this.maxLowerBoundSubset = Math.max(this.maxLowerBoundSubset, lowerBoundSubset);
+        this.maxPairwiseLB = Math.max(this.maxPairwiseLB, lowerBoundSubset);
     }
 
     public void bound(MultivariateSimilarityFunction simMetric, boolean empiricalBounding, double[] Wl, double[] Wr, double[][] pairwiseDistances){
@@ -119,13 +125,18 @@ public class ClusterCombination {
 
 //        For each subcluster, create a new cluster combination  (considering potential sideOverlap and weightOverlap)
         for (Cluster sc : largest.getChildren()) {
+            newSide.add(newSidePosition, sc);
+
             if (sc.size() == 1 &&
                     ((!allowSideOverlap && otherSide.contains(sc)) || // side overlap
-                            weightOverlap(sc, newSidePosition, isLHS ? LHS: RHS, isLHS ? Wl: Wr)) // weight overlap
+                        weightOverlapOneSide(sc, newSidePosition, isLHS ? LHS: RHS, isLHS ? Wl: Wr) || // weight overlap same side (e.g. no (a,b) and (b,a) if w = [1,1])
+                            weightOverlapTwoSides(isLHS ? newSide: LHS, isLHS ? RHS: newSide, Wl, Wr) // weight overlap other side (e.g. no (a | b) and (b | a) if wl=wr)
+                    )
             ){
+                // remove the subcluster to make room for the next subcluster
+                newSide.remove(newSidePosition);
                 continue;
             }
-            newSide.add(newSidePosition, sc);
 
             ArrayList<Cluster> newLHS = new ArrayList<>(LHS);
             ArrayList<Cluster> newRHS = new ArrayList<>(RHS);
@@ -142,17 +153,28 @@ public class ClusterCombination {
         return subCCs;
     }
 
-    private boolean weightOverlap(Cluster cToAdd, int posToAdd, List<Cluster> sideToAdd, double[] weights){
-        for (int i = 0; i < sideToAdd.size(); i++) {
-            if (i == posToAdd){
+    private boolean weightOverlapOneSide(Cluster cAdded, int posAdded, List<Cluster> sideAdded, double[] weights){
+        for (int i = 0; i < sideAdded.size(); i++) {
+            if (i == posAdded){
                 continue;
             }
-            Cluster c = sideToAdd.get(i);
-            if (weights[posToAdd] == weights[i] && c.id <= cToAdd.id){
+            Cluster c = sideAdded.get(i);
+            if (weights[posAdded] == weights[i] && c.id >= cAdded.id){
                 return true;
             }
         }
         return false;
+    }
+
+    public boolean weightOverlapTwoSides(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr){
+        if (!Arrays.equals(Wl, Wr)){ // if weights are different, there can be no weight overlap
+            return false;
+        } else if (LHS.stream().anyMatch(c -> c.size() > 1) || RHS.stream().anyMatch(c -> c.size() > 1)) { // all clusters need to be singletons
+            return false;
+        }
+
+//        Check if side ids are in lexico order (e.g. YES (14,17) | (15,16) but NO (15,16) | (14,17))
+        return LHS.hashCode() > RHS.hashCode();
     }
 
 //    Unpack CC to all cluster combinations with singleton clusters

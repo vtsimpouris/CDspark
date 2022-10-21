@@ -42,6 +42,10 @@ public class Cluster {
         return pointsIdx.size();
     }
 
+    public String toString(){
+        return Integer.toString(id);
+    }
+
     public int get(int i) {
         return pointsIdx.get(i);
     }

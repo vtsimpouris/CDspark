@@ -4,6 +4,7 @@ import _aux.*;
 import core.Parameters;
 
 import java.util.List;
+import java.util.Set;
 
 public abstract class Algorithm {
     public Parameters par;
@@ -12,7 +13,7 @@ public abstract class Algorithm {
         this.par = parameters;
     }
 
-    public abstract List<ResultTuple> run();
+    public abstract Set<ResultTuple> run();
     public abstract void printStats(StatBag statBag);
     public abstract void prepareStats();
 

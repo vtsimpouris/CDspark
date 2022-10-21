@@ -14,4 +14,26 @@ public class ResultTuple {
     @NonNull @Getter public List<String> rHeaders;
     @NonNull @Getter public double similarity;
 
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        ResultTuple otherTuple = (ResultTuple) other;
+        if (LHS.size() != otherTuple.LHS.size() && RHS.size() != otherTuple.RHS.size()){
+            return false;
+        }
+        // check LHS
+        for (int i = 0; i < LHS.size(); i++){
+            if (!LHS.get(i).equals(otherTuple.LHS.get(i))){
+                return false;
+            }
+        }
+
+        // check RHS
+        for (int i = 0; i < RHS.size(); i++){
+            if (!RHS.get(i).equals(otherTuple.RHS.get(i))){
+                return false;
+            }
+        }
+        return true;
+    }
 }

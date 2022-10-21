@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -18,13 +19,17 @@ public class RecursiveBounding {
 
     @NonNull private Parameters par;
     @NonNull private ArrayList<ArrayList<Cluster>> clusterTree;
+
+    public List<ClusterCombination> positiveDCCs = new ArrayList<>();
     public AtomicLong nCCs = new AtomicLong(0);
     public AtomicLong totalCCSize = new AtomicLong(0);
 
-    public List<ResultTuple> run() {
+    public Set<ResultTuple> run() {
         double postProcessTime = 0;
 
         Cluster rootCluster = clusterTree.get(0).get(0);
+
+//        TODO BUILD IN PROGRESSIVE COMPLEXITY BOUNDING (I.E. (1,1) -> (2,1), (1,2) -> (3,1), (2,2), (1,3) -> (4,1), (1,4), (3,2), (2,3)
 
 //        ------------------- STAGE 1 BOUND PAIRWISE ---------------------------------
 //        First compute all pairwise cluster bounds to fill cache and increase threshold in case of topK
@@ -80,14 +85,14 @@ public class RecursiveBounding {
         List<ClusterCombination> positiveDCCs = DCCs.get(true);
 
         start = System.nanoTime();
-        positiveDCCs = unpackAndCheckMinJump(positiveDCCs, par);
+        this.positiveDCCs = unpackAndCheckMinJump(positiveDCCs, par);
         postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
 //        TODO FILTER TOPK
 //        TODO PROGRESSIVE APPROXIMATION
 
 //        Get final DCCs
-        positiveDCCs.addAll(positivePairwiseDCCs);
+        this.positiveDCCs.addAll(positivePairwiseDCCs);
 
         List<ClusterCombination> negativeDCCs = DCCs.get(false);
         negativeDCCs.addAll(pairwiseDCCs.get(false));
@@ -99,7 +104,7 @@ public class RecursiveBounding {
         par.statBag.addStat("postProcessTime", postProcessTime);
 
 //        Convert to tuples
-        return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toList());
+        return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
     }
 
 //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
@@ -117,7 +122,7 @@ public class RecursiveBounding {
         totalCCSize.addAndGet(CC.size());
 
 //        Update threshold based on minJump if we have CC > 2
-        double jumpBasedThreshold = CC.getMaxLowerBoundSubset() + par.minJump;
+        double jumpBasedThreshold = CC.getMaxPairwiseLB() + par.minJump;
         if (CC.LHS.size() + CC.RHS.size() > 2){
             threshold = Math.max(threshold, jumpBasedThreshold);
         }
@@ -146,19 +151,12 @@ public class RecursiveBounding {
 
         out = lib.getStream(positiveDCCs, par.parallel).unordered()
                 .flatMap(cc -> cc.getSingletons(par.Wl.get(cc.LHS.size() - 1), par.Wr.get(cc.RHS.size() - 1), par.allowSideOverlap).stream())
-                .filter(cc -> { // remove cases where LHS and RHS overlap
-                    for(Cluster c : cc.LHS){
-                        if(cc.RHS.contains(c)){
-                            return false;
-                        }
-                    }
-                    return true;
-                })
                 .filter(cc -> {
                     cc.bound(par.simMetric, par.empiricalBounding, par.Wl.get(cc.LHS.size() - 1),
                             cc.RHS.size() > 0 ? par.Wr.get(cc.RHS.size() - 1): null, par.pairwiseDistances);
                     if (Math.abs(cc.getLB() - cc.getUB()) > 0.001) {
                         par.LOGGER.info("postprocessing: found a singleton CC with LB != UB");
+                        return false;
                     }
                     return (cc.getMaxSubsetSimilarity(par) + par.minJump) < cc.getLB();
                 })

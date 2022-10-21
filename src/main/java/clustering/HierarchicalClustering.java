@@ -4,6 +4,7 @@ import core.Parameters;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class HierarchicalClustering {
     private Parameters par;
@@ -95,5 +96,15 @@ public class HierarchicalClustering {
         }
 
         return subClusters;
+    }
+
+    public Cluster[] getAllClusters(){
+        Cluster[] allClusters = new Cluster[this.globalClusterID];
+//        Iterate over all cluster levels and add to list (considering cid as index in list)
+
+        for (List<Cluster> level : this.clusterTree){
+            level.forEach(c -> allClusters[c.id] = c);
+        }
+        return allClusters;
     }
 }

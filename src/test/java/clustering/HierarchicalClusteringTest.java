@@ -41,12 +41,9 @@ public class HierarchicalClusteringTest {
     private final static ClusteringAlgorithmEnum clusteringAlgorithm = ClusteringAlgorithmEnum.KMEANS;
     private final static int breakFirstKLevelsToMoreClusters = 1;
     private final static int clusteringRetries = 5;
-    private final static Random randomGenerator = new Random(1);
 
     private HierarchicalClustering HC;
     private Parameters par;
-
-    private static boolean setUpIsDone = false;
 
     private void getParameters(){
         par = new Parameters(
@@ -61,10 +58,7 @@ public class HierarchicalClusteringTest {
 
 
     @Before
-    public void setUpClass(){
-        if (setUpIsDone){
-            return;
-        }
+    public void setUp(){
         Pair<String[], double[][]> dataPair = Main.getData("stock", inputPath, n, m, 0, LOG);
         double[][] rawData = dataPair.y;
         data = lib.l2norm(rawData);
@@ -75,7 +69,6 @@ public class HierarchicalClusteringTest {
 //        Make hierarchical clustering
         HC = new HierarchicalClustering(par);
         HC.run();
-        setUpIsDone = true;
     }
 
 //    Run all tests (with setup once)

@@ -19,10 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.logging.*;
 import java.util.regex.Matcher;
@@ -289,7 +286,7 @@ public class Main {
             case SIMPLE_BASELINE: algorithm = new SimpleBaseline(par); break;
             case SMART_BASELINE: algorithm = new SmartBaseline(par); break;
         }
-        List<ResultTuple> results = algorithm.run();
+        Set<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();
         algorithm.printStats(par.statBag);
 
@@ -303,7 +300,7 @@ public class Main {
 
 //        Save results
         if (par.saveResults){
-            saveResults(results, par);
+            saveResults(new ArrayList<>(results), par);
         }
 
     }

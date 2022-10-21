@@ -8,6 +8,7 @@ import clustering.HierarchicalClustering;
 import core.Parameters;
 
 import java.util.List;
+import java.util.Set;
 
 public class SimilarityDetective extends Algorithm {
     public HierarchicalClustering HC;
@@ -19,7 +20,7 @@ public class SimilarityDetective extends Algorithm {
     }
 
     @Override
-    public List<ResultTuple> run() {
+    public Set<ResultTuple> run() {
         StageRunner stageRunner = new StageRunner(par.LOGGER);
 
 //        Start the timer
@@ -36,7 +37,7 @@ public class SimilarityDetective extends Algorithm {
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
 
 //        STAGE 3 - Recursive bounding
-        List<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+        Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
 
         par.statBag.stopWatch.stop();
         par.statBag.totalDuration = lib.nanoToSec(par.statBag.stopWatch.getNanoTime());
