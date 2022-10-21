@@ -1,6 +1,7 @@
 package similarities;
 
 import _aux.Pair;
+import _aux.lib;
 import bounding.ClusterBounds;
 import clustering.Cluster;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public abstract class MultivariateSimilarityFunction {
     @Setter int totalClusters;
@@ -19,8 +21,8 @@ public abstract class MultivariateSimilarityFunction {
     public double MIN_SIMILARITY = -1;
     public AtomicLong nLookups = new AtomicLong(0);
 
-    public ConcurrentHashMap<Long, double[]> empiricalPairwiseClusterCache = new ConcurrentHashMap<>();
-    public ConcurrentHashMap<Long, double[]> theoreticalPairwiseClusterCache = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Long, double[]> pairwiseClusterCache = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Long, ClusterBounds> multiClusterCache = new ConcurrentHashMap<>(1000000, .4f);
 
     //    WlSqSum for each subset of Wl (i.e. [0], [0,1], [0,1,2], ...)
     private Map<Integer, Double> WlSqSum = new HashMap<>(4);
@@ -45,15 +47,45 @@ public abstract class MultivariateSimilarityFunction {
 
     public abstract double simToDist(double sim);
     public abstract double distToSim(double dist);
-    public abstract ClusterBounds empiricalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances);
+    public ClusterBounds similarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances, boolean empirical){
+        long hash = hashMultiCluster(LHS, RHS);
+
+        if (multiClusterCache.containsKey(hash)){
+            return multiClusterCache.get(hash);
+        } else {
+            ClusterBounds bounds;
+            if (empirical){
+                bounds = empiricalSimilarityBounds(LHS, RHS, Wl, Wr, pairwiseDistances);
+            } else {
+                bounds = theoreticalSimilarityBounds(LHS, RHS, Wl, Wr);
+            }
+            multiClusterCache.put(hash, bounds);
+            return bounds;
+        }
+    }
     public abstract ClusterBounds theoreticalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr);
-    public abstract double[] theoreticalDistanceBounds(Cluster C1, Cluster C2);
+    public double[] theoreticalDistanceBounds(Cluster C1, Cluster C2){
+        long ccID = hashPairwiseCluster(C1.id, C2.id);
+
+        if (pairwiseClusterCache.containsKey(ccID)) {
+            return pairwiseClusterCache.get(ccID);
+        } else {
+            double centroidDistance = this.distFunc.dist(C1.getCentroid(), C2.getCentroid());
+            double lbDist = Math.max(0,centroidDistance - C1.getRadius() - C2.getRadius());
+            double ubDist = Math.max(0,centroidDistance + C1.getRadius() + C2.getRadius());
+            double[] bounds = new double[]{lbDist, ubDist};
+            pairwiseClusterCache.put(ccID, bounds);
+            return bounds;
+        }
+    }
+
+    public abstract ClusterBounds empiricalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances);
 
     public double[] empiricalDistanceBounds(Cluster C1, Cluster C2, double[][] pairwiseDistances){
-        long ccID = getUniqueId(C1.id, C2.id);
+        long ccID = hashPairwiseCluster(C1.id, C2.id);
 
-        if (empiricalPairwiseClusterCache.containsKey(ccID)) {
-            return empiricalPairwiseClusterCache.get(ccID);
+        if (pairwiseClusterCache.containsKey(ccID)) {
+            return pairwiseClusterCache.get(ccID);
         } else {
             double lb = Double.MAX_VALUE;
             double ub = -Double.MAX_VALUE;
@@ -66,17 +98,22 @@ public abstract class MultivariateSimilarityFunction {
                 }
             }
             double[] bounds = new double[]{lb, ub};
-            empiricalPairwiseClusterCache.put(ccID, bounds);
+            pairwiseClusterCache.put(ccID, bounds);
             return bounds;
         }
     }
 
-    public long getUniqueId(int id1, int id2) {
+    public long hashPairwiseCluster(int id1, int id2) {
         if (id1 < id2) {
             return (long) id1 * this.totalClusters + id2;
         } else {
             return (long) id2 * this.totalClusters + id1;
         }
+    }
+
+    public long hashMultiCluster(List<Cluster> LHS, List<Cluster> RHS) {
+        return lib.hashTwoLists(LHS.stream().map(Cluster::getId).collect(Collectors.toList()),
+                RHS.stream().map(Cluster::getId).collect(Collectors.toList()));
     }
 
     public double correctBound(double bound){

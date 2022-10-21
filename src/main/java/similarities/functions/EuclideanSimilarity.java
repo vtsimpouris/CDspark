@@ -41,23 +41,6 @@ public class EuclideanSimilarity extends MultivariateSimilarityFunction {
         return 1 / (1 + Math.sqrt(2 - 2*Math.cos(dist)));
     }
 
-//    Computes actual euclidean distance, not the angle (distfunc) in this case
-    @Override public double[] theoreticalDistanceBounds(Cluster C1, Cluster C2){
-        long ccID = getUniqueId(C1.id, C2.id);
-
-        if (theoreticalPairwiseClusterCache.containsKey(ccID)) {
-            return theoreticalPairwiseClusterCache.get(ccID);
-        } else {
-            double centroidDistance = lib.euclidean(C1.getCentroid(), C2.getCentroid());
-
-            double lowerDist = Math.max(0,centroidDistance - C1.getRadius() - C2.getRadius());
-            double upperDist = Math.max(0,centroidDistance + C1.getRadius() + C2.getRadius());
-            double[] bounds = new double[]{lowerDist, upperDist};
-            theoreticalPairwiseClusterCache.put(ccID, bounds);
-            return bounds;
-        }
-    }
-
     @Override public ClusterBounds theoreticalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr){
 //        Get representation of aggregated clusters
         double[] CXc = aggCentroid(LHS, Wl);
@@ -78,8 +61,10 @@ public class EuclideanSimilarity extends MultivariateSimilarityFunction {
         double maxLowerBoundSubset = this.MIN_SIMILARITY;
         for (int i = 0; i < LHS.size(); i++) {
             for (int j = 0; j < RHS.size(); j++) {
-                double[] bounds = theoreticalDistanceBounds(LHS.get(i), RHS.get(j));
-                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, 1 / (1 + bounds[1]));
+                double[] angleBounds = theoreticalDistanceBounds(LHS.get(i), RHS.get(j));
+                double simBound = this.distToSim(Math.min(Math.PI, angleBounds[1]));
+
+                maxLowerBoundSubset = Math.max(maxLowerBoundSubset, simBound);
             }
         }
 

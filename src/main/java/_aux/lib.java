@@ -119,7 +119,7 @@ public class lib {
     }
 
     public static double angle(double[] in1, double[] in2) {
-        return Math.acos(dot(in1, in2)/(l2(in1)*l2(in2)));
+        return Math.acos(Math.min(Math.max(lib.dot(in1, in2), -1),1));
     }
 
     public static double euclidean(double[] in1, double[] in2) {
@@ -275,5 +275,9 @@ public class lib {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static long hashTwoLists(List<Integer> left, List<Integer> right){
+        return 1013L * left.hashCode() ^ 1009L * right.hashCode();
     }
 }

@@ -3,7 +3,6 @@ package similarities.functions;
 import _aux.lib;
 import bounding.ClusterBounds;
 import clustering.Cluster;
-import similarities.DistanceFunction;
 import similarities.MultivariateSimilarityFunction;
 
 import java.util.List;
@@ -31,22 +30,6 @@ public class MinkowskiSimilarity extends MultivariateSimilarityFunction {
 
     @Override public double distToSim(double dist) {
         return 1 / (1 + dist);
-    }
-
-    @Override public double[] theoreticalDistanceBounds(Cluster C1, Cluster C2){
-        long ccID = getUniqueId(C1.id, C2.id);
-
-        if (theoreticalPairwiseClusterCache.containsKey(ccID)) {
-            return theoreticalPairwiseClusterCache.get(ccID);
-        } else {
-            double centroidDistance = this.distFunc.dist(C1.getCentroid(), C2.getCentroid());
-
-            double lowerDist = Math.max(0,centroidDistance - C1.getRadius() - C2.getRadius());
-            double upperDist = Math.max(0,centroidDistance + C1.getRadius() + C2.getRadius());
-            double[] bounds = new double[]{lowerDist, upperDist};
-            theoreticalPairwiseClusterCache.put(ccID, bounds);
-            return bounds;
-        }
     }
 
     //    Compute theoretical similarity bounds for a set of clusters

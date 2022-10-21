@@ -10,7 +10,7 @@ import similarities.DistanceFunction;
 import java.util.*;
 
 public class Cluster {
-    @Setter public int id;
+    @Setter @Getter public int id;
     private DistanceFunction dist;
 
     //    Points

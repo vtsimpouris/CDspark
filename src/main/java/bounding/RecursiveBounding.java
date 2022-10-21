@@ -123,7 +123,7 @@ public class RecursiveBounding {
                 par.pairwiseDistances);
 
 //      Update statistics
-        nCCs.incrementAndGet();
+        nCCs.getAndIncrement();
         totalCCSize.addAndGet(CC.size());
 
 //        Update threshold based on minJump if we have CC > 2

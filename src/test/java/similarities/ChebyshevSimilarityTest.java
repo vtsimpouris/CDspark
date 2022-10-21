@@ -47,7 +47,7 @@ public class ChebyshevSimilarityTest {
         double[] bounds = simMetric.theoreticalDistanceBounds(kit.C1, kit.C2);
 
         Assert.assertEquals(lb, bounds[0], 0.0001);
-        Assert.assertEquals(ub, bounds[1], 0.0001);
+        Assert.assertEquals(ub, Math.min(Math.PI,bounds[1]), 0.0001);
     }
 
     @Test

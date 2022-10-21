@@ -123,9 +123,7 @@ public abstract class Baseline extends Algorithm {
         return v;
     }
 
-    public long hashCandidate(List<Integer> left, List<Integer> right){
-        return 1013L * left.hashCode() ^ 1009L * right.hashCode();
-    }
+
 
 
     @Override

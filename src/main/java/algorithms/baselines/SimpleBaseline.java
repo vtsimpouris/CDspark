@@ -1,5 +1,6 @@
 package algorithms.baselines;
 
+import _aux.lib;
 import core.Parameters;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class SimpleBaseline extends Baseline{
 //    Compute similarities exhaustively
     @Override
     public double computeSimilarity(List<Integer> left, List<Integer> right){
-        long hash = hashCandidate(left, right);
+        long hash = lib.hashTwoLists(left, right);
         if(similarityCache.containsKey(hash)){
             return similarityCache.get(hash);
         }

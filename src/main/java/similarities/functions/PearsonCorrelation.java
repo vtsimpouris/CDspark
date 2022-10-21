@@ -45,7 +45,8 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         for (int i = 0; i < LHS.size(); i++) {
             for (int j = 0; j < RHS.size(); j++) {
                 double[] angleBounds = empirical ? empiricalDistanceBounds(LHS.get(i), RHS.get(j), pairwiseDistances): theoreticalDistanceBounds(LHS.get(i), RHS.get(j));
-                double[] simBounds = new double[]{distToSim(angleBounds[1]), distToSim(angleBounds[0])};
+                double[] simBounds = new double[]{this.distToSim(Math.min(Math.PI, angleBounds[1])),
+                        this.distToSim(angleBounds[0])};
                 nominator_lower += Wl[i] * Wr[j] * simBounds[0];
                 nominator_upper += Wl[i] * Wr[j] * simBounds[1];
                 maxLowerBoundSubset = Math.max(maxLowerBoundSubset, simBounds[0]);
@@ -59,7 +60,8 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         for(int i=0; i< LHS.size(); i++){
             for(int j=i+1; j< LHS.size(); j++){
                 double[] angleBounds = empirical ? empiricalDistanceBounds(LHS.get(i), LHS.get(j), pairwiseDistances): theoreticalDistanceBounds(LHS.get(i), LHS.get(j));
-                double[] simBounds = new double[]{distToSim(angleBounds[1]), distToSim(angleBounds[0])};
+                double[] simBounds = new double[]{this.distToSim(Math.min(Math.PI, angleBounds[1])),
+                        this.distToSim(angleBounds[0])};
                 denominator_lower_left += 2 * Wl[i] * Wl[j] * simBounds[0];
                 denominator_upper_left += 2 * Wl[i] * Wl[j] * simBounds[1];
                 maxLowerBoundSubset = Math.max(maxLowerBoundSubset, simBounds[0]);
@@ -73,7 +75,8 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         for(int i=0; i< RHS.size(); i++){
             for(int j=i+1; j< RHS.size(); j++){
                 double[] angleBounds = empirical ? empiricalDistanceBounds(RHS.get(i), RHS.get(j), pairwiseDistances): theoreticalDistanceBounds(RHS.get(i), RHS.get(j));
-                double[] simBounds = new double[]{distToSim(angleBounds[1]), distToSim(angleBounds[0])};
+                double[] simBounds = new double[]{this.distToSim(Math.min(Math.PI, angleBounds[1])),
+                        this.distToSim(angleBounds[0])};
                 denominator_lower_right += 2 * Wr[i] * Wr[j] * simBounds[0];
                 denominator_upper_right += 2 * Wr[i] * Wr[j] * simBounds[1];
                 maxLowerBoundSubset = Math.max(maxLowerBoundSubset, simBounds[0]);
@@ -100,21 +103,6 @@ public class PearsonCorrelation extends MultivariateSimilarityFunction {
         }
 
         return new ClusterBounds(correctBound(lower), correctBound(upper), maxLowerBoundSubset);
-    }
-
-    @Override public double[] theoreticalDistanceBounds(Cluster C1, Cluster C2){
-        long ccID = getUniqueId(C1.id, C2.id);
-
-        if (theoreticalPairwiseClusterCache.containsKey(ccID)) {
-            return theoreticalPairwiseClusterCache.get(ccID);
-        } else {
-            double centroidDistance = this.distFunc.dist(C1.getCentroid(), C2.getCentroid());
-            double lb = Math.max(0, centroidDistance - C1.getRadius() - C2.getRadius());
-            double ub = Math.min(Math.PI, centroidDistance + C1.getRadius() + C2.getRadius());
-            double[] bounds = new double[]{lb, ub};
-            theoreticalPairwiseClusterCache.put(ccID, bounds);
-            return bounds;
-        }
     }
 
 //    Empirical bounds

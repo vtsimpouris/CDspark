@@ -71,7 +71,7 @@ public class EuclideanSimilarityTest {
 
     @Test
     public void testTheoreticalDistanceBounds(){
-        double centroidDistance = lib.euclidean(kit.C1.getCentroid(), kit.C2.getCentroid());
+        double centroidDistance = lib.angle(kit.C1.getCentroid(), kit.C2.getCentroid());
         double lb = Math.max(0,centroidDistance - kit.C1.getRadius() - kit.C2.getRadius());
         double ub = Math.max(0,centroidDistance + kit.C1.getRadius() + kit.C2.getRadius());
 

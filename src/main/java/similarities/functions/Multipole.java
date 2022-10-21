@@ -39,21 +39,6 @@ public class Multipole extends MultivariateSimilarityFunction {
         return getBounds(LHS, RHS, null, Wl, Wr, false);
     }
 
-    @Override public double[] theoreticalDistanceBounds(Cluster C1, Cluster C2){
-        long ccID = getUniqueId(C1.id, C2.id);
-
-        if (theoreticalPairwiseClusterCache.containsKey(ccID)) {
-            return theoreticalPairwiseClusterCache.get(ccID);
-        } else {
-            double centroidDistance = this.distFunc.dist(C1.getCentroid(), C2.getCentroid());
-            double lb = Math.max(0, centroidDistance - C1.getRadius() - C2.getRadius());
-            double ub = Math.min(Math.PI, centroidDistance + C1.getRadius() + C2.getRadius());
-            double[] bounds = new double[]{lb, ub};
-            theoreticalPairwiseClusterCache.put(ccID, bounds);
-            return bounds;
-        }
-    }
-
     public ClusterBounds getBounds(List<Cluster> LHS, List<Cluster> RHS, double[][] pairwiseDistances, double[] Wl, double[] Wr, boolean empirical){
         double lower;
         double upper;
@@ -75,7 +60,8 @@ public class Multipole extends MultivariateSimilarityFunction {
             for (int j = i + 1; j < LHS.size(); j++) {
                 Cluster c2 = LHS.get(j);
                 double[] angleBounds = empirical ? empiricalDistanceBounds(c1, c2, pairwiseDistances) : theoreticalDistanceBounds(c1, c2);
-                double[] simBounds = new double[]{distToSim(angleBounds[1]), distToSim(angleBounds[0])};
+                double[] simBounds = new double[]{this.distToSim(Math.min(Math.PI, angleBounds[1])),
+                        this.distToSim(angleBounds[0])};
 
                 if (simBounds[0] > 0) {
                     highestAbsLowerBound = Math.max(highestAbsLowerBound, simBounds[0]); // smaller angle = higher similarity
