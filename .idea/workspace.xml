@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Fixed ambiguous problem of finding subset similarities (and to even do that)" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="created github workflow">
+      <change afterPath="$PROJECT_DIR$/.github/workflows/github-actions-test.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -161,7 +164,7 @@
       <workItem from="1666163997926" duration="46241000" />
       <workItem from="1666268606415" duration="2998000" />
       <workItem from="1666282643347" duration="2092000" />
-      <workItem from="1666340910584" duration="18528000" />
+      <workItem from="1666340910584" duration="18893000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -345,7 +348,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666361694426</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="created github workflow">
+      <created>1666362347439</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1666362347439</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -363,7 +373,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented pearson, CD stage 1 and 2" />
     <MESSAGE value="Finished recusive bounding. Calling it a day" />
     <MESSAGE value="Checing and debugging WIP" />
     <MESSAGE value="Debugged Pearson. now working" />
@@ -388,7 +397,8 @@
     <MESSAGE value="Finished RecursiveBoundingTest" />
     <MESSAGE value="Fixed progressive complexity increasing in RecursiveBounding. Before it just did pairwise, then max" />
     <MESSAGE value="Fixed ambiguous problem of finding subset similarities (and to even do that)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed ambiguous problem of finding subset similarities (and to even do that)" />
+    <MESSAGE value="created github workflow" />
+    <option name="LAST_COMMIT_MESSAGE" value="created github workflow" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
