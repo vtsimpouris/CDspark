@@ -89,17 +89,17 @@ public class Main {
             algorithm = AlgorithmEnum.SIMILARITY_DETECTIVE;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
-            simMetricName = SimEnum.PEARSON_CORRELATION;
+            simMetricName = SimEnum.MULTIPOLE;
             aggPattern = "avg";
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 500;
+            n = 50;
             m = (int) 1e7;
             partition = 0;
             tau = 0.90;
             minJump = 0.05;
-            maxPLeft = 1;
+            maxPLeft = 3;
             maxPRight = 2;
             allowSideOverlap = false;
             shrinkFactor = 1;
@@ -139,6 +139,8 @@ public class Main {
             case CHEBYSHEV_SIMILARITY: simMetric = new ChebyshevSimilarity(); break;
         }
 
+
+//      ---  INPUT CORRECTIONS
 //        Check if pleft and pright are correctly chosen
         if (!simMetric.isTwoSided() && maxPRight > 0){
             LOGGER.severe("The chosen similarity metric is not two-sided, but pright is > 0, adding pright to pleft");
@@ -150,6 +152,12 @@ public class Main {
         if (empiricalBounding && !simMetric.hasEmpiricalBounds()){
             LOGGER.severe("The chosen similarity metric does not support empirical bounding, setting empirical bounding to false");
             empiricalBounding = false;
+        }
+
+//        If custom aggregation pattern is chosen, check if minJump is set to 0
+        if (aggPattern.startsWith("custom") && minJump > 0){
+            LOGGER.severe("Custom aggregation pattern is chosen, but minJump is > 0, setting minJump to 0");
+            minJump = 0;
         }
 
 
@@ -213,7 +221,6 @@ public class Main {
             LOGGER.info("Metric does not have empirical bounds, setting empiricalBounding to false");
         }
 
-        //        TODO THIS DEPENDS ON THE DISTANCE FUNCTION!
         double startEpsilon = simMetric.simToDist(0.81*simMetric.MAX_SIMILARITY);
 
 //        read data

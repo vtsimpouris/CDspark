@@ -74,7 +74,6 @@ public class SimilarityDetective extends Algorithm {
         par.LOGGER.fine(String.format("%-30s %.1f","avgCCSize:", (double) par.statBag.otherStats.get("avgCCSize")));
 
 //        DCCs
-        par.LOGGER.fine(String.format("%-30s %d","nDCCs:", (Integer) par.statBag.otherStats.get("nDCCs")));
         par.LOGGER.fine(String.format("%-30s %d","nPosDCCs:", (Integer) par.statBag.otherStats.get("nPosDCCs")));
         par.LOGGER.fine(String.format("%-30s %d","nNegDCCs:", (Integer) par.statBag.otherStats.get("nNegDCCs")));
 

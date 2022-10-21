@@ -22,14 +22,12 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 
-//    Test our kmeans++ clustering algorithm for multiple distance functions by testing if every point is always assigned to the closest cluster
 public class RecursiveBoundingTest {
     private final static Logger LOG = Main.getLogger(Level.INFO);
     private final static String inputPath = "/home/jens/tue/data";
     private final static int n = 50;
     private final static int m = 100;
     private static double[][] data;
-    private static double[][] pairwiseDistances;
 
     private final static double startEpsilon = 0.79;
     private final static int defaultDesiredClusters = 3;

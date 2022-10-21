@@ -7,10 +7,7 @@ import clustering.Cluster;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -22,57 +19,77 @@ public class RecursiveBounding {
 
     public List<ClusterCombination> positiveDCCs = new ArrayList<>();
     public AtomicLong nCCs = new AtomicLong(0);
+    public AtomicLong nNegDCCs = new AtomicLong(0);
     public AtomicLong totalCCSize = new AtomicLong(0);
+    public double postProcessTime;
 
     public Set<ResultTuple> run() {
-        double postProcessTime = 0;
 
         Cluster rootCluster = clusterTree.get(0).get(0);
 
-//        TODO BUILD IN PROGRESSIVE COMPLEXITY BOUNDING (I.E. (1,1) -> (2,1), (1,2) -> (3,1), (2,2), (1,3) -> (4,1), (1,4), (3,2), (2,3)
+//        Make initial cluster comparison
+//        Progressively build up complexity from (1,1) to (maxPLeft,maxPRight) and get all DCCs with complexity <= (maxPLeft,maxPRight) (unless custom aggregation)
+//        I.e. if query = mc(2,4); (1,1) -> (1,2) -> (2,2) -> (2,3) -> (2,4)
+        if(!par.aggPattern.contains("custom")){
+//            Setup first iteration
+            ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(rootCluster));
+            ArrayList<Cluster> RHS = new ArrayList<>();
 
-//        ------------------- STAGE 1 BOUND PAIRWISE ---------------------------------
-//        First compute all pairwise cluster bounds to fill cache and increase threshold in case of topK
-        ArrayList<Cluster> rootLeft = new ArrayList<>();
-        ArrayList<Cluster> rootRight = new ArrayList<>();
-        rootLeft.add(rootCluster);
+            while (LHS.size() < par.maxPLeft || RHS.size() < par.maxPRight){
+//                Make new lists to avoid concurrent modification
+                LHS = new ArrayList<>(LHS);
+                RHS = new ArrayList<>(RHS);
 
-        if (par.simMetric.isTwoSided()){
-            rootRight.add(rootCluster);
-        } else {
+                if ((LHS.size() == RHS.size() && LHS.size() < par.maxPLeft) || RHS.size() == par.maxPRight){ // always increase LHS first
+                    LHS.add(rootCluster);
+                } else {
+                    RHS.add(rootCluster);
+                }
+                ClusterCombination rootCandidate = new ClusterCombination(LHS, RHS, 0);
+                this.positiveDCCs.addAll(startRecursiveBounding(rootCandidate));
+            }
+        }
+//        Do pairwise and max complexity
+        else{
+            //        First compute all pairwise cluster bounds to fill cache and increase threshold in case of topK
+            ArrayList<Cluster> rootLeft = new ArrayList<>();
+            ArrayList<Cluster> rootRight = new ArrayList<>();
             rootLeft.add(rootCluster);
+
+            if (par.simMetric.isTwoSided()){
+                rootRight.add(rootCluster);
+            } else {
+                rootLeft.add(rootCluster);
+            }
+            ClusterCombination rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
+            this.positiveDCCs.addAll(startRecursiveBounding(rootCandidate));
+
+//        Now compute the high-order DCCs
+            rootLeft = new ArrayList<>();
+            for (int i = 0; i < par.maxPLeft; i++) {
+                rootLeft.add(rootCluster);
+            }
+
+            rootRight = new ArrayList<>();
+            for (int i = 0; i < par.maxPRight; i++) {
+                rootRight.add(rootCluster);
+            }
+
+            rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
+            this.positiveDCCs.addAll(startRecursiveBounding(rootCandidate));
         }
 
-        ClusterCombination pairwiseRootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
+//        Set statistics
+        par.statBag.addStat("nPosDCCs", positiveDCCs.size());
+        par.statBag.addStat("nNegDCCs", nNegDCCs.get());
+        par.statBag.addStat("postProcessTime", postProcessTime);
 
-        Map<Boolean, List<ClusterCombination>> pairwiseDCCs = recursiveBounding(pairwiseRootCandidate)
-                .stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+//        Convert to tuples
+        return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
+    }
 
-        long start = System.nanoTime();
-
-//        Filter pairwise posDCCs
-        List<ClusterCombination> positivePairwiseDCCs = unpackAndCheckMinJump(pairwiseDCCs.get(true), par);
-        postProcessTime += lib.nanoToSec(System.nanoTime() - start);
-
-
-//        Pair<List<ClusterCombination>, List<ClusterCombination>> pairwiseDCCs = getAndFilterDCCs(pairwiseRootCandidate);
-
-//        TODO FILTER TOPK
-
-//        ------------------- STAGE 2 BOUND HIGH-ORDER COMBINATIONS ---------------------------------
-//        Now compute all high-order cluster bounds
-        rootLeft = new ArrayList<>();
-        for (int i = 0; i < par.maxPLeft; i++) {
-            rootLeft.add(rootCluster);
-        }
-
-        rootRight = new ArrayList<>();
-        for (int i = 0; i < par.maxPRight; i++) {
-            rootRight.add(rootCluster);
-        }
-
-        ClusterCombination rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
-
+//    Get positive DCCs for a certain complexity
+    public List<ClusterCombination> startRecursiveBounding(ClusterCombination rootCandidate) {
         //        Make candidate list so that we can stream it
         List<ClusterCombination> rootCandidateList = new ArrayList<>(); rootCandidateList.add(rootCandidate);
 
@@ -82,32 +99,20 @@ public class RecursiveBounding {
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
 
 //        Filter minJump confirming positives
-        List<ClusterCombination> positiveDCCs = DCCs.get(true);
-
-        start = System.nanoTime();
-        this.positiveDCCs = unpackAndCheckMinJump(positiveDCCs, par);
+        long start = System.nanoTime();
+        List<ClusterCombination> positiveDCCs = unpackAndCheckMinJump(DCCs.get(true), par);
         postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
 //        TODO FILTER TOPK
 //        TODO PROGRESSIVE APPROXIMATION
+//        Handle negative DCCs
+        this.nNegDCCs.getAndAdd(DCCs.get(false).size());
 
-//        Get final DCCs
-        this.positiveDCCs.addAll(positivePairwiseDCCs);
 
-        List<ClusterCombination> negativeDCCs = DCCs.get(false);
-        negativeDCCs.addAll(pairwiseDCCs.get(false));
-
-//        Set statistics
-        par.statBag.addStat("nPosDCCs", positiveDCCs.size());
-        par.statBag.addStat("nNegDCCs", negativeDCCs.size());
-        par.statBag.addStat("nDCCs", positiveDCCs.size() + negativeDCCs.size());
-        par.statBag.addStat("postProcessTime", postProcessTime);
-
-//        Convert to tuples
-        return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
+        return positiveDCCs;
     }
 
-//    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
+    //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
     public List<ClusterCombination> recursiveBounding(ClusterCombination CC) {
         ArrayList<ClusterCombination> DCCs = new ArrayList<>();
 
