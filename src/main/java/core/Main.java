@@ -90,7 +90,7 @@ public class Main {
             algorithm = AlgorithmEnum.SIMILARITY_DETECTIVE;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
-            simMetricName = SimEnum.MULTIPOLE;
+            simMetricName = SimEnum.PEARSON_CORRELATION;
             aggPattern = "avg";
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;

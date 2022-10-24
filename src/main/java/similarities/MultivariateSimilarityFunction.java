@@ -23,7 +23,6 @@ public abstract class MultivariateSimilarityFunction {
     public AtomicLong nLookups = new AtomicLong(0);
 
     public ConcurrentHashMap<Long, double[]> pairwiseClusterCache = new ConcurrentHashMap<>(100000, .4f);
-    public ConcurrentHashMap<Long, ClusterBounds> multiClusterCache = new ConcurrentHashMap<>(1000000, .4f);
 
     //    WlSqSum for each subset of Wl (i.e. [0], [0,1], [0,1,2], ...)
     private Map<Integer, Double> WlSqSum = new HashMap<>(4);
@@ -48,22 +47,6 @@ public abstract class MultivariateSimilarityFunction {
 
     public abstract double simToDist(double sim);
     public abstract double distToSim(double dist);
-    public ClusterBounds similarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr, double[][] pairwiseDistances, boolean empirical){
-        long hash = hashMultiCluster(LHS, RHS);
-
-        if (multiClusterCache.containsKey(hash)){
-            return multiClusterCache.get(hash);
-        } else {
-            ClusterBounds bounds;
-            if (empirical){
-                bounds = empiricalSimilarityBounds(LHS, RHS, Wl, Wr, pairwiseDistances);
-            } else {
-                bounds = theoreticalSimilarityBounds(LHS, RHS, Wl, Wr);
-            }
-            multiClusterCache.put(hash, bounds);
-            return bounds;
-        }
-    }
     public abstract ClusterBounds theoreticalSimilarityBounds(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr);
     public double[] theoreticalDistanceBounds(Cluster C1, Cluster C2){
         long ccID = hashPairwiseCluster(C1.id, C2.id);
@@ -112,7 +95,7 @@ public abstract class MultivariateSimilarityFunction {
         }
     }
 
-    public long hashMultiCluster(List<Cluster> LHS, List<Cluster> RHS) {
+    public Pair<List<Integer>, Integer> hashMultiCluster(List<Cluster> LHS, List<Cluster> RHS) {
         ArrayList<Integer> ids = new ArrayList<>(LHS.size() + RHS.size() + 1);
         for (Cluster c : LHS) {
             ids.add(c.id);
@@ -121,7 +104,7 @@ public abstract class MultivariateSimilarityFunction {
         for (Cluster c : RHS) {
             ids.add(c.id);
         }
-        return ids.hashCode();
+        return new Pair<>(ids, ids.hashCode());
     }
 
     public double correctBound(double bound){

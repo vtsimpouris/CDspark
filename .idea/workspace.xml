@@ -4,17 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="- Implemented topK queries (to be tested)&#10;- Bugfixes for RecursiveBounding with one-sided metrics&#10;- Bugfixes for multiClusterBound caching">
-      <change afterPath="$PROJECT_DIR$/src/test/java/algorithms/SimilarityDetectiveTest.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting">
+      <change afterPath="$PROJECT_DIR$/src/main/java/bounding/BoundCacheValue.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/ResultTuple.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/ResultTuple.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/bounding/ClusterCombinationTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/bounding/ClusterCombinationTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/bounding/RecursiveBoundingTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/bounding/RecursiveBoundingTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/clustering/HierarchicalClusteringTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/clustering/HierarchicalClusteringTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,6 +66,19 @@
     </key>
   </component>
   <component name="RunManager" selected="JUnit.All in SimilarityDetective">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="core.Main" />
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="core.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="All in SimilarityDetective" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <option name="PACKAGE_NAME" value="" />
@@ -80,7 +87,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ClusterCombinationTest.testSplitting" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="RecursiveBoundingTest.testFullRunEmpirical" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
@@ -89,24 +96,25 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="bounding" />
-      <option name="MAIN_CLASS_NAME" value="bounding.ClusterCombinationTest" />
-      <option name="METHOD_NAME" value="testSplitting" />
+      <option name="MAIN_CLASS_NAME" value="bounding.RecursiveBoundingTest" />
+      <option name="METHOD_NAME" value="testFullRunEmpirical" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SimilarityDetectiveTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="RecursiveBoundingTest.testFullRunTheoretical" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="algorithms.*" />
+          <option name="PATTERN" value="bounding.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="algorithms" />
-      <option name="MAIN_CLASS_NAME" value="algorithms.SimilarityDetectiveTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="bounding" />
+      <option name="MAIN_CLASS_NAME" value="bounding.RecursiveBoundingTest" />
+      <option name="METHOD_NAME" value="testFullRunTheoretical" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -127,36 +135,20 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="SimilarityDetectiveTest.testTopKQuery" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SimilarityDetective" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="algorithms.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="algorithms" />
-      <option name="MAIN_CLASS_NAME" value="algorithms.SimilarityDetectiveTest" />
-      <option name="METHOD_NAME" value="testTopKQuery" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <list>
-      <item itemvalue="JUnit.ClusterCombinationTest.testSplitting" />
-      <item itemvalue="JUnit.SimilarityDetectiveTest" />
+      <item itemvalue="Application.Main" />
+      <item itemvalue="JUnit.RecursiveBoundingTest.testFullRunEmpirical" />
+      <item itemvalue="JUnit.RecursiveBoundingTest.testFullRunTheoretical" />
       <item itemvalue="JUnit.SimilarityDetectiveTest.testThresholdQuery" />
-      <item itemvalue="JUnit.SimilarityDetectiveTest.testTopKQuery" />
       <item itemvalue="JUnit.All in SimilarityDetective" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.All in SimilarityDetective" />
-        <item itemvalue="JUnit.SimilarityDetectiveTest" />
-        <item itemvalue="JUnit.SimilarityDetectiveTest.testTopKQuery" />
         <item itemvalue="JUnit.SimilarityDetectiveTest.testThresholdQuery" />
-        <item itemvalue="JUnit.ClusterCombinationTest.testSplitting" />
+        <item itemvalue="JUnit.RecursiveBoundingTest.testFullRunTheoretical" />
+        <item itemvalue="JUnit.RecursiveBoundingTest.testFullRunEmpirical" />
+        <item itemvalue="Application.Main" />
       </list>
     </recent_temporary>
   </component>
@@ -179,7 +171,7 @@
       <workItem from="1666282643347" duration="2092000" />
       <workItem from="1666340910584" duration="19553000" />
       <workItem from="1666363865533" duration="3960000" />
-      <workItem from="1666599549389" duration="19954000" />
+      <workItem from="1666599549389" duration="20929000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -405,7 +397,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666616268783</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting">
+      <created>1666622510726</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1666622510726</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -423,7 +422,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added some simple stats to CD code" />
     <MESSAGE value="Implemented Euclidean Similarity. Still have to debug" />
     <MESSAGE value="Fixed Euclidean Similarity" />
     <MESSAGE value="Implemented manhattan and chebyshev similarities" />
@@ -448,7 +446,8 @@
     <MESSAGE value="changed github workflow" />
     <MESSAGE value="added ClusterCombination unit-tests" />
     <MESSAGE value="- Implemented topK queries (to be tested)&#10;- Bugfixes for RecursiveBounding with one-sided metrics&#10;- Bugfixes for multiClusterBound caching" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Implemented topK queries (to be tested)&#10;- Bugfixes for RecursiveBounding with one-sided metrics&#10;- Bugfixes for multiClusterBound caching" />
+    <MESSAGE value="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting" />
+    <option name="LAST_COMMIT_MESSAGE" value="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -466,11 +465,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
           <line>186</line>
           <option name="timeStamp" value="69" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java</url>
-          <line>141</line>
-          <option name="timeStamp" value="85" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
