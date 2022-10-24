@@ -94,14 +94,14 @@ public class RecursiveBoundingTest {
         }
 
         //    Test number of lookups - empirical bounds
-        Assert.assertEquals(14790, par.simMetric.nLookups.get());
+        Assert.assertEquals(14810, par.simMetric.nLookups.get());
 
 
         //    Test number of CCs - empirical bounds
-        Assert.assertEquals(6589, par.statBag.nCCs.get());
+        Assert.assertEquals(6726, par.statBag.nCCs.get());
 
         //    Test number of positive DCCs - empirical bounds
-        Assert.assertEquals(15, par.statBag.otherStats.get("nPosDCCs"));
+        Assert.assertEquals(18, par.statBag.otherStats.get("nPosDCCs"));
 
         //    Test number of negative DCCs - empirical bounds
         Assert.assertEquals(0L, par.statBag.otherStats.get("nNegDCCs"));
@@ -132,7 +132,7 @@ public class RecursiveBoundingTest {
         Assert.assertEquals(0, par.simMetric.nLookups.get());
 
         //    Test number of positive DCCs - theoretical bounds
-        Assert.assertEquals(16, par.statBag.otherStats.get("nPosDCCs"));
+        Assert.assertEquals(18, par.statBag.otherStats.get("nPosDCCs"));
     }
 
 //    Test unpackAndCheckMinJump

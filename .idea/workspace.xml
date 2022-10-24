@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting">
-      <change afterPath="$PROJECT_DIR$/src/main/java/bounding/BoundCacheValue.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Broke out multiClusterCache as it had many collisions and did not really lead to speedups">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/bounding/RecursiveBoundingTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/bounding/RecursiveBoundingTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,7 +170,7 @@
       <workItem from="1666282643347" duration="2092000" />
       <workItem from="1666340910584" duration="19553000" />
       <workItem from="1666363865533" duration="3960000" />
-      <workItem from="1666599549389" duration="20929000" />
+      <workItem from="1666599549389" duration="22481000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -404,7 +403,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666622510726</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Broke out multiClusterCache as it had many collisions and did not really lead to speedups">
+      <created>1666623473488</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1666623473488</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -422,7 +428,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented Euclidean Similarity. Still have to debug" />
     <MESSAGE value="Fixed Euclidean Similarity" />
     <MESSAGE value="Implemented manhattan and chebyshev similarities" />
     <MESSAGE value="Implemented spearman correlation" />
@@ -447,7 +452,8 @@
     <MESSAGE value="added ClusterCombination unit-tests" />
     <MESSAGE value="- Implemented topK queries (to be tested)&#10;- Bugfixes for RecursiveBounding with one-sided metrics&#10;- Bugfixes for multiClusterBound caching" />
     <MESSAGE value="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting" />
-    <option name="LAST_COMMIT_MESSAGE" value="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting" />
+    <MESSAGE value="Broke out multiClusterCache as it had many collisions and did not really lead to speedups" />
+    <option name="LAST_COMMIT_MESSAGE" value="Broke out multiClusterCache as it had many collisions and did not really lead to speedups" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

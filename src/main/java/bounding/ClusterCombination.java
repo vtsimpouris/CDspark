@@ -114,7 +114,12 @@ public class ClusterCombination {
     }
 
     public void bound(MultivariateSimilarityFunction simMetric, boolean empiricalBounding, double[] Wl, double[] Wr, double[][] pairwiseDistances){
-        ClusterBounds bounds = simMetric.similarityBounds(this.LHS, this.RHS, Wl, Wr, pairwiseDistances, empiricalBounding);
+        ClusterBounds bounds;
+        if (empiricalBounding){
+            bounds = simMetric.empiricalSimilarityBounds(this.LHS, this.RHS, Wl, Wr, pairwiseDistances);
+        } else {
+            bounds = simMetric.theoreticalSimilarityBounds(this.LHS, this.RHS, Wl, Wr);
+        }
         this.checkAndSetLB(bounds.getLB());
         this.checkAndSetUB(bounds.getUB());
         this.checkAndSetMaxPairwiseLB(bounds.getMaxLowerBoundSubset());
