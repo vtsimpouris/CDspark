@@ -49,7 +49,8 @@ public class RecursiveBoundingTest {
                 new ArrayList<>(Arrays.asList(new double[]{1})), new ArrayList<>(Arrays.asList(new double[]{1}, new double[]{.5,.5})),
                 1, 2, false, "stock", "", new String[n], data, n, m,
                 0, empiricalBounds, 0.95, -1, startEpsilon, epsilonMultiplier, maxLevels, defaultDesiredClusters,
-                clusteringAlgorithm, breakFirstKLevelsToMoreClusters, clusteringRetries, 0, 0, 0, -1, ApproximationStrategyEnum.SIMPLE
+                clusteringAlgorithm, breakFirstKLevelsToMoreClusters, clusteringRetries, 1,
+                100, 0, -1, ApproximationStrategyEnum.SIMPLE
         );
         par.init();
     }
@@ -93,17 +94,17 @@ public class RecursiveBoundingTest {
         }
 
         //    Test number of lookups - empirical bounds
-        Assert.assertEquals(14329, par.simMetric.nLookups.get());
+        Assert.assertEquals(14790, par.simMetric.nLookups.get());
 
 
         //    Test number of CCs - empirical bounds
-        Assert.assertEquals(6379, par.statBag.nCCs.get());
+        Assert.assertEquals(6589, par.statBag.nCCs.get());
 
         //    Test number of positive DCCs - empirical bounds
-        Assert.assertEquals(2, par.statBag.otherStats.get("nPosDCCs"));
+        Assert.assertEquals(15, par.statBag.otherStats.get("nPosDCCs"));
 
         //    Test number of negative DCCs - empirical bounds
-        Assert.assertEquals(3273L, par.statBag.otherStats.get("nNegDCCs"));
+        Assert.assertEquals(0L, par.statBag.otherStats.get("nNegDCCs"));
     }
 
     @Test
@@ -131,7 +132,7 @@ public class RecursiveBoundingTest {
         Assert.assertEquals(0, par.simMetric.nLookups.get());
 
         //    Test number of positive DCCs - theoretical bounds
-        Assert.assertEquals(2, par.statBag.otherStats.get("nPosDCCs"));
+        Assert.assertEquals(16, par.statBag.otherStats.get("nPosDCCs"));
     }
 
 //    Test unpackAndCheckMinJump
@@ -190,14 +191,14 @@ public class RecursiveBoundingTest {
         List<ClusterCombination> pDCCs = DCCs.stream().collect(Collectors.groupingBy(ClusterCombination::isPositive)).get(true);
 
         //    Test nResults
-        Assert.assertEquals(3, DCCs.size());
+        Assert.assertEquals(1, DCCs.size());
         Assert.assertEquals(1, pDCCs.size());
 
         //    Test nCCs
-        Assert.assertEquals(13, par.statBag.nCCs.get());
+        Assert.assertEquals(19, par.statBag.nCCs.get());
 
         //    Test nLookups
-        Assert.assertEquals(21, par.simMetric.nLookups.get());
+        Assert.assertEquals(24, par.simMetric.nLookups.get());
 
         //        Test DCCs actually decisive
         for (ClusterCombination DCC : DCCs) {

@@ -3,6 +3,7 @@ package clustering;
 import _aux.Pair;
 import _aux.lib;
 import algorithms.AlgorithmEnum;
+import bounding.ApproximationStrategyEnum;
 import core.Main;
 import core.Parameters;
 import org.junit.Assert;
@@ -51,7 +52,7 @@ public class HierarchicalClusteringTest {
                 false, false, 1, simMetric, "", new ArrayList<>(), new ArrayList<>(),
                 1, 1, false, "stock", "", new String[0], data, n, m,
                 1, false, 0.5, 0.5, startEpsilon, epsilonMultiplier, maxLevels, defaultDesiredClusters,
-                clusteringAlgorithm, breakFirstKLevelsToMoreClusters, clusteringRetries, 0, 0, 0, -1, ""
+                clusteringAlgorithm, breakFirstKLevelsToMoreClusters, clusteringRetries, 0, 0, 0, -1, ApproximationStrategyEnum.SIMPLE
         );
         par.init();
     }

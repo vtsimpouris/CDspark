@@ -111,7 +111,9 @@ public class RecursiveBounding {
         postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
 //        Sort (descending) and filter positive DCCs to comply to topK parameter
-        this.positiveDCCs = updateTopK(this.positiveDCCs, par);
+        if (par.topK > 0) {
+            this.positiveDCCs = updateTopK(this.positiveDCCs, par);
+        }
 
 //        TODO SEE IF WE CAN MEASURE THIS TIME SEPARATELY
 //        Handle negative DCCs using progressive approximation

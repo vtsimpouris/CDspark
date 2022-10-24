@@ -52,7 +52,10 @@ public class ProgressiveApproximation {
 
 //            Update the positive DCCs
             runningPosDCCs.addAll(RecursiveBounding.unpackAndCheckMinJump(additionalPositives, par));
-            runningPosDCCs = RecursiveBounding.updateTopK(runningPosDCCs, par);
+
+            if (par.topK > 0){
+                runningPosDCCs = RecursiveBounding.updateTopK(runningPosDCCs, par);
+            }
         }
 
         return runningPosDCCs;

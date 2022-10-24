@@ -50,7 +50,7 @@ public class ClusterCombinationTest {
                 new ArrayList<>(Arrays.asList(new double[]{1})), new ArrayList<>(Arrays.asList(new double[]{1}, new double[]{.5,.5})),
                 1, 2, false, "stock", "", new String[n], data, n, m,
                 0, empiricalBounds, 0.95, -1, startEpsilon, epsilonMultiplier, maxLevels, defaultDesiredClusters,
-                clusteringAlgorithm, breakFirstKLevelsToMoreClusters, clusteringRetries, 0, 0, 0, -1, ""
+                clusteringAlgorithm, breakFirstKLevelsToMoreClusters, clusteringRetries, 0, 0, 0, -1, ApproximationStrategyEnum.SIMPLE
         );
         par.init();
     }
@@ -162,11 +162,11 @@ public class ClusterCombinationTest {
         Cluster C2 = allClusters[33];
         Cluster C3 = allClusters[34];
 
-        List<Cluster> tmpRHS = new ArrayList<>(Arrays.asList(C2, C3, C2));
+        List<Cluster> tmpRHS = new ArrayList<>(Arrays.asList(C2, C3, C3));
 
 //    Test weightOverlap one side (both true and false)
-        Assert.assertTrue(ClusterCombination.weightOverlapOneSide(C2, 0, tmpRHS, new double[]{0.4, 0.2, 0.4}));
-        Assert.assertFalse(ClusterCombination.weightOverlapOneSide(C2, 0, tmpRHS, new double[]{0.4, 0.2, 0.3}));
+        Assert.assertTrue(ClusterCombination.weightOverlapOneSide(tmpRHS, new double[]{0.4, 0.2, 0.4}));
+        Assert.assertFalse(ClusterCombination.weightOverlapOneSide(tmpRHS, new double[]{0.4, 0.2, 0.3}));
 
 //    Test weightOverlap two sides (both true and false)
         tmpRHS = new ArrayList<>(Arrays.asList(C2, C3));

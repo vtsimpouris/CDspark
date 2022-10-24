@@ -154,7 +154,7 @@ public class ClusterCombination {
 
             if (sc.size() == 1 &&
                     ((!allowSideOverlap && otherSide.contains(sc)) || // side overlap
-                            weightOverlapOneSide(sc, newSidePosition, newSide, isLHS ? Wl: Wr) || // weight overlap same side (e.g. no (a,b) and (b,a) if w = [1,1])
+                            weightOverlapOneSide(newSide, isLHS ? Wl: Wr) || // weight overlap same side (e.g. no (a,b) and (b,a) if w = [1,1])
                             weightOverlapTwoSides(isLHS ? newSide: LHS, isLHS ? RHS: newSide, Wl, Wr) // weight overlap other side (e.g. no (a | b) and (b | a) if wl=wr)
                     )
             ){
@@ -179,14 +179,12 @@ public class ClusterCombination {
     }
 
 //    Check if a side in the cluster combination have overlapping weights (i.e. (a,b,c) == (c,a,b) if w=[0.5,1,0.5])
-    public static boolean weightOverlapOneSide(Cluster cAdded, int posAdded, List<Cluster> sideAdded, double[] weights){
-        for (int i = 0; i < sideAdded.size(); i++) {
-            if (i == posAdded){
-                continue;
-            }
-            Cluster c = sideAdded.get(i);
-            if (weights[posAdded] == weights[i] && cAdded.id >= c.id){
-                return true;
+    public static boolean weightOverlapOneSide(List<Cluster> newSide, double[] weights){
+        for (int i = 0; i < newSide.size(); i++) {
+            for (int j = i + 1; j < newSide.size(); j++) {
+                if (weights[i] == weights[j] && newSide.get(i).id < newSide.get(j).id){
+                    return true;
+                }
             }
         }
         return false;
