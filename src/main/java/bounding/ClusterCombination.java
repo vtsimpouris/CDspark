@@ -23,7 +23,7 @@ public class ClusterCombination {
 
     @Setter @Getter boolean isPositive = false;
     @Setter @Getter boolean isDecisive = false;
-    Boolean isSingleton;
+    private Boolean isSingleton;
     private List<Cluster> clusters;
 
     @Getter double LB = -Double.MAX_VALUE;
@@ -125,7 +125,7 @@ public class ClusterCombination {
 
             if (sc.size() == 1 &&
                     ((!allowSideOverlap && otherSide.contains(sc)) || // side overlap
-                            weightOverlapOneSide(sc, newSidePosition, isLHS ? LHS: RHS, isLHS ? Wl: Wr) || // weight overlap same side (e.g. no (a,b) and (b,a) if w = [1,1])
+                            weightOverlapOneSide(sc, newSidePosition, newSide, isLHS ? Wl: Wr) || // weight overlap same side (e.g. no (a,b) and (b,a) if w = [1,1])
                             weightOverlapTwoSides(isLHS ? newSide: LHS, isLHS ? RHS: newSide, Wl, Wr) // weight overlap other side (e.g. no (a | b) and (b | a) if wl=wr)
                     )
             ){
@@ -150,13 +150,13 @@ public class ClusterCombination {
     }
 
 //    Check if a side in the cluster combination have overlapping weights (i.e. (a,b,c) == (c,a,b) if w=[0.5,1,0.5])
-    private boolean weightOverlapOneSide(Cluster cAdded, int posAdded, List<Cluster> sideAdded, double[] weights){
+    public static boolean weightOverlapOneSide(Cluster cAdded, int posAdded, List<Cluster> sideAdded, double[] weights){
         for (int i = 0; i < sideAdded.size(); i++) {
             if (i == posAdded){
                 continue;
             }
             Cluster c = sideAdded.get(i);
-            if (weights[posAdded] == weights[i] && c.id >= cAdded.id){
+            if (weights[posAdded] == weights[i] && cAdded.id >= c.id){
                 return true;
             }
         }
@@ -164,7 +164,7 @@ public class ClusterCombination {
     }
 
 //    Check if the combination of clusters on the left and right side has a weight overlap (i.e. (a,b)->(c,d) and (a,b)->(d,c) are the same if Wl = Wr)
-    public boolean weightOverlapTwoSides(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr){
+    public static boolean weightOverlapTwoSides(List<Cluster> LHS, List<Cluster> RHS, double[] Wl, double[] Wr){
         if (!Arrays.equals(Wl, Wr)){ // if weights are different, there can be no weight overlap
             return false;
         } else if (LHS.stream().anyMatch(c -> c.size() > 1) || RHS.stream().anyMatch(c -> c.size() > 1)) { // all clusters need to be singletons
@@ -172,7 +172,7 @@ public class ClusterCombination {
         }
 
 //        Check if side ids are in lexico order (e.g. YES (14,17) | (15,16) but NO (15,16) | (14,17))
-        return LHS.hashCode() > RHS.hashCode();
+        return LHS.hashCode() >= RHS.hashCode();
     }
 
 //    Unpack CC to all cluster combinations with singleton clusters

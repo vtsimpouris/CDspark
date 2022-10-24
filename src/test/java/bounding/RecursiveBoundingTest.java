@@ -198,6 +198,10 @@ public class RecursiveBoundingTest {
 
         //    Test nLookups
         Assert.assertEquals(21, par.simMetric.nLookups.get());
-    }
 
+        //        Test DCCs actually decisive
+        for (ClusterCombination DCC : DCCs) {
+            Assert.assertTrue(DCC.isDecisive());
+        }
+    }
 }
