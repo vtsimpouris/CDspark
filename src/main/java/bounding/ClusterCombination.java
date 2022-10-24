@@ -29,7 +29,9 @@ public class ClusterCombination {
     @Getter double LB = -Double.MAX_VALUE;
     @Getter double UB = Double.MAX_VALUE;
     @Getter double maxPairwiseLB = -Double.MAX_VALUE;
-
+    @Getter @Setter double centerOfBounds = 0.0;
+    @Getter @Setter double slack;
+    @Getter @Setter double criticalShrinkFactor;
 
     Double maxSubsetSimilarity;
 
@@ -38,6 +40,15 @@ public class ClusterCombination {
 //    ------------------- METHODS -------------------
     public int size(){
         return this.getClusters().stream().mapToInt(Cluster::size).sum();
+    }
+
+    @Override
+    public boolean equals(Object other){
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof ClusterCombination))return false;
+        ClusterCombination otherCC = (ClusterCombination) other;
+        return this.LHS.equals(otherCC.LHS) && this.RHS.equals(otherCC.RHS);
     }
 
     @Override
@@ -68,12 +79,6 @@ public class ClusterCombination {
         return this.clusters;
     }
 
-    public void swapLeftRightSide(){
-        ArrayList<Cluster> left = this.LHS;
-        this.LHS = this.RHS;
-        this.RHS = left;
-    }
-
     public void checkAndSetLB(double LB){
         this.LB = Math.max(LB, this.LB);
     }
@@ -82,15 +87,39 @@ public class ClusterCombination {
         this.UB = Math.min(UB, this.UB);
     }
 
-    public void checkAndSetMaxSubsetLowerBoundSubset(double lowerBoundSubset){
-        this.maxPairwiseLB = Math.max(this.maxPairwiseLB, lowerBoundSubset);
+    public void checkAndSetMaxPairwiseLB(double maxPairwiseLB){
+        this.maxPairwiseLB = Math.max(this.maxPairwiseLB, maxPairwiseLB);
+    }
+
+    public double getRadiiGeometricMean(){
+        double out = 1;
+        for(Cluster c: this.getClusters()){
+            out *= c.getRadius();
+        }
+        return Math.pow(out, 1.0/this.getClusters().size());
+    }
+
+    public double getShrunkUB(double shrinkFactor, double maxApproximationSize){
+        if(this.getRadiiGeometricMean() < maxApproximationSize){
+            return centerOfBounds + slack * shrinkFactor;
+        }else{
+            return UB;
+        }
+
+    }
+
+    public void setCriticalShrinkFactor(double threshold){
+//        value of 10 is arbitrary, can be any number > 1; point is to stop investigating since CC can never become positive
+        this.criticalShrinkFactor = this.getSlack() > 0 && threshold <= 1 ? (threshold - this.getCenterOfBounds()) / this.getSlack(): 10;
     }
 
     public void bound(MultivariateSimilarityFunction simMetric, boolean empiricalBounding, double[] Wl, double[] Wr, double[][] pairwiseDistances){
         ClusterBounds bounds = simMetric.similarityBounds(this.LHS, this.RHS, Wl, Wr, pairwiseDistances, empiricalBounding);
         this.checkAndSetLB(bounds.getLB());
         this.checkAndSetUB(bounds.getUB());
-        this.checkAndSetMaxSubsetLowerBoundSubset(bounds.getMaxLowerBoundSubset());
+        this.checkAndSetMaxPairwiseLB(bounds.getMaxLowerBoundSubset());
+        this.setCenterOfBounds((bounds.getUB() + bounds.getLB()) / 2);
+        this.setSlack(bounds.getUB() - this.getCenterOfBounds());
     }
 
 //    Split cluster combination into 'smaller' combinations by replacing the largest cluster with its children

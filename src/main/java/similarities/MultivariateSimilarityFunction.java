@@ -7,6 +7,7 @@ import clustering.Cluster;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ public abstract class MultivariateSimilarityFunction {
     public double MIN_SIMILARITY = -1;
     public AtomicLong nLookups = new AtomicLong(0);
 
-    public ConcurrentHashMap<Long, double[]> pairwiseClusterCache = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Long, double[]> pairwiseClusterCache = new ConcurrentHashMap<>(100000, .4f);
     public ConcurrentHashMap<Long, ClusterBounds> multiClusterCache = new ConcurrentHashMap<>(1000000, .4f);
 
     //    WlSqSum for each subset of Wl (i.e. [0], [0,1], [0,1,2], ...)
@@ -112,8 +113,15 @@ public abstract class MultivariateSimilarityFunction {
     }
 
     public long hashMultiCluster(List<Cluster> LHS, List<Cluster> RHS) {
-        return lib.hashTwoLists(LHS.stream().map(Cluster::getId).collect(Collectors.toList()),
-                RHS.stream().map(Cluster::getId).collect(Collectors.toList()));
+        ArrayList<Integer> ids = new ArrayList<>(LHS.size() + RHS.size() + 1);
+        for (Cluster c : LHS) {
+            ids.add(c.id);
+        }
+        ids.add(-1); // add for side separation
+        for (Cluster c : RHS) {
+            ids.add(c.id);
+        }
+        return ids.hashCode();
     }
 
     public double correctBound(double bound){

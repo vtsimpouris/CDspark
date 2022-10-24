@@ -7,6 +7,7 @@ import algorithms.AlgorithmEnum;
 import algorithms.baselines.SimpleBaseline;
 import algorithms.baselines.SmartBaseline;
 import algorithms.performance.SimilarityDetective;
+import bounding.ApproximationStrategyEnum;
 import clustering.ClusteringAlgorithmEnum;
 import data_reading.DataReader;
 import lombok.NonNull;
@@ -54,17 +55,17 @@ public class Main {
         double tau;
         double minJump;
         double shrinkFactor;
-        int k;
-        String approximationStrategy;
+        int topK;
+        ApproximationStrategyEnum approximationStrategy;
 
 //        Read parameters from args
         if (args.length>0){
             int i=0;
             logLevel = Level.parse(args[i]); i++;
-            algorithm = AlgorithmEnum.valueOf(args[i]); i++;
+            algorithm = AlgorithmEnum.valueOf(args[i].toUpperCase()); i++;
             inputPath = args[i]; i++;
             outputPath = args[i]; i++;
-            simMetricName = SimEnum.valueOf(args[i]); i++;
+            simMetricName = SimEnum.valueOf(args[i].toUpperCase()); i++;
             aggPattern = args[i]; i++;
             empiricalBounding = args[i].equals("true"); i++;
             dataType = args[i]; i++;
@@ -77,8 +78,8 @@ public class Main {
             maxPRight = Integer.parseInt(args[i]); i++;
             allowSideOverlap = args[i].equals("true"); i++;
             shrinkFactor = Double.parseDouble(args[i]); i++;
-            k = Integer.parseInt(args[i]); i++;
-            approximationStrategy = args[i]; i++;
+            topK = Integer.parseInt(args[i]); i++;
+            approximationStrategy = ApproximationStrategyEnum.valueOf(args[i].toUpperCase()); i++;
             seed = Integer.parseInt(args[i]); i++;
             parallel = args[i].equals("true"); i++;
             random = args[i].equals("true"); i++;
@@ -94,19 +95,19 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 50;
+            n = 200;
             m = (int) 1e7;
             partition = 0;
             tau = 0.90;
             minJump = 0.05;
-            maxPLeft = 3;
+            maxPLeft = 1;
             maxPRight = 2;
             allowSideOverlap = false;
-            shrinkFactor = 1;
-            k = -1;
-            approximationStrategy = "simple";
+            shrinkFactor = 0;
+            topK = 100;
+            approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = true;
+            parallel = false;
             random = false;
             saveStats = false;
             saveResults = false;
@@ -125,7 +126,6 @@ public class Main {
         ClusteringAlgorithmEnum clusteringAlgorithm = ClusteringAlgorithmEnum.KMEANS;
         int breakFirstKLevelsToMoreClusters = 0;
         int clusteringRetries = 50;
-        double maxApproximationSize = Math.sqrt(2 * m * (1- (0.5)));
         int nPriorityBuckets = 50;
 
         //        Get similarity function from enum
@@ -148,7 +148,7 @@ public class Main {
             maxPRight = 0;
         }
 
-//        Check if emprical bounding is possible
+//        Check if empirical bounding is possible
         if (empiricalBounding && !simMetric.hasEmpiricalBounds()){
             LOGGER.severe("The chosen similarity metric does not support empirical bounding, setting empirical bounding to false");
             empiricalBounding = false;
@@ -158,6 +158,16 @@ public class Main {
         if (aggPattern.startsWith("custom") && minJump > 0){
             LOGGER.severe("Custom aggregation pattern is chosen, but minJump is > 0, setting minJump to 0");
             minJump = 0;
+        }
+
+//        If topK query, reset tau and shrinkFactor
+        if (topK > 0){
+            LOGGER.severe("TopK query is chosen, setting tau to 0, minJump to 0");
+            tau = 0.5;
+            minJump = 0;
+        } else {
+            LOGGER.severe("Threshold query is chosen, setting shrinkFactor to 1");
+            shrinkFactor = 1;
         }
 
 
@@ -222,6 +232,7 @@ public class Main {
         }
 
         double startEpsilon = simMetric.simToDist(0.81*simMetric.MAX_SIMILARITY);
+        double maxApproximationSize = simMetric.simToDist(0.9*simMetric.MAX_SIMILARITY);
 
 //        read data
         Pair<String[], double[][]> dataPair = getData(dataType, inputPath, n, m, partition, LOGGER);
@@ -274,7 +285,7 @@ public class Main {
                 shrinkFactor,
                 maxApproximationSize,
                 nPriorityBuckets,
-                k,
+                topK,
                 approximationStrategy
         );
         par.init();

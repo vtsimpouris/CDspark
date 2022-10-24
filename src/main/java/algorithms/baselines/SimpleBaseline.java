@@ -15,7 +15,7 @@ public class SimpleBaseline extends Baseline{
 //    Compute similarities exhaustively
     @Override
     public double computeSimilarity(List<Integer> left, List<Integer> right){
-        long hash = lib.hashTwoLists(left, right);
+        long hash = hashCandidate(left, right);
         if(similarityCache.containsKey(hash)){
             return similarityCache.get(hash);
         }

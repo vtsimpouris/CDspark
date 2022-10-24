@@ -276,8 +276,4 @@ public class lib {
         }
         return null;
     }
-
-    public static long hashTwoLists(List<Integer> left, List<Integer> right){
-        return 1013L * left.hashCode() ^ 1009L * right.hashCode();
-    }
 }

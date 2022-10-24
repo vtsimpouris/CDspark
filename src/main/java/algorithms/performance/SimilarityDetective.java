@@ -60,8 +60,8 @@ public class SimilarityDetective extends Algorithm {
         boundingStage.setDuration(boundingStage.getDuration() - postProcessTime);
 
         par.statBag.otherStats.put("nLookups", par.simMetric.nLookups.get());
-        par.statBag.otherStats.put("nCCs", RB.nCCs.get());
-        par.statBag.otherStats.put("avgCCSize", RB.totalCCSize.get() / (double) RB.nCCs.get());
+        par.statBag.otherStats.put("nCCs", par.statBag.nCCs.get());
+        par.statBag.otherStats.put("avgCCSize", par.statBag.totalCCSize.get() / (double) par.statBag.nCCs.get());
     }
 
     @Override
@@ -75,7 +75,7 @@ public class SimilarityDetective extends Algorithm {
 
 //        DCCs
         par.LOGGER.fine(String.format("%-30s %d","nPosDCCs:", (Integer) par.statBag.otherStats.get("nPosDCCs")));
-        par.LOGGER.fine(String.format("%-30s %d","nNegDCCs:", (Integer) par.statBag.otherStats.get("nNegDCCs")));
+        par.LOGGER.fine(String.format("%-30s %d","nNegDCCs:", (Long) par.statBag.otherStats.get("nNegDCCs")));
 
         this.printStageDurations(statBag);
     }

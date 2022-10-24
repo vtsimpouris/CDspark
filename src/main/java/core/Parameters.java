@@ -2,6 +2,7 @@ package core;
 
 import _aux.StatBag;
 import algorithms.AlgorithmEnum;
+import bounding.ApproximationStrategyEnum;
 import clustering.ClusteringAlgorithmEnum;
 import lombok.Getter;
 import lombok.NonNull;
@@ -66,8 +67,8 @@ public class Parameters {
     @NonNull @Getter public double shrinkFactor;
     @NonNull @Getter public double maxApproximationSize;
     @NonNull @Getter public int nPriorityBuckets;
-    @NonNull @Getter public int k;
-    @NonNull @Getter public String approximationStrategy;
+    @NonNull @Getter public int topK;
+    @NonNull @Getter public ApproximationStrategyEnum approximationStrategy;
 
 //    Misc
     @Getter public StatBag statBag = new StatBag();

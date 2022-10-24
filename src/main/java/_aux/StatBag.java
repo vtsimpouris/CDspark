@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 public class StatBag {
@@ -20,6 +21,9 @@ public class StatBag {
     public List<Stage> stageDurations = new ArrayList<>();
 
 //    Algorithm specific stats
+    public AtomicLong nCCs = new AtomicLong(0);
+    public AtomicLong totalCCSize = new AtomicLong(0);
+    public AtomicLong nNegDCCs = new AtomicLong(0);
     public HashMap<String, Object> otherStats = new HashMap<>();
 
     public void addStat(String key, Object value){

@@ -49,7 +49,7 @@ public class RecursiveBoundingTest {
                 new ArrayList<>(Arrays.asList(new double[]{1})), new ArrayList<>(Arrays.asList(new double[]{1}, new double[]{.5,.5})),
                 1, 2, false, "stock", "", new String[n], data, n, m,
                 0, empiricalBounds, 0.95, -1, startEpsilon, epsilonMultiplier, maxLevels, defaultDesiredClusters,
-                clusteringAlgorithm, breakFirstKLevelsToMoreClusters, clusteringRetries, 0, 0, 0, -1, ""
+                clusteringAlgorithm, breakFirstKLevelsToMoreClusters, clusteringRetries, 0, 0, 0, -1, ApproximationStrategyEnum.SIMPLE
         );
         par.init();
     }
@@ -97,7 +97,7 @@ public class RecursiveBoundingTest {
 
 
         //    Test number of CCs - empirical bounds
-        Assert.assertEquals(6379, RB.nCCs.get());
+        Assert.assertEquals(6379, par.statBag.nCCs.get());
 
         //    Test number of positive DCCs - empirical bounds
         Assert.assertEquals(2, par.statBag.otherStats.get("nPosDCCs"));
@@ -186,7 +186,7 @@ public class RecursiveBoundingTest {
         ClusterCombination CC = new ClusterCombination(LHS, RHS, 0);
 
 //        Bound it
-        List<ClusterCombination> DCCs = RB.recursiveBounding(CC);
+        List<ClusterCombination> DCCs = RB.recursiveBounding(CC, 1, par);
         List<ClusterCombination> pDCCs = DCCs.stream().collect(Collectors.groupingBy(ClusterCombination::isPositive)).get(true);
 
         //    Test nResults
@@ -194,7 +194,7 @@ public class RecursiveBoundingTest {
         Assert.assertEquals(1, pDCCs.size());
 
         //    Test nCCs
-        Assert.assertEquals(13, RB.nCCs.get());
+        Assert.assertEquals(13, par.statBag.nCCs.get());
 
         //    Test nLookups
         Assert.assertEquals(21, par.simMetric.nLookups.get());

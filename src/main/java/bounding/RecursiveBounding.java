@@ -18,9 +18,7 @@ public class RecursiveBounding {
     @NonNull private ArrayList<ArrayList<Cluster>> clusterTree;
 
     public List<ClusterCombination> positiveDCCs = new ArrayList<>();
-    public AtomicLong nCCs = new AtomicLong(0);
     public AtomicLong nNegDCCs = new AtomicLong(0);
-    public AtomicLong totalCCSize = new AtomicLong(0);
     public double postProcessTime;
 
     public Set<ResultTuple> run() {
@@ -35,6 +33,9 @@ public class RecursiveBounding {
             ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(rootCluster));
             ArrayList<Cluster> RHS = new ArrayList<>();
 
+//            Do first iteration with shrinkFactor 1
+            double runningShrinkFactor = 1;
+
             while (LHS.size() < par.maxPLeft || RHS.size() < par.maxPRight){
 //                Make new lists to avoid concurrent modification
                 LHS = new ArrayList<>(LHS);
@@ -46,7 +47,10 @@ public class RecursiveBounding {
                     RHS.add(rootCluster);
                 }
                 ClusterCombination rootCandidate = new ClusterCombination(LHS, RHS, 0);
-                this.positiveDCCs.addAll(startRecursiveBounding(rootCandidate));
+                assessComparisonTree(rootCandidate, runningShrinkFactor);
+
+                //            Set shrink factor back to original value
+                runningShrinkFactor = par.shrinkFactor;
             }
         }
 //        Do pairwise and max complexity
@@ -62,7 +66,9 @@ public class RecursiveBounding {
                 rootLeft.add(rootCluster);
             }
             ClusterCombination rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
-            this.positiveDCCs.addAll(startRecursiveBounding(rootCandidate));
+
+//            Do pairwise with shrink factor 1
+            assessComparisonTree(rootCandidate, 1);
 
 //        Now compute the high-order DCCs
             rootLeft = new ArrayList<>();
@@ -76,7 +82,7 @@ public class RecursiveBounding {
             }
 
             rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
-            this.positiveDCCs.addAll(startRecursiveBounding(rootCandidate));
+            assessComparisonTree(rootCandidate, par.shrinkFactor);
         }
 
 //        Set statistics
@@ -89,31 +95,32 @@ public class RecursiveBounding {
     }
 
 //    Get positive DCCs for a certain complexity
-    public List<ClusterCombination> startRecursiveBounding(ClusterCombination rootCandidate) {
+    public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor) {
         //        Make candidate list so that we can stream it
         List<ClusterCombination> rootCandidateList = new ArrayList<>(); rootCandidateList.add(rootCandidate);
 
         Map<Boolean, List<ClusterCombination>> DCCs = lib.getStream(rootCandidateList, par.parallel)
                 .unordered()
-                .flatMap(cc -> lib.getStream(recursiveBounding(cc), par.parallel))
+                .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
+                .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
 
 //        Filter minJump confirming positives
         long start = System.nanoTime();
-        List<ClusterCombination> positiveDCCs = unpackAndCheckMinJump(DCCs.get(true), par);
+        this.positiveDCCs.addAll(unpackAndCheckMinJump(DCCs.get(true), par));
         postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
-//        TODO FILTER TOPK
-//        TODO PROGRESSIVE APPROXIMATION
-//        Handle negative DCCs
+//        Sort (descending) and filter positive DCCs to comply to topK parameter
+        this.positiveDCCs = updateTopK(this.positiveDCCs, par);
+
+//        TODO SEE IF WE CAN MEASURE THIS TIME SEPARATELY
+//        Handle negative DCCs using progressive approximation
         this.nNegDCCs.getAndAdd(DCCs.get(false).size());
-
-
-        return positiveDCCs;
+        this.positiveDCCs = ProgressiveApproximation.ApproximateProgressively(DCCs.get(false), this.positiveDCCs, par);
     }
 
     //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
-    public List<ClusterCombination> recursiveBounding(ClusterCombination CC) {
+    public static List<ClusterCombination> recursiveBounding(ClusterCombination CC, double shrinkFactor, Parameters par) {
         ArrayList<ClusterCombination> DCCs = new ArrayList<>();
 
         double threshold = par.tau;
@@ -123,8 +130,11 @@ public class RecursiveBounding {
                 par.pairwiseDistances);
 
 //      Update statistics
-        nCCs.getAndIncrement();
-        totalCCSize.addAndGet(CC.size());
+        par.statBag.nCCs.getAndIncrement();
+        par.statBag.totalCCSize.addAndGet(CC.size());
+
+//        Shrink upper bound for progressive bounding
+        double shrunkUB = CC.getShrunkUB(shrinkFactor, par.maxApproximationSize);
 
 //        Update threshold based on minJump if we have CC > 2
         double jumpBasedThreshold = CC.getMaxPairwiseLB() + par.minJump;
@@ -133,20 +143,29 @@ public class RecursiveBounding {
         }
 
 //        Check if CC is (in)decisive
-        if ((CC.getLB() < threshold) && (CC.getUB() >= threshold)){
+        if ((CC.getLB() < threshold) && (shrunkUB >= threshold)){
             CC.setDecisive(false);
 
 //            Get splitted CCs
-            ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.get(CC.RHS.size() - 1), par.allowSideOverlap);
+            ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
 
             return lib.getStream(subCCs, par.parallel).unordered()
-                    .flatMap(subCC -> recursiveBounding(subCC).stream())
+                    .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
                     .collect(Collectors.toList());
         } else { // CC is decisive, add to DCCs
             CC.setDecisive(true);
 
-            CC.setPositive(CC.getLB() >= threshold);
-            DCCs.add(CC);
+//            Negative DCC, set critical shrink factor in order to investigate later when using progressive approximation
+            if (shrunkUB < threshold) {
+                CC.setCriticalShrinkFactor(threshold);
+                if (CC.getCriticalShrinkFactor() <= 1 && threshold <= 1) {
+                    DCCs.add(CC);
+                }
+            } else if (CC.getLB() >= threshold){ //  Positive DCC
+                CC.setPositive(true);
+                CC.criticalShrinkFactor = -10;
+                DCCs.add(CC);
+            }
         }
         return DCCs;
     }
@@ -155,18 +174,38 @@ public class RecursiveBounding {
         List<ClusterCombination> out;
 
         out = lib.getStream(positiveDCCs, par.parallel).unordered()
-                .flatMap(cc -> cc.getSingletons(par.Wl.get(cc.LHS.size() - 1), par.Wr.get(cc.RHS.size() - 1), par.allowSideOverlap).stream())
+                .flatMap(cc -> cc.getSingletons(par.Wl.get(cc.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(cc.RHS.size() - 1): null, par.allowSideOverlap).stream())
                 .filter(cc -> {
                     cc.bound(par.simMetric, par.empiricalBounding, par.Wl.get(cc.LHS.size() - 1),
                             cc.RHS.size() > 0 ? par.Wr.get(cc.RHS.size() - 1): null, par.pairwiseDistances);
                     if (Math.abs(cc.getLB() - cc.getUB()) > 0.001) {
                         par.LOGGER.info("postprocessing: found a singleton CC with LB != UB");
+//                        TODO DEBUG
+                        cc.bound(par.simMetric, par.empiricalBounding, par.Wl.get(cc.LHS.size() - 1),
+                                cc.RHS.size() > 0 ? par.Wr.get(cc.RHS.size() - 1): null, par.pairwiseDistances);
                         return false;
                     }
                     return (cc.getMaxSubsetSimilarity(par) + par.minJump) < cc.getLB();
                 })
                 .collect(Collectors.toList());
         return out;
+
+    }
+
+    public static List<ClusterCombination> updateTopK(List<ClusterCombination> positiveDCCs, Parameters par){
+        //        Sort (descending) and filter positive DCCs to comply to topK parameter
+        if (positiveDCCs.size() > par.topK){
+            positiveDCCs = lib.getStream(positiveDCCs, par.parallel)
+                    .sorted((cc1, cc2) -> Double.compare(cc2.getLB(), cc1.getLB()))
+                    .limit(par.topK)
+                    .collect(Collectors.toList());
+
+//            Update correlation threshold
+            par.tau = Math.max(par.tau, positiveDCCs.get(positiveDCCs.size()-1).getLB());
+
+            par.LOGGER.fine("TopK reached. New correlation threshold: " + par.tau);
+        }
+        return positiveDCCs;
 
     }
 

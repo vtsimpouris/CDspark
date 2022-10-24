@@ -136,4 +136,12 @@ public abstract class Baseline extends Algorithm {
         par.LOGGER.fine("----------- Run statistics --------------");
         this.printStageDurations(statBag);
     }
+
+    public static int hashCandidate(List<Integer> left, List<Integer> right){
+        List<Integer> all = new ArrayList<>(left.size() + right.size());
+        all.addAll(left);
+        all.add(-1);
+        all.addAll(right);
+        return all.hashCode();
+    }
 }
