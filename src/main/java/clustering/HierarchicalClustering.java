@@ -1,10 +1,13 @@
 package clustering;
 
+import _aux.lib;
 import core.Parameters;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class HierarchicalClustering {
     private Parameters par;
@@ -45,46 +48,55 @@ public class HierarchicalClustering {
 
         for (Cluster sc : subClusters) {
         // If under maxlevel, keep multiplying epsilon, otherwise change threshold such that we only get singletons
-            if (sc.level < par.maxLevels - 1) {
+            if (sc.level < par.maxLevels - 2) {
                 nextThreshold = sc.getRadius() * par.epsilonMultiplier;
             }
-            if (sc.level < par.maxLevels && sc.size() > 1) {
+            if (sc.level < par.maxLevels - 1 && sc.size() > 1) {
                 recursiveClustering(sc,nextThreshold);
             }
         }
     }
 
     public ArrayList<Cluster> makeAndGetSubClusters(Cluster c, double epsilon){
-        ArrayList<Cluster> subClusters;
-        ArrayList<Cluster> bestSubClusters = null;
-        double bestDistance = Double.MAX_VALUE;
+        ArrayList<Cluster>[] subClustersPerTry = new ArrayList[par.clusteringRetries];
 
-        for (int i = 0; i < par.clusteringRetries; i++) {
-            Collections.shuffle(c.pointsIdx, par.randomGenerator);
+//        Try different clustering runs in parallel, return score for each run
+        List<Double> clusteringScores = lib.getStream(IntStream.range(0, par.clusteringRetries).boxed(), par.parallel).unordered()
+                .map(i -> {
+                     List<Integer> points = new ArrayList<>(c.pointsIdx);
+                    Collections.shuffle(points, par.randomGenerator);
 
-//            Variable cluster parameters
-            int nDesiredClusters = par.defaultDesiredClusters;
-            if (epsilon <= 0 || c.level == par.maxLevels) nDesiredClusters = c.size();
-            if (c.level < par.breakFirstKLevelsToMoreClusters) nDesiredClusters *= 5;
+                    //  Variable cluster parameters
+                    int nDesiredClusters = par.defaultDesiredClusters;
+                    if (epsilon <= 0 || c.level == par.maxLevels) nDesiredClusters = c.size();
+                    if (c.level < par.breakFirstKLevelsToMoreClusters) nDesiredClusters *= 5;
 
-            switch (par.clusteringAlgorithm) {
-                default:
-                case KMEANS:
-                    subClusters = Clustering.getKMeansMaxClusters(c.pointsIdx, par.data, par.pairwiseDistances,
-                            epsilon, nDesiredClusters, par.simMetric.distFunc);
-                    break;
-            }
+                    List<Cluster> localSubClusters;
+                    switch (par.clusteringAlgorithm) {
+                        default:
+                        case KMEANS:
+                            localSubClusters = Clustering.getKMeansMaxClusters(points, par.data, par.pairwiseDistances,
+                                    epsilon, nDesiredClusters, par.simMetric.distFunc);
+                            break;
+                    }
+                    subClustersPerTry[i] = new ArrayList<>(localSubClusters);
+                    return localSubClusters.stream().mapToDouble(Cluster::getScore).sum();
+                }).collect(Collectors.toList());
 
-            double totalScore = subClusters.stream().mapToDouble(Cluster::getScore).sum();
-            if (totalScore < bestDistance) {
-                bestDistance = totalScore;
-                bestSubClusters = (ArrayList<Cluster>) subClusters.clone();
+//        Get clustering with best score
+        double bestScore = clusteringScores.get(0);
+        ArrayList<Cluster> bestSubClusters = subClustersPerTry[0];
+
+        for (int i = 1; i < par.clusteringRetries; i++) {
+            if (clusteringScores.get(i) < bestScore) {
+                bestScore = clusteringScores.get(i);
+                bestSubClusters = subClustersPerTry[i];
             }
         }
-        subClusters = bestSubClusters;
+
 
 //        Set parent-child relationships
-        for (Cluster sc : subClusters) {
+        for (Cluster sc : bestSubClusters) {
             sc.setParent(c);
             c.addChild(sc);
 
@@ -95,7 +107,7 @@ public class HierarchicalClustering {
             this.clusterTree.get(sc.level).add(sc);
         }
 
-        return subClusters;
+        return bestSubClusters;
     }
 
     public Cluster[] getAllClusters(){

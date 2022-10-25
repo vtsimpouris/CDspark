@@ -27,7 +27,7 @@ public class ResultTuple {
     public boolean equals(Object other){
         if (other == null) return false;
         ResultTuple otherTuple = (ResultTuple) other;
-        if (LHS.size() != otherTuple.LHS.size() && RHS.size() != otherTuple.RHS.size()){
+        if (LHS.size() != otherTuple.LHS.size() || RHS.size() != otherTuple.RHS.size()){
             return false;
         }
 

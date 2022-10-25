@@ -95,7 +95,7 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 200;
+            n = 1000;
             m = (int) 1e7;
             partition = 0;
             tau = 0.90;
@@ -104,12 +104,12 @@ public class Main {
             maxPRight = 2;
             allowSideOverlap = false;
             shrinkFactor = 0;
-            topK = 100;
+            topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = false;
+            parallel = true;
             random = false;
-            saveStats = false;
+            saveStats = true;
             saveResults = false;
         }
 

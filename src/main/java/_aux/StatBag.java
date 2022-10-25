@@ -46,7 +46,7 @@ public class StatBag {
             List<String> excludedColumns = Arrays.asList(
                     "LOGGER", "data", "statBag", "saveResults",
                     "resultPath", "headers", "outputPath", "stageDurations",
-                    "Wl", "Wr", "otherStats", "stopWatch", "pairwiseDistances", "totalDuration", "randomGenerator"
+                    "Wl", "Wr", "otherStats", "stopWatch", "pairwiseDistances", "randomGenerator"
             );
 
             FileWriter resultWriter = new FileWriter(fileName, true);
