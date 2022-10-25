@@ -87,7 +87,7 @@ public class Main {
             saveResults = args[i].equals("true"); i++;
         } else {
             logLevel = Level.FINE;
-            algorithm = AlgorithmEnum.SIMILARITY_DETECTIVE;
+            algorithm = AlgorithmEnum.SMART_BASELINE;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
             simMetricName = SimEnum.PEARSON_CORRELATION;
@@ -95,11 +95,11 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 1000;
+            n = 200;
             m = (int) 1e7;
             partition = 0;
-            tau = 0.90;
-            minJump = 0.05;
+            tau = 0.95;
+            minJump = 0.03;
             maxPLeft = 1;
             maxPRight = 2;
             allowSideOverlap = false;

@@ -1,10 +1,14 @@
 package algorithms.baselines;
 
+import _aux.Pair;
+import _aux.ResultTuple;
+import bounding.ClusterCombination;
 import core.Parameters;
 import _aux.lib;
 import bounding.ClusterBounds;
 import clustering.Cluster;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,31 +35,34 @@ public class SmartBaseline extends Baseline{
         par.simMetric.setTotalClusters(par.n);
     }
 
-//    Compute similarities based on pairwise similarities (if possible)
     @Override
-    public double computeSimilarity(List<Integer> left, List<Integer> right){
-        long hash = hashCandidate(left, right);
-        if(similarityCache.containsKey(hash)){
-            return similarityCache.get(hash);
-        }
-        else{
-            double sim;
+    public boolean assessCandidate(Pair<List<Integer>, List<Integer>> candidate){
+//        Get bounded singleton cc
+        ClusterCombination cc = computeSimilarity(candidate.x, candidate.y);
+        double sim = cc.getLB();
 
-//            If simmetric is distributive, get similarity based on pairwise similarities
-            if (par.simMetric.hasEmpiricalBounds()){
-                List<Cluster> LHS = left.stream().map(i -> singletonClusters[i]).collect(Collectors.toList());
-                List<Cluster> RHS = right.stream().map(i -> singletonClusters[i]).collect(Collectors.toList());
-                ClusterBounds bounds = par.simMetric.empiricalSimilarityBounds(LHS, RHS,
-                        par.Wl.get(left.size() - 1), par.Wr.get(right.size() - 1), par.pairwiseDistances);
-                sim = bounds.LB;
-            } else {
-//            Make linear combinations
-            double[] v1 = par.simMetric.preprocess(linearCombination(left, WlFull));
-            double[] v2 = par.simMetric.preprocess(linearCombination(right, WrFull));
-            sim = par.simMetric.sim(v1,v2);
+//        If significant also check minJump
+        if (sim > par.tau){
+            if (par.minJump > 0){
+                double maxSubsetSim = cc.getMaxSubsetSimilarity(par);
+                if (maxSubsetSim + par.minJump > sim){
+                    return false;
+                }
             }
-            similarityCache.put(hash, sim);
-            return sim;
+            return true;
         }
+        return false;
+    }
+
+//    Compute similarities based on pairwise similarities (if possible)
+    public ClusterCombination computeSimilarity(List<Integer> left, List<Integer> right){
+//        Create cluster combination
+        ArrayList<Cluster> LHS = left.stream().map(i -> singletonClusters[i]).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Cluster> RHS = right.stream().map(i -> singletonClusters[i]).collect(Collectors.toCollection(ArrayList::new));
+        ClusterCombination cc = new ClusterCombination(LHS, RHS, 0);
+        cc.bound(par.simMetric, true,
+                par.Wl.get(left.size() - 1), par.Wr.size() > 0 ? par.Wr.get(right.size() - 1): null,
+                par.pairwiseDistances);
+        return cc;
     }
 }

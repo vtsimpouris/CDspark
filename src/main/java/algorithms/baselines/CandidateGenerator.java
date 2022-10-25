@@ -16,21 +16,29 @@ public class CandidateGenerator {
                                                                          double[] WlFull, double[] WrFull,
                                                                          boolean parallel) {
         List<List<Integer>> candidatesLeft = getCandidatesSide(n, maxPLeft, WlFull, parallel);
-        List<List<Integer>> candidatesRight = getCandidatesSide(n, maxPRight, WrFull, parallel);
+
+        List<List<Integer>> candidatesRight = maxPRight > 0 ? getCandidatesSide(n, maxPRight, WrFull, parallel): new ArrayList<>();
 
         List<Pair<List<Integer>, List<Integer>>> candidates;
-        if (allowSideOverlap){
-            candidates = lib.getStream(candidatesLeft, parallel)
-                    .flatMap(l -> lib.getStream(candidatesRight, parallel)
-                            .map(r -> new Pair<>(l, r)))
-                    .collect(Collectors.toList());
+        if (maxPRight > 0){
+            if (allowSideOverlap){
+                candidates = lib.getStream(candidatesLeft, parallel)
+                        .flatMap(l -> lib.getStream(candidatesRight, parallel)
+                                .map(r -> new Pair<>(l, r)))
+                        .collect(Collectors.toList());
+            } else {
+                candidates = lib.getStream(candidatesLeft, parallel)
+                        .flatMap(l -> lib.getStream(candidatesRight, parallel)
+                                .filter(r -> !isDuplicateTwoSide(l,r))
+                                .map(r -> new Pair<>(l, r)))
+                        .collect(Collectors.toList());
+            }
         } else {
             candidates = lib.getStream(candidatesLeft, parallel)
-                    .flatMap(l -> lib.getStream(candidatesRight, parallel)
-                            .filter(r -> !isDuplicateTwoSide(l,r))
-                            .map(r -> new Pair<>(l, r)))
+                    .map(l -> new Pair<>(l, (List<Integer>) new ArrayList<Integer>()))
                     .collect(Collectors.toList());
         }
+
 
         return candidates;
     }
@@ -46,7 +54,7 @@ public class CandidateGenerator {
         }
 
         for (int i = 1; i < maxP; i++) {
-            baseCandidates = lib.getStream(baseCandidates, parallel)
+            baseCandidates.addAll(lib.getStream(baseCandidates, parallel)
                     .flatMap(c -> IntStream.range(0, n)
                             .mapToObj(j -> {
                                 List<Integer> newC = new ArrayList<>(c);
@@ -54,7 +62,7 @@ public class CandidateGenerator {
                                 return newC;
                             })
                             .filter(newC -> !isDuplicateOneSide(newC, weights)))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
         }
         return baseCandidates;
     }
@@ -62,7 +70,7 @@ public class CandidateGenerator {
     public static boolean isDuplicateOneSide(List<Integer> candidateSide, double[] weights){
         for (int i = 0; i < candidateSide.size(); i++) {
             for (int j = i + 1; j < candidateSide.size(); j++) {
-                if(candidateSide.get(i) >= candidateSide.get(j) && weights[i] == weights[j]){
+                if(candidateSide.get(i) < candidateSide.get(j) && weights[i] == weights[j]){
                     return true;
                 }
             }

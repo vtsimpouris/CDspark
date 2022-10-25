@@ -13,13 +13,11 @@ import java.util.stream.IntStream;
 public abstract class Baseline extends Algorithm {
     double[] WlFull;
     double[] WrFull;
-    ConcurrentHashMap<Long, Double> similarityCache;
-    
+
     public Baseline(Parameters par) {
         super(par);
         WlFull = par.Wl.get(par.Wl.size()-1);
-        WrFull = par.Wr.get(par.Wr.size()-1);
-        similarityCache = new ConcurrentHashMap<>((int) Math.pow(par.n, par.maxPLeft + par.maxPRight), .4f);
+        WrFull = par.Wr.size() > 0 ? par.Wr.get(par.Wr.size()-1): null;
     }
 
     public abstract void prepare();
@@ -41,6 +39,7 @@ public abstract class Baseline extends Algorithm {
                                 WlFull, WrFull, par.parallel),
                         par.statBag.stopWatch);
         par.LOGGER.info("Number of candidates: " + candidates.size());
+        par.statBag.otherStats.put("nCandidates", candidates.size());
 
         // --> STAGE 3 - Compute similarities
         Set<ResultTuple> results = stageRunner.run("Compute similarities", () -> iterateCandidates(candidates), par.statBag.stopWatch);
@@ -53,67 +52,14 @@ public abstract class Baseline extends Algorithm {
 
     
     private Set<ResultTuple> iterateCandidates(List<Pair<List<Integer>, List<Integer>>> candidates){
-        return lib.getStream(candidates, par.parallel).flatMap(c ->
-            this.assessCandidate(c).stream()
-        ).collect(Collectors.toSet());
+        return lib.getStream(candidates, par.parallel)
+                .filter(this::assessCandidate)
+                .map(c -> new ResultTuple(c.x, c.y, new ArrayList<>(), new ArrayList<>(), par.tau))
+                .collect(Collectors.toSet());
     }
 
 //    Go over candidate and check if it (or its subsets) has a significant similarity
-    private List<ResultTuple> assessCandidate(Pair<List<Integer>, List<Integer>> candidate){
-        List<ResultTuple> out = new ArrayList<>();
-
-//        Get own similarity
-        double sim = computeSimilarity(candidate.x, candidate.y);
-
-//        Get significant similarities of subsets
-        List<Integer> LHS = candidate.x;
-        List<Integer> RHS = candidate.y;
-
-//        First LHS
-        if (LHS.size() > 1) {
-            out.addAll(lib.getStream(IntStream.range(0, LHS.size()).boxed(), par.parallel).flatMap(i -> {
-                int j = i; // otherwise remove will remove the object, not the index
-                List<Integer> LHSsub = new ArrayList<>(LHS);
-                LHSsub.remove(j);
-                return assessCandidate(new Pair<>(LHSsub, RHS)).stream();
-            }).collect(Collectors.toList()));
-        }
-
-//        Then RHS
-        if (RHS.size() > 1) {
-            out.addAll(lib.getStream(IntStream.range(0, RHS.size()).boxed(), par.parallel).flatMap(i -> {
-                int j = i; // otherwise remove will remove the object, not the index
-                List<Integer> RHSsub = new ArrayList<>(RHS);
-                RHSsub.remove(j);
-                return assessCandidate(new Pair<>(LHS, RHSsub)).stream();
-            }).collect(Collectors.toList()));
-        }
-
-//        Minjump check on direct subsets
-        if (sim > par.tau){
-            boolean add = true;
-//            Iterate over all (direct) significant subsets
-            for (ResultTuple subset : out) {
-                if (subset.LHS.size() >= LHS.size() - 1 && subset.RHS.size() >= RHS.size() - 1
-                        && subset.similarity + par.minJump >= sim) {
-                    add = false;
-                    break;
-                }
-            }
-            if (add){
-//                    Make headers
-                List<String> lHeader = LHS.stream().map(i -> par.headers[i]).collect(Collectors.toList());
-                List<String> rHeader = RHS.stream().map(i -> par.headers[i]).collect(Collectors.toList());
-
-//                    Add to output
-                out.add(new ResultTuple(LHS, RHS, lHeader, rHeader, sim));
-            }
-        }
-
-        return out;
-    }
-
-    public abstract double computeSimilarity(List<Integer> left, List<Integer> right);
+    public abstract boolean assessCandidate(Pair<List<Integer>, List<Integer>> candidate);
 
     public double[] linearCombination(List<Integer> idx, double[] W){
         double[] v = new double[par.m];
@@ -122,9 +68,6 @@ public abstract class Baseline extends Algorithm {
         }
         return v;
     }
-
-
-
 
     @Override
     public void prepareStats(){
@@ -135,13 +78,5 @@ public abstract class Baseline extends Algorithm {
     public void printStats(StatBag statBag){
         par.LOGGER.fine("----------- Run statistics --------------");
         this.printStageDurations(statBag);
-    }
-
-    public static int hashCandidate(List<Integer> left, List<Integer> right){
-        List<Integer> all = new ArrayList<>(left.size() + right.size());
-        all.addAll(left);
-        all.add(-1);
-        all.addAll(right);
-        return all.hashCode();
     }
 }

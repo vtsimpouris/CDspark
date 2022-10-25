@@ -1,18 +1,18 @@
 #!/usr/bin/bash
 
 logLevel=FINE
-algorithm=SIMILARITY_DETECTIVE
+algorithm=$1
 inputPath=/home/data
 outputPath=output
-simMetricName=PEARSON_CORRELATION
+simMetricName=$2
 aggPattern=avg
 empiricalBounding=true
 dataType=stock
-n=1000
+n=$3
 m=1000000000
 partition=0
-tau=0.9
-minJump=0.05
+tau=0.95
+minJump=0.03
 maxPLeft=1
 maxPRight=2
 allowSideOverlap=false
@@ -21,7 +21,7 @@ topK=-1
 approximationStrategy=SIMPLE
 seed=0
 parallel=true
-random=false
+random=true
 saveStats=true
 saveResults=false
 
