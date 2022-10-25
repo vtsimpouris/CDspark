@@ -24,7 +24,8 @@ public class DataReader {
             int effN = Math.min(maxN, n);
 
 //            Parse data
-            double[][] rows = new double[maxN][maxDim];
+            ArrayList<Double>[] rows = new ArrayList[maxN];
+            IntStream.range(0, maxN).forEach(i -> rows[i] = new ArrayList<>());
 
 //            Skip all non-partition rows
             for (int i = 0; i < maxDim*partition; i++) {
@@ -39,23 +40,28 @@ public class DataReader {
                         System.out.println("nan value");
                     }
 
-                    rows[i][m] = Double.parseDouble(line[i]);
+                    rows[i].add(Double.parseDouble(line[i]));
                 }
                 m++;
             }
 
+            int effDim = rows[0].size();
+
 //            Remove the rows that have too low variance (if skipvar on)
-            double[][] finalRows = new double[effN][maxDim];
+            double[][] finalRows = new double[effN][effDim];
             if (skipVar) {
                 int i=0;
                 int j=0;
                 while (i < effN) {
-                    double[] row = rows[j]; j++;
+                    double[] row = rows[j].stream().mapToDouble(Double::doubleValue).toArray();
+                    j++;
                     if (lib.std(row) >= 1e-3) {
                         finalRows[i] = row; i++;
                     }
                 }
-            } else{finalRows = rows;}
+            } else{
+                finalRows = IntStream.range(0, effN).mapToObj(i -> rows[i].stream().mapToDouble(Double::doubleValue).toArray()).toArray(double[][]::new);
+            }
 
             return new Pair<>(header, finalRows);
         } catch (Exception e) {

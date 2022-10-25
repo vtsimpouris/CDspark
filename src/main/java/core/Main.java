@@ -87,19 +87,19 @@ public class Main {
             saveResults = args[i].equals("true"); i++;
         } else {
             logLevel = Level.FINE;
-            algorithm = AlgorithmEnum.SMART_BASELINE;
+            algorithm = AlgorithmEnum.SIMILARITY_DETECTIVE;
             inputPath = "/home/jens/tue/data";
             outputPath = "output";
             simMetricName = SimEnum.PEARSON_CORRELATION;
             aggPattern = "avg";
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
-            dataType = "stock";
-            n = 200;
+            dataType = "fmri";
+            n = 0;
             m = (int) 1e7;
             partition = 0;
-            tau = 0.95;
-            minJump = 0.03;
+            tau = 0.8;
+            minJump = 0.05;
             maxPLeft = 1;
             maxPRight = 2;
             allowSideOverlap = false;
@@ -349,7 +349,7 @@ public class Main {
                         String.format("%s/fmri/fmri_res32x38x32-9700.csv", inputPath),
                 };
 
-                dataPath = dataPaths[Math.min(n+1, 4)];
+                dataPath = dataPaths[Math.min(n, 4)];
 
                 n = n_steps[n];
                 dataPair = DataReader.readColumnMajorCSV(dataPath, n, m, n < 9700, partition);

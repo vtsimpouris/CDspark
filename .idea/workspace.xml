@@ -4,14 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Updated some tests to comply with new parallel clustering">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Major bugfixes in baselines">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_sd.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run_sd.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/baselines/Baseline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/Baseline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/baselines/CandidateGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/CandidateGenerator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SimpleBaseline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SimpleBaseline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SmartBaseline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/baselines/SmartBaseline.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/data_reading/DataReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/data_reading/DataReader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +66,7 @@
       <recent name="_aux" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="JUnit.DataReaderTest.testFMRIData">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="core.Main" />
       <module name="SimilarityDetective" />
@@ -91,6 +88,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="DataReaderTest.testFMRIData" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SimilarityDetective" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="data_reading.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="data_reading" />
+      <option name="MAIN_CLASS_NAME" value="data_reading.DataReaderTest" />
+      <option name="METHOD_NAME" value="testFMRIData" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="RecursiveBoundingTest.testRecursiveBounding" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SimilarityDetective" />
       <extension name="coverage">
@@ -102,22 +115,6 @@
       <option name="PACKAGE_NAME" value="bounding" />
       <option name="MAIN_CLASS_NAME" value="bounding.RecursiveBoundingTest" />
       <option name="METHOD_NAME" value="testRecursiveBounding" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="RecursiveBoundingTest.testUnpackAndCheckMinJump" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SimilarityDetective" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="bounding.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="bounding" />
-      <option name="MAIN_CLASS_NAME" value="bounding.RecursiveBoundingTest" />
-      <option name="METHOD_NAME" value="testUnpackAndCheckMinJump" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -141,18 +138,18 @@
     </configuration>
     <list>
       <item itemvalue="Application.Main" />
+      <item itemvalue="JUnit.DataReaderTest.testFMRIData" />
       <item itemvalue="JUnit.RecursiveBoundingTest.testRecursiveBounding" />
-      <item itemvalue="JUnit.RecursiveBoundingTest.testUnpackAndCheckMinJump" />
       <item itemvalue="JUnit.SimilarityDetectiveTest.testThresholdQuery" />
       <item itemvalue="JUnit.All in SimilarityDetective" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
+        <item itemvalue="JUnit.DataReaderTest.testFMRIData" />
         <item itemvalue="JUnit.All in SimilarityDetective" />
+        <item itemvalue="Application.Main" />
         <item itemvalue="JUnit.SimilarityDetectiveTest.testThresholdQuery" />
         <item itemvalue="JUnit.RecursiveBoundingTest.testRecursiveBounding" />
-        <item itemvalue="JUnit.RecursiveBoundingTest.testUnpackAndCheckMinJump" />
       </list>
     </recent_temporary>
   </component>
@@ -176,7 +173,7 @@
       <workItem from="1666340910584" duration="19553000" />
       <workItem from="1666363865533" duration="3960000" />
       <workItem from="1666599549389" duration="22481000" />
-      <workItem from="1666694502284" duration="8649000" />
+      <workItem from="1666694502284" duration="10699000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -430,7 +427,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666698794929</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="Major bugfixes in baselines">
+      <created>1666704964727</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1666704964727</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -448,7 +452,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Implemented subset weights, debugged multipole and pearson metric" />
     <MESSAGE value="Created unit-tets for datareader&#10;and lib. Also fixed some bugs in methods as a result from it" />
     <MESSAGE value="Added unit-tests for pearson correlation" />
     <MESSAGE value="Added unit-tests for Multipole" />
@@ -473,7 +476,8 @@
     <MESSAGE value="WIP merging" />
     <MESSAGE value="parallelized clustering" />
     <MESSAGE value="Updated some tests to comply with new parallel clustering" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated some tests to comply with new parallel clustering" />
+    <MESSAGE value="Major bugfixes in baselines" />
+    <option name="LAST_COMMIT_MESSAGE" value="Major bugfixes in baselines" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -498,9 +502,9 @@
           <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/algorithms/baselines/CandidateGenerator.java</url>
-          <line>42</line>
-          <option name="timeStamp" value="87" />
+          <url>file://$PROJECT_DIR$/src/main/java/data_reading/DataReader.java</url>
+          <line>50</line>
+          <option name="timeStamp" value="90" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
