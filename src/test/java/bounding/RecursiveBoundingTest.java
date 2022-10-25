@@ -48,7 +48,7 @@ public class RecursiveBoundingTest {
                 false, false, 1, simMetric, "avg",
                 new ArrayList<>(Arrays.asList(new double[]{1})), new ArrayList<>(Arrays.asList(new double[]{1}, new double[]{.5,.5})),
                 1, 2, false, "stock", "", new String[n], data, n, m,
-                0, empiricalBounds, 0.95, -1, startEpsilon, epsilonMultiplier, maxLevels, defaultDesiredClusters,
+                0, empiricalBounds, 0.97, -1, startEpsilon, epsilonMultiplier, maxLevels, defaultDesiredClusters,
                 clusteringAlgorithm, breakFirstKLevelsToMoreClusters, clusteringRetries, 1,
                 100, 0, -1, ApproximationStrategyEnum.SIMPLE
         );
@@ -81,8 +81,7 @@ public class RecursiveBoundingTest {
         List<ResultTuple> results = new ArrayList<>(RB.run());
 
         List<ResultTuple> expectedResults = Arrays.asList(
-                new ResultTuple(new ArrayList<>(Arrays.asList(19)), new ArrayList<>(Arrays.asList(45,14)), new ArrayList<>(), new ArrayList<>(), .95),
-                new ResultTuple(new ArrayList<>(Arrays.asList(1)), new ArrayList<>(Arrays.asList(48,18)), new ArrayList<>(), new ArrayList<>(), .95)
+                new ResultTuple(new ArrayList<>(Arrays.asList(48)), new ArrayList<>(Arrays.asList(1,19)), new ArrayList<>(), new ArrayList<>(), .97)
         );
 
         //    Test correct results - empirical bounds
@@ -94,14 +93,14 @@ public class RecursiveBoundingTest {
         }
 
         //    Test number of lookups - empirical bounds
-        Assert.assertEquals(14810, par.simMetric.nLookups.get());
+        Assert.assertEquals(14850, par.simMetric.nLookups.get());
 
 
         //    Test number of CCs - empirical bounds
-        Assert.assertEquals(6726, par.statBag.nCCs.get());
+        Assert.assertEquals(6130, par.statBag.nCCs.get());
 
         //    Test number of positive DCCs - empirical bounds
-        Assert.assertEquals(18, par.statBag.otherStats.get("nPosDCCs"));
+        Assert.assertEquals(1, par.statBag.otherStats.get("nPosDCCs"));
 
         //    Test number of negative DCCs - empirical bounds
         Assert.assertEquals(0L, par.statBag.otherStats.get("nNegDCCs"));
@@ -116,10 +115,8 @@ public class RecursiveBoundingTest {
         List<ResultTuple> results = new ArrayList<>(RB.run());
 
         List<ResultTuple> expectedResults = Arrays.asList(
-                new ResultTuple(new ArrayList<>(Arrays.asList(19)), new ArrayList<>(Arrays.asList(45,14)), new ArrayList<>(), new ArrayList<>(), .95),
-                new ResultTuple(new ArrayList<>(Arrays.asList(1)), new ArrayList<>(Arrays.asList(48,18)), new ArrayList<>(), new ArrayList<>(), .95)
+                new ResultTuple(new ArrayList<>(Arrays.asList(48)), new ArrayList<>(Arrays.asList(1,19)), new ArrayList<>(), new ArrayList<>(), .97)
         );
-
         //    Test correct results - theoretical bounds
         for (int i = 0; i < results.size(); i++) {
             Assert.assertTrue(expectedResults.contains(results.get(i)));
@@ -132,7 +129,7 @@ public class RecursiveBoundingTest {
         Assert.assertEquals(0, par.simMetric.nLookups.get());
 
         //    Test number of positive DCCs - theoretical bounds
-        Assert.assertEquals(18, par.statBag.otherStats.get("nPosDCCs"));
+        Assert.assertEquals(1, par.statBag.otherStats.get("nPosDCCs"));
     }
 
 //    Test unpackAndCheckMinJump
@@ -142,9 +139,9 @@ public class RecursiveBoundingTest {
         par.tau = 0.94;
 
         Cluster[] allClusters = HC.getAllClusters();
-        Cluster C1 = allClusters[35];
-        Cluster C2 = allClusters[33];
-        Cluster C3 = allClusters[34];
+        Cluster C1 = allClusters[20];
+        Cluster C2 = allClusters[22];
+        Cluster C3 = allClusters[19];
 
 //        Make a positive cluster combination
         ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(C1));
@@ -153,19 +150,13 @@ public class RecursiveBoundingTest {
         CC.bound(par.simMetric, true, par.Wl.get(0), par.Wr.get(1), par.getPairwiseDistances());
         List<ClusterCombination> pDCCs = new ArrayList<>(Arrays.asList(CC));
 
-//        CC similarity is 0.956635, max subset similarity is 0.9468.
+//        CC similarity is 0.9706655435524135, max subset similarity is 0.944304189416244.
 //        Let's first test with insignificant minjump
         List<ClusterCombination> unpacked = RecursiveBounding.unpackAndCheckMinJump(pDCCs, par);
         Assert.assertTrue(unpacked.contains(CC));
 
 //        Let's now test with significant minjump
-        par.minJump = 0.02;
-        unpacked = RecursiveBounding.unpackAndCheckMinJump(pDCCs, par);
-        Assert.assertFalse(unpacked.contains(CC));
-
-//        Test if CC filtered out when UB != LB
-        par.minJump = 0;
-        CC.UB = 0.9;
+        par.minJump = 0.03;
         unpacked = RecursiveBounding.unpackAndCheckMinJump(pDCCs, par);
         Assert.assertFalse(unpacked.contains(CC));
     }
@@ -177,9 +168,9 @@ public class RecursiveBoundingTest {
         RB = new RecursiveBounding(par, HC.clusterTree);
 
         Cluster[] allClusters = HC.getAllClusters();
-        Cluster C1 = allClusters[35].getParent();
-        Cluster C2 = allClusters[33].getParent();
-        Cluster C3 = allClusters[34].getParent();
+        Cluster C1 = allClusters[20].getParent();
+        Cluster C2 = allClusters[22].getParent();
+        Cluster C3 = allClusters[19].getParent();
 
 //        Make a big cluster combination
         ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(C1));
@@ -195,10 +186,10 @@ public class RecursiveBoundingTest {
         Assert.assertEquals(1, pDCCs.size());
 
         //    Test nCCs
-        Assert.assertEquals(19, par.statBag.nCCs.get());
+        Assert.assertEquals(10, par.statBag.nCCs.get());
 
         //    Test nLookups
-        Assert.assertEquals(24, par.simMetric.nLookups.get());
+        Assert.assertEquals(37, par.simMetric.nLookups.get());
 
         //        Test DCCs actually decisive
         for (ClusterCombination DCC : DCCs) {

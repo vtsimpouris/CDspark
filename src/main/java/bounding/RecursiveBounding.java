@@ -182,9 +182,6 @@ public class RecursiveBounding {
                             cc.RHS.size() > 0 ? par.Wr.get(cc.RHS.size() - 1): null, par.pairwiseDistances);
                     if (Math.abs(cc.getLB() - cc.getUB()) > 0.001) {
                         par.LOGGER.info("postprocessing: found a singleton CC with LB != UB");
-//                        TODO DEBUG
-                        cc.bound(par.simMetric, par.empiricalBounding, par.Wl.get(cc.LHS.size() - 1),
-                                cc.RHS.size() > 0 ? par.Wr.get(cc.RHS.size() - 1): null, par.pairwiseDistances);
                         return false;
                     }
                     return (cc.getMaxSubsetSimilarity(par) + par.minJump) < cc.getLB();
