@@ -95,8 +95,8 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 10;
-            m = (int) 1e7;
+            n = 2;
+            m = (int) 10;
             partition = 0;
             tau = 0.8;
             minJump = 0.05;
@@ -240,7 +240,6 @@ public class Main {
         data = dataPair.y;
 
 //        update parameters if we got less data
-        System.out.println(data.length);
         n = data.length;
         m = data[0].length;
 

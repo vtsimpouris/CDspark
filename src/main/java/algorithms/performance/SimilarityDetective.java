@@ -5,10 +5,24 @@ import algorithms.Algorithm;
 import algorithms.StageRunner;
 import bounding.RecursiveBounding;
 import clustering.HierarchicalClustering;
+import com.google.common.primitives.Doubles;
 import core.Parameters;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
+import org.apache.spark.api.java.function.Function2;
+import similarities.DistanceFunction;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 public class SimilarityDetective extends Algorithm {
     public HierarchicalClustering HC;
@@ -27,11 +41,33 @@ public class SimilarityDetective extends Algorithm {
         par.statBag.stopWatch.start();
 
 //        STAGE 1 - Compute pairwise distances if using empirical bounds
+        System.out.println(par.pairwiseDistances);
         par.setPairwiseDistances(
                 stageRunner.run("Compute pairwise distances",
                         () -> lib.computePairwiseDistances(par.data, par.simMetric.distFunc, par.parallel), par.statBag.stopWatch)
         );
+        Logger.getLogger("org").setLevel(Level.OFF);
+        Logger.getLogger("akka").setLevel(Level.OFF);
+        SparkConf sparkConf = new SparkConf().setAppName("spark_test");
+        sparkConf.setMaster("local");
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
+        double[] all_pairs = Doubles.concat(par.data);
+        System.out.println(all_pairs.getClass());
+        List<Double> list = Doubles.asList(all_pairs);
+        System.out.println(list.getClass());
+
+        JavaRDD<Double> pairRDD = sc.parallelize(list);
+        DistanceFunction distFunc = par.simMetric.distFunc;
+        JavaPairRDD<Double, Double> cartesian = pairRDD.cartesian(pairRDD);
+        // JavaRDD<Tuple2<InputType0, InputType1>> crossProduct = cartesian
+        //      .map(scalaTuple -> new Tuple2<>(scalaTuple._1, scalaTuple._2));
+        System.out.println(cartesian.collect());
+
+
+        System.out.println(par.n);
+        System.out.println(par.m);
+        //System.out.println(par.data[0][0]);
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
