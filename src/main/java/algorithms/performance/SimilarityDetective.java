@@ -7,6 +7,7 @@ import bounding.RecursiveBounding;
 import clustering.HierarchicalClustering;
 import com.google.common.primitives.Doubles;
 import core.Parameters;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
@@ -15,6 +16,8 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.PairFunction;
+import scala.Tuple2;
 import similarities.DistanceFunction;
 
 import java.util.ArrayList;
@@ -63,6 +66,18 @@ public class SimilarityDetective extends Algorithm {
         // JavaRDD<Tuple2<InputType0, InputType1>> crossProduct = cartesian
         //      .map(scalaTuple -> new Tuple2<>(scalaTuple._1, scalaTuple._2));
         System.out.println(cartesian.collect());
+        JavaPairRDD<Double,Double> convert_D_to_d =  cartesian.mapToPair(
+                (Tuple2<Double,Double> pair) ->  new Tuple2<Double,Double>(
+                        (pair._1().doubleValue()), distFunc.dist(pair._1().doubleValue(),pair._2().doubleValue()));
+        // need new distance metrics to abide to spark (Double)
+
+
+        /*JavaRDD<String> words = input.flatMap(
+new FlatMapFunction<String, String>() {
+public Iterable<String> call(String x) {
+return Arrays.asList(x.split(" "));
+}}); */
+
 
 
         System.out.println(par.n);
