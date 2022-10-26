@@ -5,10 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="Major bugfixes in baselines">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/run_sd.sh" beforeDir="false" afterPath="$PROJECT_DIR$/run_sd.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/data_reading/DataReader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/data_reading/DataReader.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,7 +66,7 @@
       <recent name="_aux" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.DataReaderTest.testFMRIData">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="core.Main" />
       <module name="SimilarityDetective" />
@@ -76,6 +76,13 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Sandbox" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Sandbox" />
+      <module name="SimilarityDetective" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -104,52 +111,35 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="RecursiveBoundingTest.testRecursiveBounding" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SimilarityDetective" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="bounding.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="bounding" />
-      <option name="MAIN_CLASS_NAME" value="bounding.RecursiveBoundingTest" />
-      <option name="METHOD_NAME" value="testRecursiveBounding" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="SimilarityDetectiveTest.testThresholdQuery" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SimilarityDetective" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="algorithms.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="algorithms" />
-      <option name="MAIN_CLASS_NAME" value="algorithms.SimilarityDetectiveTest" />
-      <option name="METHOD_NAME" value="testThresholdQuery" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
+    <configuration name="run_sd.sh" type="ShConfigurationType" temporary="true">
+      <option name="SCRIPT_TEXT" value="" />
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/run_sd.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="EXECUTE_IN_TERMINAL" value="true" />
+      <option name="EXECUTE_SCRIPT_FILE" value="true" />
+      <envs />
+      <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Application.Sandbox" />
       <item itemvalue="Application.Main" />
       <item itemvalue="JUnit.DataReaderTest.testFMRIData" />
-      <item itemvalue="JUnit.RecursiveBoundingTest.testRecursiveBounding" />
-      <item itemvalue="JUnit.SimilarityDetectiveTest.testThresholdQuery" />
       <item itemvalue="JUnit.All in SimilarityDetective" />
+      <item itemvalue="Shell Script.run_sd.sh" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Main" />
+        <item itemvalue="Shell Script.run_sd.sh" />
+        <item itemvalue="Application.Sandbox" />
         <item itemvalue="JUnit.DataReaderTest.testFMRIData" />
         <item itemvalue="JUnit.All in SimilarityDetective" />
-        <item itemvalue="Application.Main" />
-        <item itemvalue="JUnit.SimilarityDetectiveTest.testThresholdQuery" />
-        <item itemvalue="JUnit.RecursiveBoundingTest.testRecursiveBounding" />
       </list>
     </recent_temporary>
   </component>
@@ -174,6 +164,7 @@
       <workItem from="1666363865533" duration="3960000" />
       <workItem from="1666599549389" duration="22481000" />
       <workItem from="1666694502284" duration="10699000" />
+      <workItem from="1666779828338" duration="4246000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -500,11 +491,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/algorithms/baselines/CandidateGenerator.java</url>
           <line>82</line>
           <option name="timeStamp" value="86" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/data_reading/DataReader.java</url>
-          <line>50</line>
-          <option name="timeStamp" value="90" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

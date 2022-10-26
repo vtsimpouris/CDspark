@@ -88,14 +88,14 @@ public class Main {
         } else {
             logLevel = Level.FINE;
             algorithm = AlgorithmEnum.SIMILARITY_DETECTIVE;
-            inputPath = "/home/jens/tue/data";
+            inputPath = "/home/vtsimpouris/Desktop/";
             outputPath = "output";
             simMetricName = SimEnum.PEARSON_CORRELATION;
             aggPattern = "avg";
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
-            dataType = "fmri";
-            n = 0;
+            dataType = "stock";
+            n = 10;
             m = (int) 1e7;
             partition = 0;
             tau = 0.8;
@@ -240,6 +240,7 @@ public class Main {
         data = dataPair.y;
 
 //        update parameters if we got less data
+        System.out.println(data.length);
         n = data.length;
         m = data[0].length;
 
@@ -360,12 +361,13 @@ public class Main {
                 dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
             case "stock_log": {
-                dataPath = String.format("%s/stock/stocks_2020_04_10min_logreturn_full.csv", inputPath);
+                // path here needs correction
+                dataPath = String.format("%s/stock/stock_0021daily/0021daily/stocks_0021daily_interpolated_full.csv", inputPath);
                 dataPair = DataReader.readColumnMajorCSV(dataPath, n, m, true, partition);
             } break;
             case "stock":
             default: {
-                dataPath = String.format("%s/stock/0021daily/stocks_0021daily_interpolated_full.csv", inputPath);
+                dataPath = String.format("/home/vtsimpouris/Desktop/stock/stock_0021daily/0021daily/stocks_0021daily_interpolated_full.csv");
                 dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
         }
