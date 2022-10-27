@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="we need compatible distance metrics">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="different approach due to type issues">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/DistanceFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/DistanceFunction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -169,7 +166,7 @@
       <workItem from="1666786168625" duration="10445000" />
       <workItem from="1666798751680" duration="3063000" />
       <workItem from="1666801902739" duration="3456000" />
-      <workItem from="1666873635269" duration="9769000" />
+      <workItem from="1666873635269" duration="10266000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -451,7 +448,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666805347990</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="different approach due to type issues">
+      <created>1666883441855</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1666883441855</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -475,7 +479,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added unit-tests for Multipole" />
     <MESSAGE value="Added unit-tests for EuclideanSimilarity" />
     <MESSAGE value="Added unit-tests for MinkowskiSimilarity" />
     <MESSAGE value="Added unit-tests for ChebyshevSimilarity" />
@@ -500,7 +503,8 @@
     <MESSAGE value="Major bugfixes in baselines" />
     <MESSAGE value="working on sparking setPairwiseDistances" />
     <MESSAGE value="we need compatible distance metrics" />
-    <option name="LAST_COMMIT_MESSAGE" value="we need compatible distance metrics" />
+    <MESSAGE value="different approach due to type issues" />
+    <option name="LAST_COMMIT_MESSAGE" value="different approach due to type issues" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

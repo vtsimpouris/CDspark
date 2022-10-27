@@ -41,6 +41,17 @@ public class SimilarityDetective extends Algorithm {
 
     };
 
+    public JavaPairRDD<Double,Integer> createRDDfromData(double[][] d, JavaSparkContext sc){
+        JavaPairRDD<Double,Integer> result = null;
+        for (int i = 0; i < d.length; i++) {
+            List<Tuple2> data =  Arrays.asList(new Tuple2(Doubles.asList(d[i]), i));
+            JavaRDD rdd = sc.parallelize(data);
+            result = JavaPairRDD.fromJavaRDD(rdd);
+            System.out.println(result.collect());
+        }
+        return result;
+    };
+
     public SimilarityDetective(Parameters par) {
         super(par);
         HC = new HierarchicalClustering(par);
@@ -65,24 +76,12 @@ public class SimilarityDetective extends Algorithm {
         SparkConf sparkConf = new SparkConf().setAppName("spark_test");
         sparkConf.setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        JavaPairRDD<Double,Integer> result = createRDDfromData(par.data,sc);
+        System.out.println(result.collect());
 
-        double[] all_pairs = Doubles.concat(par.data);
-        Double[] TS = convert_d_to_D(par.data[0]);
-        //JavaPairRDD<Double,Integer> pairRDD = sc.parallelizePairs((Doubles.asList(par.data[0]),1));
-        for (int i = 0; i < par.data.length; i++) {
-            List<Tuple2> data =  Arrays.asList(new Tuple2(Doubles.asList(par.data[i]), i));
-            JavaRDD rdd = sc.parallelize(data);
-            JavaPairRDD result = JavaPairRDD.fromJavaRDD(rdd);
-            System.out.println(result.collect());
-            /*JavaPairRDD<Double> pairRDD = sc.parallelize(Doubles.asList(par.data[i]),i);
-            //JavaPairRDD<Double,Integer> result = pairRDD.mapToPair(1);
-            JavaPairRDD<Double, Integer> result = pairRDD.mapToPair(v -> {
-                Double value = v;
-                Integer key = i;
-                return new Tuple2<Double, Integer>(value, key);
-            });*/
-        }
-        List<Double> list = Doubles.asList(all_pairs);
+
+
+        //List<Double> list = Doubles.asList(all_pairs);
         //System.out.println(result.collect());
         //JavaRDD<Double> pairRDD = sc.parallelize(list);
         //System.out.println(pairRDD.collect());
