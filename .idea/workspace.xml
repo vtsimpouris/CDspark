@@ -4,9 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="working on sparking setPairwiseDistances">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="we need compatible distance metrics">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/DistanceFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/DistanceFunction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,9 +19,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Interface" />
         <option value="Enum" />
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
@@ -165,7 +168,8 @@
       <workItem from="1666779828338" duration="5181000" />
       <workItem from="1666786168625" duration="10445000" />
       <workItem from="1666798751680" duration="3063000" />
-      <workItem from="1666801902739" duration="3418000" />
+      <workItem from="1666801902739" duration="3456000" />
+      <workItem from="1666873635269" duration="9769000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -440,7 +444,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666796810642</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="we need compatible distance metrics">
+      <created>1666805347990</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1666805347990</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -464,7 +475,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added unit-tests for pearson correlation" />
     <MESSAGE value="Added unit-tests for Multipole" />
     <MESSAGE value="Added unit-tests for EuclideanSimilarity" />
     <MESSAGE value="Added unit-tests for MinkowskiSimilarity" />
@@ -489,7 +499,8 @@
     <MESSAGE value="Updated some tests to comply with new parallel clustering" />
     <MESSAGE value="Major bugfixes in baselines" />
     <MESSAGE value="working on sparking setPairwiseDistances" />
-    <option name="LAST_COMMIT_MESSAGE" value="working on sparking setPairwiseDistances" />
+    <MESSAGE value="we need compatible distance metrics" />
+    <option name="LAST_COMMIT_MESSAGE" value="we need compatible distance metrics" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

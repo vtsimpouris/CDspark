@@ -31,6 +31,16 @@ public class SimilarityDetective extends Algorithm {
     public HierarchicalClustering HC;
     public RecursiveBounding RB;
 
+    public Double[] convert_d_to_D(double[] array){
+        Double[] temp = new Double[array.length];
+        for (int i = 0; i < array.length; i++){
+            temp[i] = Double.valueOf(array[i]);
+
+        }
+        return temp;
+
+    };
+
     public SimilarityDetective(Parameters par) {
         super(par);
         HC = new HierarchicalClustering(par);
@@ -39,16 +49,17 @@ public class SimilarityDetective extends Algorithm {
     @Override
     public Set<ResultTuple> run() {
         StageRunner stageRunner = new StageRunner(par.LOGGER);
-
+        System.out.println("babis");
 //        Start the timer
         par.statBag.stopWatch.start();
 
 //        STAGE 1 - Compute pairwise distances if using empirical bounds
-        System.out.println(par.pairwiseDistances);
+        //System.out.println(par.pairwiseDistances);
         par.setPairwiseDistances(
                 stageRunner.run("Compute pairwise distances",
                         () -> lib.computePairwiseDistances(par.data, par.simMetric.distFunc, par.parallel), par.statBag.stopWatch)
         );
+        System.out.println("babis");
         Logger.getLogger("org").setLevel(Level.OFF);
         Logger.getLogger("akka").setLevel(Level.OFF);
         SparkConf sparkConf = new SparkConf().setAppName("spark_test");
@@ -56,20 +67,35 @@ public class SimilarityDetective extends Algorithm {
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
         double[] all_pairs = Doubles.concat(par.data);
-        System.out.println(all_pairs.getClass());
+        Double[] TS = convert_d_to_D(par.data[0]);
+        //JavaPairRDD<Double,Integer> pairRDD = sc.parallelizePairs((Doubles.asList(par.data[0]),1));
+        for (int i = 0; i < par.data.length; i++) {
+            List<Tuple2> data =  Arrays.asList(new Tuple2(Doubles.asList(par.data[i]), i));
+            JavaRDD rdd = sc.parallelize(data);
+            JavaPairRDD result = JavaPairRDD.fromJavaRDD(rdd);
+            System.out.println(result.collect());
+            /*JavaPairRDD<Double> pairRDD = sc.parallelize(Doubles.asList(par.data[i]),i);
+            //JavaPairRDD<Double,Integer> result = pairRDD.mapToPair(1);
+            JavaPairRDD<Double, Integer> result = pairRDD.mapToPair(v -> {
+                Double value = v;
+                Integer key = i;
+                return new Tuple2<Double, Integer>(value, key);
+            });*/
+        }
         List<Double> list = Doubles.asList(all_pairs);
-        System.out.println(list.getClass());
-
-        JavaRDD<Double> pairRDD = sc.parallelize(list);
-        DistanceFunction distFunc = par.simMetric.distFunc;
-        JavaPairRDD<Double, Double> cartesian = pairRDD.cartesian(pairRDD);
+        //System.out.println(result.collect());
+        //JavaRDD<Double> pairRDD = sc.parallelize(list);
+        //System.out.println(pairRDD.collect());
+        //DistanceFunction distFunc = par.simMetric.distFunc;
+        //JavaPairRDD<Double, Double> cartesian = pairRDD.cartesian(pairRDD);
         // JavaRDD<Tuple2<InputType0, InputType1>> crossProduct = cartesian
         //      .map(scalaTuple -> new Tuple2<>(scalaTuple._1, scalaTuple._2));
-        System.out.println(cartesian.collect());
-        JavaPairRDD<Double,Double> convert_D_to_d =  cartesian.mapToPair(
+        //System.out.println(cartesian.collect());
+        /*JavaPairRDD<Double,Double> convert_D_to_d =  cartesian.mapToPair(
                 (Tuple2<Double,Double> pair) ->  new Tuple2<Double,Double>(
-                        (pair._1().doubleValue()), distFunc.dist(pair._1().doubleValue(),pair._2().doubleValue()));
+                        (pair._1()), new Double(distFunc.dist(new double[]{pair._1()},new double[]{pair._2()}))));*/
         // need new distance metrics to abide to spark (Double)
+        //System.out.println(distFunc.dist(new double[]{1.0,2.0},new double[]{1.0,3.0}));
 
 
         /*JavaRDD<String> words = input.flatMap(
@@ -80,8 +106,8 @@ return Arrays.asList(x.split(" "));
 
 
 
-        System.out.println(par.n);
-        System.out.println(par.m);
+        //System.out.println(par.n);
+        //System.out.println(par.m);
         //System.out.println(par.data[0][0]);
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);

@@ -220,6 +220,9 @@ public class lib {
         lib.getStream(IntStream.range(0, n).boxed(), parallel).forEach(i -> {
             lib.getStream(IntStream.range(i+1, n).boxed(), parallel).forEach(j -> {
                 double dist = distFunc.dist(data[i], data[j]);
+
+                //System.out.println(data[j].length);
+                System.out.println(dist);
                 pairwiseDistances[i][j] = dist;
                 pairwiseDistances[j][i] = dist;
             });

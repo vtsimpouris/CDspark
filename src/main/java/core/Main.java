@@ -95,8 +95,8 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 2;
-            m = (int) 10;
+            n = 5;
+            m = (int) 5;
             partition = 0;
             tau = 0.8;
             minJump = 0.05;
@@ -304,6 +304,7 @@ public class Main {
             case SIMPLE_BASELINE: algorithm = new SimpleBaseline(par); break;
             case SMART_BASELINE: algorithm = new SmartBaseline(par); break;
         }
+        System.out.println("babis");
         Set<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();
         algorithm.printStats(par.statBag);
