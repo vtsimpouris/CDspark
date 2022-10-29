@@ -304,7 +304,6 @@ public class Main {
             case SIMPLE_BASELINE: algorithm = new SimpleBaseline(par); break;
             case SMART_BASELINE: algorithm = new SmartBaseline(par); break;
         }
-        System.out.println("babis");
         Set<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();
         algorithm.printStats(par.statBag);

@@ -20,10 +20,7 @@ import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 import similarities.DistanceFunction;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -41,21 +38,33 @@ public class SimilarityDetective extends Algorithm {
 
     };
 
-    public JavaPairRDD<Double,Integer> createRDDfromData(double[][] d, JavaSparkContext sc){
+    public void createRDDfromData(double[][] d, JavaSparkContext sc){
         JavaPairRDD temp = null;
-        JavaPairRDD<Double,Integer> result = null;
-        for (int i = 0; i < d.length; i++) {
+        JavaPairRDD<Double[],Integer> result = null;
+        for (int i = 0; i < d.length; i++){
+            Double[] t = new Double[d[i].length];
+            for (int j = 0; j < d[i].length; j++) {
+                t[j] = d[i][j];
+                //System.out.println(t[j]);
+            }
+            List<Double[]> t2 = new ArrayList<Double[]>();
+            t2.add(t);
+            JavaRDD rdd = sc.parallelize(t2);
+            Double[] t3 = (Double[]) (rdd.collect().toArray()[0]);
+            System.out.println(Arrays.toString(t3));
+
+        }
+        /*for (int i = 0; i < d.length; i++) {
             List<Tuple2> data =  Arrays.asList(new Tuple2(Doubles.asList(d[i]), i));
             JavaRDD rdd = sc.parallelize(data);
             temp= JavaPairRDD.fromJavaRDD(rdd);
             if(result == null){
-                System.out.println("babis");
                 result = temp;
             }else {
                 result = result.union(temp);
             }
-        }
-        return result;
+        }*/
+        //return result;
     };
 
     public SimilarityDetective(Parameters par) {
@@ -66,7 +75,6 @@ public class SimilarityDetective extends Algorithm {
     @Override
     public Set<ResultTuple> run() {
         StageRunner stageRunner = new StageRunner(par.LOGGER);
-        System.out.println("babis");
 //        Start the timer
         par.statBag.stopWatch.start();
 
@@ -82,8 +90,25 @@ public class SimilarityDetective extends Algorithm {
         SparkConf sparkConf = new SparkConf().setAppName("spark_test");
         sparkConf.setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        JavaPairRDD<Double,Integer> result = createRDDfromData(par.data,sc);
-        System.out.println(result.collect());
+        createRDDfromData(par.data,sc);
+        //JavaPairRDD<Double,Integer> data = createRDDfromData(par.data,sc);
+        /*JavaPairRDD<Tuple2<Double[], Integer>,
+                Tuple2<Double[], Integer>> cartesian = data.cartesian(data);
+
+        List<Tuple2<Tuple2<Double[], Integer>, Tuple2<Double[], Integer>>> r = cartesian.collect();
+        //Tuple2<Tuple2<Double, Integer>, Tuple2<Double, Integer>> t = new Tuple2<Tuple2<Double, Integer>, Tuple2<Double, Integer>>();
+        System.out.println(r.get(0));
+        Object[] arr = Arrays.stream(r.toArray()).toArray();
+        Double[] nums = new Double[5];
+        for (int i =0; i< arr.length; i++){
+            ArrayList<Double> list = new ArrayList<>(Arrays.asList(r.get(0)._1._1));
+            System.out.println(r.get(0)._1._1);
+        }*/
+        //String[] y;
+        //y = new String[]{d._1};
+        //List<Double> list = new ArrayList<>(Arrays.asList({r.get(0)._1._1};
+        //Double temp1 = (Double) r.get(0)._1._1;
+        //System.out.println(temp1);
 
 
 
