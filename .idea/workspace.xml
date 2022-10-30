@@ -173,7 +173,7 @@
       <workItem from="1667125890790" duration="5434000" />
       <workItem from="1667132702268" duration="1708000" />
       <workItem from="1667134709642" duration="120000" />
-      <workItem from="1667135005797" duration="1727000" />
+      <workItem from="1667135005797" duration="2582000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -490,7 +490,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667135682093</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="run spark from main">
+      <created>1667136791157</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1667136791157</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

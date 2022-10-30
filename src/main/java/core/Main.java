@@ -313,6 +313,13 @@ public class Main {
                 this.i = i;
                 this.data = (double[]) data.clone();
             }
+            public void printData(){
+                for(int i = 0; i < this.data.length; i++){
+                    System.out.println(data[i]);
+                }
+                System.out.println(this.data.length);
+                System.out.println("\n");
+            }
         }
         SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD")
                 .setMaster("local[2]").set("spark.executor.memory","2g");
@@ -334,6 +341,9 @@ public class Main {
                     }
                 };
         JavaPairRDD<Integer, sparkObject> pairs = JavaRDD.mapToPair(keyData);
+        pairs.foreach(x -> {
+            x._2().printData();
+        });
 
         for(sparkObject o: JavaRDD.collect()){
             System.out.println(o.i);
