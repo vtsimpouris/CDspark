@@ -9,8 +9,12 @@ import algorithms.baselines.SmartBaseline;
 import algorithms.performance.SimilarityDetective;
 import bounding.ApproximationStrategyEnum;
 import clustering.ClusteringAlgorithmEnum;
+import com.google.common.collect.ImmutableList;
 import data_reading.DataReader;
 import lombok.NonNull;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 import similarities.MultivariateSimilarityFunction;
 import similarities.functions.*;
 import similarities.SimEnum;
@@ -18,6 +22,7 @@ import similarities.SimEnum;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -95,7 +100,7 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 5;
+            n = 3;
             m = (int) 5;
             partition = 0;
             tau = 0.8;
@@ -297,7 +302,34 @@ public class Main {
         par.LOGGER.info(String.format("----------- new run starting; querying %s with %s on %s part %d, n=%d ---------------------",
                 par.simMetric, par.algorithm, par.dataType, par.partition, par.n));
         par.LOGGER.info("Starting time " + LocalDateTime.now());
+        class sparkObject implements Serializable {
+            private static final long serialVersionUID = -2685444218382696366L;
+            double[]  data;
+            int i;
+            public sparkObject(int i, double[] data){
+                this.i = i;
+                this.data = (double[]) data.clone();
+            }
+        }
+        SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD")
+                .setMaster("local[2]").set("spark.executor.memory","2g");
+        // start a spark context
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
+        // prepare list of objects
+        List<sparkObject> tempList = new ArrayList<>();
+        for (int i = 0; i < par.data.length; i++){
+            tempList.add(new sparkObject(i,par.data[i]));
+        }
+        List<sparkObject> list = ImmutableList.copyOf(tempList);
+        // parallelize the list using SparkContext
+        JavaRDD<sparkObject> JavaRDD = sc.parallelize(list);
+
+        for(sparkObject o: JavaRDD.collect()){
+            System.out.println(o.i);
+        }
+
+        //sc.close();
         Algorithm algorithm;
         switch (par.algorithm){
             case SIMILARITY_DETECTIVE: default: algorithm = new SimilarityDetective(par); break;

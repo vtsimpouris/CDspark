@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="function to create rdd from data created (bug fix)">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="refactoring types in JavaRDDs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
@@ -170,7 +169,12 @@
       <workItem from="1666801902739" duration="3456000" />
       <workItem from="1666873635269" duration="19733000" />
       <workItem from="1667043185691" duration="3275000" />
-      <workItem from="1667047422706" duration="1969000" />
+      <workItem from="1667047422706" duration="5785000" />
+      <workItem from="1667057059935" duration="417000" />
+      <workItem from="1667125890790" duration="5434000" />
+      <workItem from="1667132702268" duration="1708000" />
+      <workItem from="1667134709642" duration="120000" />
+      <workItem from="1667135005797" duration="642000" />
     </task>
     <task id="LOCAL-00001" summary="first commit">
       <created>1665609043747</created>
@@ -473,7 +477,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666885166527</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="refactoring types in JavaRDDs">
+      <created>1667049417431</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1667049417431</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -497,7 +508,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added unit-tests for ChebyshevSimilarity" />
     <MESSAGE value="Worked on slow baseline candidate generation" />
     <MESSAGE value="Created Baseline algorithm" />
     <MESSAGE value="Finished both baselines" />
@@ -522,7 +532,8 @@
     <MESSAGE value="different approach due to type issues" />
     <MESSAGE value="function to create rdd from data created" />
     <MESSAGE value="function to create rdd from data created (bug fix)" />
-    <option name="LAST_COMMIT_MESSAGE" value="function to create rdd from data created (bug fix)" />
+    <MESSAGE value="refactoring types in JavaRDDs" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactoring types in JavaRDDs" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
