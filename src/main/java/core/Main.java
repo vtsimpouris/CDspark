@@ -13,8 +13,11 @@ import com.google.common.collect.ImmutableList;
 import data_reading.DataReader;
 import lombok.NonNull;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.PairFunction;
+import scala.Tuple2;
 import similarities.MultivariateSimilarityFunction;
 import similarities.functions.*;
 import similarities.SimEnum;
@@ -324,10 +327,18 @@ public class Main {
         List<sparkObject> list = ImmutableList.copyOf(tempList);
         // parallelize the list using SparkContext
         JavaRDD<sparkObject> JavaRDD = sc.parallelize(list);
+        PairFunction<sparkObject, Integer, sparkObject> keyData =
+                new PairFunction<sparkObject, Integer, sparkObject>() {
+                    public Tuple2<Integer, sparkObject> call(sparkObject x) {
+                        return new Tuple2(x.i, x);
+                    }
+                };
+        JavaPairRDD<Integer, sparkObject> pairs = JavaRDD.mapToPair(keyData);
 
         for(sparkObject o: JavaRDD.collect()){
             System.out.println(o.i);
         }
+        System.out.println(pairs.collect());
 
         //sc.close();
         Algorithm algorithm;
