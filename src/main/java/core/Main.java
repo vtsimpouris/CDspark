@@ -13,6 +13,7 @@ import clustering.ClusteringAlgorithmEnum;
 import com.google.common.collect.ImmutableList;
 import data_reading.DataReader;
 import lombok.NonNull;
+import org.apache.curator.shaded.com.google.common.base.Stopwatch;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -33,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.logging.*;
 import java.util.regex.Matcher;
@@ -107,8 +109,8 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 10;
-            m = (int) 5;
+            n = 100;
+            m = (int) 500;
             partition = 0;
             tau = 0.8;
             minJump = 0.05;
@@ -349,7 +351,7 @@ public class Main {
         }
         DistanceFunction distFunc = par.simMetric.distFunc;
         SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD")
-                .setMaster("local[2]").set("spark.executor.memory","2g");
+                .setMaster("local[16]").set("spark.executor.memory","4g");
         // start a spark context
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
@@ -360,9 +362,12 @@ public class Main {
                 tempList.add(new sparkObject(i, j, par.data[i], par.data[j], distFunc));
             }
         }
+
         List<sparkObject> list = ImmutableList.copyOf(tempList);
         JavaRDD<sparkObject> JavaRDD = sc.parallelize(list);
+
         List<sparkObject> returned = JavaRDD.collect();
+        final Stopwatch sw = Stopwatch.createStarted();
         double[][] pairwiseDistances = new double[par.n][par.n];
         for (int i = 0; i < par.data.length; i++) {
             //System.out.println("i = " + i);
@@ -373,8 +378,9 @@ public class Main {
                 //System.out.println('\n');
             }
         }
-        System.out.println(list.size());
-        System.out.println(Arrays.deepToString(pairwiseDistances));
+        final long elapsedMillis = sw.elapsed(TimeUnit.MILLISECONDS);
+        System.out.println("time = " + elapsedMillis);
+        //System.out.println(Arrays.deepToString(pairwiseDistances));
         /*System.out.println("mine");
         for (int i = 0; i < list.size(); i++) {
             System.out.println("pair:");

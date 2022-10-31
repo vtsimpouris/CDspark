@@ -1,12 +1,14 @@
 package _aux;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.curator.shaded.com.google.common.base.Stopwatch;
 import similarities.DistanceFunction;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -214,8 +216,11 @@ public class lib {
         return Z;
     }
 
+
+    final Stopwatch sw = Stopwatch.createStarted();
     public static double[][] computePairwiseDistances(double[][] data, DistanceFunction distFunc, boolean parallel) {
         int n = data.length;
+        final Stopwatch sw = Stopwatch.createStarted();
         double[][] pairwiseDistances = new double[n][n];
         lib.getStream(IntStream.range(0, n).boxed(), parallel).forEach(i -> {
             lib.getStream(IntStream.range(i+1, n).boxed(), parallel).forEach(j -> {
@@ -225,7 +230,9 @@ public class lib {
 
             });
         });
-        System.out.println(Arrays.deepToString(pairwiseDistances));
+        final long elapsedMillis = sw.elapsed(TimeUnit.MILLISECONDS);
+        System.out.println("time2 = " + elapsedMillis);
+        //System.out.println(Arrays.deepToString(pairwiseDistances));
         return pairwiseDistances;
     }
 
