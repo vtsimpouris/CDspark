@@ -132,5 +132,6 @@ public abstract class MultivariateSimilarityFunction {
 
         return new Pair<>(WlSqSum.get(Wl.length), WrSqSum.get(Wr.length));
     }
+
 }
 

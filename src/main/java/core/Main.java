@@ -2,6 +2,7 @@ package core;
 
 import _aux.Pair;
 import _aux.ResultTuple;
+import _aux.lib;
 import algorithms.Algorithm;
 import algorithms.AlgorithmEnum;
 import algorithms.baselines.SimpleBaseline;
@@ -16,8 +17,10 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
+import similarities.DistanceFunction;
 import similarities.MultivariateSimilarityFunction;
 import similarities.functions.*;
 import similarities.SimEnum;
@@ -30,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
+import java.util.function.Function;
 import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -115,7 +119,7 @@ public class Main {
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = true;
+            parallel = false;
             random = false;
             saveStats = true;
             saveResults = false;
@@ -307,20 +311,29 @@ public class Main {
         par.LOGGER.info("Starting time " + LocalDateTime.now());
         class sparkObject implements Serializable {
             private static final long serialVersionUID = -2685444218382696366L;
-            double[]  data;
-            int i;
-            public sparkObject(int i, double[] data){
-                this.i = i;
-                this.data = (double[]) data.clone();
+            double[]  d1;
+            double[]  d2;
+            double pairwiseDistances;
+            void PearsonCorrelation (double[] a, double[] b) {
+                this.pairwiseDistances = Math.acos(Math.min(Math.max(lib.dot(a, b), -1), 1));
             }
-            public void printData(){
-                for(int i = 0; i < this.data.length; i++){
-                    System.out.println(data[i]);
+            int i;
+            int j;
+            public sparkObject(int i, int j, double[] d1, double[] d2){
+                this.i = i;
+                this.i = j;
+                this.d1 = (double[]) d1.clone();
+                this.d2 = (double[]) d2.clone();
+            }
+            public void printData1(){
+                for(int i = 0; i < this.d1.length; i++){
+                    System.out.println(d1[i]);
                 }
-                System.out.println(this.data.length);
+                System.out.println(this.d1.length);
                 System.out.println("\n");
             }
         }
+        DistanceFunction distFunc = par.simMetric.distFunc;
         SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD")
                 .setMaster("local[2]").set("spark.executor.memory","2g");
         // start a spark context
@@ -328,27 +341,23 @@ public class Main {
 
         // prepare list of objects
         List<sparkObject> tempList = new ArrayList<>();
-        for (int i = 0; i < par.data.length; i++){
-            tempList.add(new sparkObject(i,par.data[i]));
+        for (int i = 0; i < par.data.length; i++) {
+            for (int j = i+1; j < par.data.length; j++) {
+                tempList.add(new sparkObject(i, j, par.data[i], par.data[j]));
+            }
         }
         List<sparkObject> list = ImmutableList.copyOf(tempList);
-        // parallelize the list using SparkContext
         JavaRDD<sparkObject> JavaRDD = sc.parallelize(list);
-        PairFunction<sparkObject, Integer, sparkObject> keyData =
-                new PairFunction<sparkObject, Integer, sparkObject>() {
-                    public Tuple2<Integer, sparkObject> call(sparkObject x) {
-                        return new Tuple2(x.i, x);
-                    }
-                };
-        JavaPairRDD<Integer, sparkObject> pairs = JavaRDD.mapToPair(keyData);
-        pairs.foreach(x -> {
-            x._2().printData();
-        });
-
-        for(sparkObject o: JavaRDD.collect()){
-            System.out.println(o.i);
+        List<sparkObject> returned = JavaRDD.collect();
+        System.out.println("mine");
+        for (int i = 0; i < list.size(); i++) {
+                System.out.println("pair:");
+                System.out.println(Arrays.toString(returned.get(i).d1));
+                System.out.println(Arrays.toString(returned.get(i).d2));
+                //System.out.println(returned.get(i).pairwiseDistances);
         }
-        System.out.println(pairs.collect());
+        System.out.println("mine");
+        System.out.println("\n");
 
         //sc.close();
         Algorithm algorithm;
@@ -375,6 +384,8 @@ public class Main {
         }
 
     }
+
+
 
     public static Pair<String[], double[][]> getData(String dataType, String inputPath, int n, int m, int partition, Logger LOGGER) {
         String dataPath;
