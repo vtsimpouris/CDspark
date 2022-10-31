@@ -119,7 +119,7 @@ public class Main {
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = false;
+            parallel = true;
             random = false;
             saveStats = true;
             saveResults = false;
@@ -309,22 +309,27 @@ public class Main {
         par.LOGGER.info(String.format("----------- new run starting; querying %s with %s on %s part %d, n=%d ---------------------",
                 par.simMetric, par.algorithm, par.dataType, par.partition, par.n));
         par.LOGGER.info("Starting time " + LocalDateTime.now());
-        class sparkObject implements Serializable {
+        class sparkObject implements Serializable  {
             private static final long serialVersionUID = -2685444218382696366L;
             double[]  d1;
             double[]  d2;
-            double pairwiseDistances;
-            void PearsonCorrelation (double[] a, double[] b) {
-                this.pairwiseDistances = Math.acos(Math.min(Math.max(lib.dot(a, b), -1), 1));
-            }
+            double pairwiseDistances[];
+            public transient DistanceFunction distFunc;
+            double dist;
+
+
             int i;
             int j;
-            public sparkObject(int i, int j, double[] d1, double[] d2){
+            public sparkObject(int i, int j, double[] d1, double[] d2, DistanceFunction distFunc){
                 this.i = i;
                 this.i = j;
                 this.d1 = (double[]) d1.clone();
                 this.d2 = (double[]) d2.clone();
+                this.distFunc = distFunc;
+                this.dist = distFunc.dist(this.d1, this.d2);
             }
+
+
             public void printData1(){
                 for(int i = 0; i < this.d1.length; i++){
                     System.out.println(d1[i]);
@@ -332,6 +337,15 @@ public class Main {
                 System.out.println(this.d1.length);
                 System.out.println("\n");
             }
+        }
+
+
+        //sc.close();
+        Algorithm algorithm;
+        switch (par.algorithm){
+            case SIMILARITY_DETECTIVE: default: algorithm = new SimilarityDetective(par); break;
+            case SIMPLE_BASELINE: algorithm = new SimpleBaseline(par); break;
+            case SMART_BASELINE: algorithm = new SmartBaseline(par); break;
         }
         DistanceFunction distFunc = par.simMetric.distFunc;
         SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD")
@@ -342,30 +356,42 @@ public class Main {
         // prepare list of objects
         List<sparkObject> tempList = new ArrayList<>();
         for (int i = 0; i < par.data.length; i++) {
-            for (int j = i+1; j < par.data.length; j++) {
-                tempList.add(new sparkObject(i, j, par.data[i], par.data[j]));
+            for (int j = 0; j < par.data.length; j++) {
+                tempList.add(new sparkObject(i, j, par.data[i], par.data[j], distFunc));
             }
         }
         List<sparkObject> list = ImmutableList.copyOf(tempList);
         JavaRDD<sparkObject> JavaRDD = sc.parallelize(list);
         List<sparkObject> returned = JavaRDD.collect();
-        System.out.println("mine");
+        double[][] pairwiseDistances = new double[par.n][par.n];
+        for (int i = 0; i < par.data.length; i++) {
+            for (int j = i + 1; j < par.data.length; j++) {
+                if(i == 0){
+                    pairwiseDistances[i][j] = returned.get(j).dist;
+                    pairwiseDistances[j][i] = returned.get(j).dist;
+                }
+                else{
+                    pairwiseDistances[i][j] = returned.get(2*j+1).dist;
+                    pairwiseDistances[j][i] = returned.get(2*j+1).dist;
+                }
+                }
+            System.out.println('\n');
+        }
+        System.out.println(Arrays.deepToString(pairwiseDistances));
         for (int i = 0; i < list.size(); i++) {
-                System.out.println("pair:");
-                System.out.println(Arrays.toString(returned.get(i).d1));
-                System.out.println(Arrays.toString(returned.get(i).d2));
-                //System.out.println(returned.get(i).pairwiseDistances);
+           System.out.println(returned.get(i).dist);
+        }
+        /*System.out.println("mine");
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println("pair:");
+            System.out.println(returned.get(i).i);
+            System.out.println(returned.get(i).j);
+            System.out.println(Arrays.toString(returned.get(i).d1));
+            System.out.println(Arrays.toString(returned.get(i).d2));
+            System.out.println(returned.get(i).dist);
         }
         System.out.println("mine");
-        System.out.println("\n");
-
-        //sc.close();
-        Algorithm algorithm;
-        switch (par.algorithm){
-            case SIMILARITY_DETECTIVE: default: algorithm = new SimilarityDetective(par); break;
-            case SIMPLE_BASELINE: algorithm = new SimpleBaseline(par); break;
-            case SMART_BASELINE: algorithm = new SmartBaseline(par); break;
-        }
+        System.out.println("\n");*/
         Set<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();
         algorithm.printStats(par.statBag);

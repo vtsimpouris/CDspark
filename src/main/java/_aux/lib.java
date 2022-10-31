@@ -218,19 +218,15 @@ public class lib {
         int n = data.length;
         double[][] pairwiseDistances = new double[n][n];
         lib.getStream(IntStream.range(0, n).boxed(), parallel).forEach(i -> {
-
             lib.getStream(IntStream.range(i+1, n).boxed(), parallel).forEach(j -> {
                 double dist = distFunc.dist(data[i], data[j]);
                 pairwiseDistances[i][j] = dist;
                 pairwiseDistances[j][i] = dist;
                 System.out.println("his pair:");
-                System.out.println(Arrays.toString(data[i]));
-                System.out.println(Arrays.toString(data[j]));
-                System.out.println("/n");
 
             });
-
         });
+        System.out.println(Arrays.deepToString(pairwiseDistances));
         return pairwiseDistances;
     }
 

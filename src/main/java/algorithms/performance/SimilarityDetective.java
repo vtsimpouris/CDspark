@@ -102,24 +102,6 @@ public class SimilarityDetective extends Algorithm {
                 stageRunner.run("Compute pairwise distances",
                         () -> lib.computePairwiseDistances(par.data, par.simMetric.distFunc, par.parallel), par.statBag.stopWatch)
         );
-        //createRDDfromData(par.data,sc);
-        /*JavaPairRDD<Double,Integer> data = createRDDfromData(par.data,sc);
-        JavaPairRDD<Tuple2<Double, Integer>,
-                Tuple2<Double, Integer>> cartesian = data.cartesian(data);
-
-        List<Tuple2<Tuple2<Double, Integer>, Tuple2<Double, Integer>>> r = cartesian.collect();
-        //Tuple2<Tuple2<Double, Integer>, Tuple2<Double, Integer>> t = new Tuple2<Tuple2<Double, Integer>, Tuple2<Double, Integer>>();
-        System.out.println(r.get(0));
-        System.out.println(r.get(0)._1._1.getClass());
-        List<Double> list = new ArrayList<Double>(Arrays.asList(r.get(0)._1._1));*/
-        //System.out.println(r.get(0)._1._1);
-        //String[] y;
-        //y = new String[]{d._1};
-        //List<Double> list = new ArrayList<>(Arrays.asList({r.get(0)._1._1};
-        //Double temp1 = (Double) r.get(0)._1._1;
-        //System.out.println(temp1);
-
-
 
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
