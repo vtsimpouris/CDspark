@@ -222,7 +222,6 @@ public class lib {
                 double dist = distFunc.dist(data[i], data[j]);
                 pairwiseDistances[i][j] = dist;
                 pairwiseDistances[j][i] = dist;
-                System.out.println("his pair:");
 
             });
         });

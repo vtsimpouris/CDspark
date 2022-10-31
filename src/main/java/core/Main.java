@@ -107,7 +107,7 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 3;
+            n = 10;
             m = (int) 5;
             partition = 0;
             tau = 0.8;
@@ -119,7 +119,7 @@ public class Main {
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = true;
+            parallel = false;
             random = false;
             saveStats = true;
             saveResults = false;
@@ -365,22 +365,16 @@ public class Main {
         List<sparkObject> returned = JavaRDD.collect();
         double[][] pairwiseDistances = new double[par.n][par.n];
         for (int i = 0; i < par.data.length; i++) {
+            //System.out.println("i = " + i);
             for (int j = i + 1; j < par.data.length; j++) {
-                if(i == 0){
-                    pairwiseDistances[i][j] = returned.get(j).dist;
-                    pairwiseDistances[j][i] = returned.get(j).dist;
-                }
-                else{
-                    pairwiseDistances[i][j] = returned.get(2*j+1).dist;
-                    pairwiseDistances[j][i] = returned.get(2*j+1).dist;
-                }
-                }
-            System.out.println('\n');
+                //System.out.println(j);
+                pairwiseDistances[i][j] = returned.get(par.n * i + j).dist;
+                pairwiseDistances[j][i] = returned.get(par.n * i + j).dist;
+                //System.out.println('\n');
+            }
         }
+        System.out.println(list.size());
         System.out.println(Arrays.deepToString(pairwiseDistances));
-        for (int i = 0; i < list.size(); i++) {
-           System.out.println(returned.get(i).dist);
-        }
         /*System.out.println("mine");
         for (int i = 0; i < list.size(); i++) {
             System.out.println("pair:");
