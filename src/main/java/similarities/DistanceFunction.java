@@ -1,6 +1,6 @@
 package similarities;
 
-public interface DistanceFunction {
+public interface  DistanceFunction  {
     double dist(double[] x, double[] y);
 }
 

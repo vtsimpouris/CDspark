@@ -6,9 +6,10 @@ import bounding.ClusterBounds;
 import clustering.Cluster;
 import similarities.MultivariateSimilarityFunction;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class PearsonCorrelation extends MultivariateSimilarityFunction {
+public class PearsonCorrelation extends MultivariateSimilarityFunction implements Serializable {
     public PearsonCorrelation() {
 //        Angle is distance function
         this.distFunc = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b), -1),1));

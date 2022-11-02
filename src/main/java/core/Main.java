@@ -10,15 +10,15 @@ import algorithms.baselines.SmartBaseline;
 import algorithms.performance.SimilarityDetective;
 import bounding.ApproximationStrategyEnum;
 import clustering.ClusteringAlgorithmEnum;
-import com.google.common.collect.ImmutableList;
 import data_reading.DataReader;
 import lombok.NonNull;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
-import org.apache.spark.api.java.function.PairFunction;
 import scala.Tuple2;
 import similarities.DistanceFunction;
 import similarities.MultivariateSimilarityFunction;
@@ -33,7 +33,6 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
-import java.util.function.Function;
 import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -107,7 +106,7 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 10;
+            n = 4;
             m = (int) 5;
             partition = 0;
             tau = 0.8;
@@ -360,16 +359,37 @@ public class Main {
                 tempList.add(new sparkObject(i, j, par.data[i], par.data[j], distFunc));
             }
         }
-        List<sparkObject> list = ImmutableList.copyOf(tempList);
+        List<Double[]> list= new ArrayList<Double[]>();
+        for (int i = 0; i < par.data.length; i++) {
+            list.add(ArrayUtils.toObject(par.data[i]));
+        }
+        JavaRDD<Double[]> JavaRDD = sc.parallelize(list);
+        JavaPairRDD<Double[], Double[]> cartesian = JavaRDD.cartesian(JavaRDD);
+        List<Tuple2<Double[], Double[]>> temp = cartesian.collect();
+        for(Tuple2<Double[], Double[]> array : temp) {
+            System.out.println(Arrays.toString(array._1));
+            System.out.println(Arrays.toString(array._2));
+            System.out.println("\n");
+        }
+        JavaDoubleRDD pairwise = cartesian.flatMapToDouble(s -> {
+            List<Double> l = new LinkedList<>();
+            double d = Math.acos(Math.min(Math.max(lib.dot(ArrayUtils.toPrimitive(s._1), ArrayUtils.toPrimitive(s._2)), -1),1));
+            l.add(d);
+            return l.iterator();
+        });
+        System.out.println(pairwise.collect());
+        List<Double> returned = pairwise.collect();
+        //Arrays.toString(JavaRDD.collect().toArray())
+        /*List<sparkObject> list = ImmutableList.copyOf(tempList);
         JavaRDD<sparkObject> JavaRDD = sc.parallelize(list);
-        List<sparkObject> returned = JavaRDD.collect();
+        List<sparkObject> returned = JavaRDD.collect();*/
         double[][] pairwiseDistances = new double[par.n][par.n];
         for (int i = 0; i < par.data.length; i++) {
             //System.out.println("i = " + i);
             for (int j = i + 1; j < par.data.length; j++) {
                 //System.out.println(j);
-                pairwiseDistances[i][j] = returned.get(par.n * i + j).dist;
-                pairwiseDistances[j][i] = returned.get(par.n * i + j).dist;
+                pairwiseDistances[i][j] = returned.get(par.n * i + j);
+                pairwiseDistances[j][i] = returned.get(par.n * i + j);
                 //System.out.println('\n');
             }
         }
