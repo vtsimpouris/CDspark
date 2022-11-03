@@ -13,6 +13,7 @@ import clustering.ClusteringAlgorithmEnum;
 import data_reading.DataReader;
 import lombok.NonNull;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.curator.shaded.com.google.common.base.Stopwatch;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaDoubleRDD;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -33,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,8 +108,8 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 4;
-            m = (int) 5;
+            n = 10;
+            m = (int) 500;
             partition = 0;
             tau = 0.8;
             minJump = 0.05;
@@ -118,7 +120,7 @@ public class Main {
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = false;
+            parallel = true;
             random = false;
             saveStats = true;
             saveResults = false;
@@ -142,13 +144,21 @@ public class Main {
         //        Get similarity function from enum
         MultivariateSimilarityFunction simMetric;
         switch (simMetricName){
+            case EUCLIDEAN_SIMILARITY: default: simMetric = new EuclideanSimilarity(); break;
+            case SPEARMAN_CORRELATION: simMetric = new SpearmanCorrelation(); break;
+            case MULTIPOLE: simMetric = new Multipole(); break;
+            case PEARSON_CORRELATION: simMetric = new PearsonCorrelation(); break;
+            case MANHATTAN_SIMILARITY: simMetric = new MinkowskiSimilarity(1); break;
+            case CHEBYSHEV_SIMILARITY: simMetric = new ChebyshevSimilarity(); break;
+        }
+        /*switch (simMetricName){
             case PEARSON_CORRELATION: default: simMetric = new PearsonCorrelation(); break;
             case SPEARMAN_CORRELATION: simMetric = new SpearmanCorrelation(); break;
             case MULTIPOLE: simMetric = new Multipole(); break;
             case EUCLIDEAN_SIMILARITY: simMetric = new EuclideanSimilarity(); break;
             case MANHATTAN_SIMILARITY: simMetric = new MinkowskiSimilarity(1); break;
             case CHEBYSHEV_SIMILARITY: simMetric = new ChebyshevSimilarity(); break;
-        }
+        }*/
 
 
 //      ---  INPUT CORRECTIONS
@@ -303,42 +313,33 @@ public class Main {
 
         run(par);
     }
+    public static double[][] sparkComputePairwiseCorrelations(List<Double[]> list, JavaSparkContext sc, int n){
+        JavaRDD<Double[]> JavaRDD = sc.parallelize(list);
+
+        JavaPairRDD<Double[], Double[]> cartesian = JavaRDD.cartesian(JavaRDD);
+        List<Tuple2<Double[], Double[]>> temp = cartesian.collect();
+        JavaDoubleRDD pairwise = cartesian.mapToDouble(s -> {
+            double d = Math.acos(Math.min(Math.max(lib.dot(ArrayUtils.toPrimitive(s._1), ArrayUtils.toPrimitive(s._2)), -1),1));
+            //l.add(d);
+            return Double.valueOf(d);
+        });
+        List<Double> returned = pairwise.collect();
+        double[][] pairwiseDistances = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            //System.out.println("i = " + i);
+            for (int j = i + 1; j < n; j++) {
+                pairwiseDistances[i][j] = returned.get(n * i + j);
+                pairwiseDistances[j][i] = returned.get(n * i + j);
+            }
+        }
+        return pairwiseDistances;
+    }
+
 
     private static void run(@NonNull Parameters par) {
         par.LOGGER.info(String.format("----------- new run starting; querying %s with %s on %s part %d, n=%d ---------------------",
                 par.simMetric, par.algorithm, par.dataType, par.partition, par.n));
         par.LOGGER.info("Starting time " + LocalDateTime.now());
-        class sparkObject implements Serializable  {
-            private static final long serialVersionUID = -2685444218382696366L;
-            double[]  d1;
-            double[]  d2;
-            double pairwiseDistances[];
-            public transient DistanceFunction distFunc;
-            double dist;
-
-
-            int i;
-            int j;
-            public sparkObject(int i, int j, double[] d1, double[] d2, DistanceFunction distFunc){
-                this.i = i;
-                this.i = j;
-                this.d1 = (double[]) d1.clone();
-                this.d2 = (double[]) d2.clone();
-                this.distFunc = distFunc;
-                this.dist = distFunc.dist(this.d1, this.d2);
-            }
-
-
-            public void printData1(){
-                for(int i = 0; i < this.d1.length; i++){
-                    System.out.println(d1[i]);
-                }
-                System.out.println(this.d1.length);
-                System.out.println("\n");
-            }
-        }
-
-
         //sc.close();
         Algorithm algorithm;
         switch (par.algorithm){
@@ -346,66 +347,21 @@ public class Main {
             case SIMPLE_BASELINE: algorithm = new SimpleBaseline(par); break;
             case SMART_BASELINE: algorithm = new SmartBaseline(par); break;
         }
-        DistanceFunction distFunc = par.simMetric.distFunc;
+
         SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD")
-                .setMaster("local[2]").set("spark.executor.memory","2g");
+                .setMaster("local[8]").set("spark.executor.memory","4g");
         // start a spark context
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
 
         // prepare list of objects
-        List<sparkObject> tempList = new ArrayList<>();
-        for (int i = 0; i < par.data.length; i++) {
-            for (int j = 0; j < par.data.length; j++) {
-                tempList.add(new sparkObject(i, j, par.data[i], par.data[j], distFunc));
-            }
-        }
         List<Double[]> list= new ArrayList<Double[]>();
         for (int i = 0; i < par.data.length; i++) {
             list.add(ArrayUtils.toObject(par.data[i]));
         }
-        JavaRDD<Double[]> JavaRDD = sc.parallelize(list);
-        JavaPairRDD<Double[], Double[]> cartesian = JavaRDD.cartesian(JavaRDD);
-        List<Tuple2<Double[], Double[]>> temp = cartesian.collect();
-        for(Tuple2<Double[], Double[]> array : temp) {
-            System.out.println(Arrays.toString(array._1));
-            System.out.println(Arrays.toString(array._2));
-            System.out.println("\n");
-        }
-        JavaDoubleRDD pairwise = cartesian.flatMapToDouble(s -> {
-            List<Double> l = new LinkedList<>();
-            double d = Math.acos(Math.min(Math.max(lib.dot(ArrayUtils.toPrimitive(s._1), ArrayUtils.toPrimitive(s._2)), -1),1));
-            l.add(d);
-            return l.iterator();
-        });
-        System.out.println(pairwise.collect());
-        List<Double> returned = pairwise.collect();
-        //Arrays.toString(JavaRDD.collect().toArray())
-        /*List<sparkObject> list = ImmutableList.copyOf(tempList);
-        JavaRDD<sparkObject> JavaRDD = sc.parallelize(list);
-        List<sparkObject> returned = JavaRDD.collect();*/
         double[][] pairwiseDistances = new double[par.n][par.n];
-        for (int i = 0; i < par.data.length; i++) {
-            //System.out.println("i = " + i);
-            for (int j = i + 1; j < par.data.length; j++) {
-                //System.out.println(j);
-                pairwiseDistances[i][j] = returned.get(par.n * i + j);
-                pairwiseDistances[j][i] = returned.get(par.n * i + j);
-                //System.out.println('\n');
-            }
-        }
-        System.out.println(list.size());
+        pairwiseDistances = sparkComputePairwiseCorrelations(list, sc, par.n);
+        System.out.println("mine: \n");
         System.out.println(Arrays.deepToString(pairwiseDistances));
-        /*System.out.println("mine");
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println("pair:");
-            System.out.println(returned.get(i).i);
-            System.out.println(returned.get(i).j);
-            System.out.println(Arrays.toString(returned.get(i).d1));
-            System.out.println(Arrays.toString(returned.get(i).d2));
-            System.out.println(returned.get(i).dist);
-        }
-        System.out.println("mine");
-        System.out.println("\n");*/
         Set<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();
         algorithm.printStats(par.statBag);

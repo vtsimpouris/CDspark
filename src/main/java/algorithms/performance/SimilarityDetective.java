@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
 import core.Parameters;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.curator.shaded.com.google.common.base.Stopwatch;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
@@ -29,6 +30,7 @@ import com.google.common.collect.ImmutableList;
 import similarities.DistanceFunction;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -102,6 +104,8 @@ public class SimilarityDetective extends Algorithm {
                 stageRunner.run("Compute pairwise distances",
                         () -> lib.computePairwiseDistances(par.data, par.simMetric.distFunc, par.parallel), par.statBag.stopWatch)
         );
+        System.out.println("his: \n ");
+        System.out.println(Arrays.deepToString(par.pairwiseDistances));
 
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
