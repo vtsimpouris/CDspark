@@ -4,10 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="pairwaise in spark complete, time is 1/7th of serialial">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="added serializations">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/clustering/Cluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clustering/Cluster.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/DistanceFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/DistanceFunction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,14 +185,7 @@
       <workItem from="1667135005797" duration="6441000" />
       <workItem from="1667210107858" duration="17231000" />
       <workItem from="1667393168370" duration="3330000" />
-      <workItem from="1667469661262" duration="2455000" />
-    </task>
-    <task id="LOCAL-00001" summary="first commit">
-      <created>1665609043747</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1665609043747</updated>
+      <workItem from="1667469661262" duration="10404000" />
     </task>
     <task id="LOCAL-00002" summary="Implemented pearson, CD stage 1 and 2">
       <created>1665664099115</created>
@@ -523,7 +523,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667224761373</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="pairwaise in spark complete, time is 1/7th of serial">
+      <created>1667472197999</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1667472197999</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -547,8 +554,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Created Baseline algorithm" />
-    <MESSAGE value="Finished both baselines" />
     <MESSAGE value="Fixed candidate generation for CD. Now considers potential side overlap" />
     <MESSAGE value="Added unit-tests for Clustering and HierarchicalClustering" />
     <MESSAGE value="Made HierarchicalClusteringTest more efficient" />
@@ -572,7 +577,9 @@
     <MESSAGE value="function to create rdd from data created (bug fix)" />
     <MESSAGE value="refactoring types in JavaRDDs" />
     <MESSAGE value="run spark from main" />
-    <option name="LAST_COMMIT_MESSAGE" value="run spark from main" />
+    <MESSAGE value="pairwaise in spark complete, time is 1/7th of serial" />
+    <MESSAGE value="added serializations" />
+    <option name="LAST_COMMIT_MESSAGE" value="added serializations" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

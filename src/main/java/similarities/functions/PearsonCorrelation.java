@@ -4,15 +4,21 @@ import _aux.Pair;
 import _aux.lib;
 import bounding.ClusterBounds;
 import clustering.Cluster;
+import org.apache.spark.api.java.function.Function2;
+import similarities.DistanceFunction;
 import similarities.MultivariateSimilarityFunction;
 
 import java.io.Serializable;
+import java.lang.invoke.SerializedLambda;
 import java.util.List;
+import java.util.function.Function;
 
-public class PearsonCorrelation extends MultivariateSimilarityFunction implements Serializable {
+public class PearsonCorrelation extends MultivariateSimilarityFunction  {
+    private static final long serialVersionUID = -2685444218382696316L;
     public PearsonCorrelation() {
 //        Angle is distance function
-        this.distFunc = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b), -1),1));
+        //DistanceFunction lambda = (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b), -1), 1));
+        this.distFunc =  (double[] a, double[] b) -> Math.acos(Math.min(Math.max(lib.dot(a, b), -1),1));
     }
 
     @Override public boolean hasEmpiricalBounds() {return true;}

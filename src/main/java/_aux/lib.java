@@ -217,7 +217,6 @@ public class lib {
     }
 
 
-    final Stopwatch sw = Stopwatch.createStarted();
     public static double[][] computePairwiseDistances(double[][] data, DistanceFunction distFunc, boolean parallel) {
         int n = data.length;
         final Stopwatch sw = Stopwatch.createStarted();
@@ -230,8 +229,6 @@ public class lib {
 
             });
         });
-        final long elapsedMillis = sw.elapsed(TimeUnit.MILLISECONDS);
-        System.out.println("time2 = " + elapsedMillis);
         //System.out.println(Arrays.deepToString(pairwiseDistances));
         return pairwiseDistances;
     }

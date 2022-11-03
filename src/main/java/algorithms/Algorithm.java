@@ -3,11 +3,12 @@ package algorithms;
 import _aux.*;
 import core.Parameters;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Set;
 
-public abstract class Algorithm {
-    public Parameters par;
+public abstract class Algorithm implements Serializable {
+    public transient Parameters par;
 
     public Algorithm(Parameters parameters){
         this.par = parameters;

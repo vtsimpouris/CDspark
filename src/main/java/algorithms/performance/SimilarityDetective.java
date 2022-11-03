@@ -4,6 +4,7 @@ import _aux.*;
 import algorithms.Algorithm;
 import algorithms.StageRunner;
 import bounding.RecursiveBounding;
+import clustering.Cluster;
 import clustering.HierarchicalClustering;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
@@ -34,58 +35,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
-public class SimilarityDetective extends Algorithm {
-    public HierarchicalClustering HC;
-    public RecursiveBounding RB;
+public class SimilarityDetective extends Algorithm implements Serializable {
+    private static final long serialVersionUID = -2685444218382696361L;
+    public transient HierarchicalClustering HC;
+    public transient RecursiveBounding RB;
 
-    public Double[] convert_d_to_D(double[] array){
-        Double[] temp = new Double[array.length];
-        for (int i = 0; i < array.length; i++){
-            temp[i] = Double.valueOf(array[i]);
-
-        }
-        return temp;
-
-    };
-
-    public JavaPairRDD<Double,Integer> createRDDfromData(double[][] d, JavaSparkContext sc){
-        JavaPairRDD temp = null;
-        JavaPairRDD<Double,Integer> result = null;
-        /*for (int i = 0; i < d.length; i++){
-            Double[] t = new Double[d[i].length];
-            for (int j = 0; j < d[i].length; j++) {
-                t[j] = d[i][j];
-                //System.out.println(t[j]);
-            }
-            List<Double[]> t2 = new ArrayList<Double[]>();
-            t2.add(t);
-            JavaRDD rdd = sc.parallelize(t2);
-
-            /* TODO: ADD key
-            List<Tuple2> data =  Arrays.asList(new Tuple2(i, t2));
-            System.out.println(data.get(0)._2.getClass());
-            //Arrays.deepToString(list.toArray())
-            JavaRDD rdd = sc.parallelize(t2);
-            //result = JavaPairRDD.fromJavaRDD(rdd);
-
-            // code for printing array from RDD
-            //Double[] t3 = (Double[]) (rdd.collect().toArray()[0]);
-            //System.out.println(Arrays.toString(t3));
-            //System.out.println(result.collect());
-
-        }*/
-        for (int i = 0; i < d.length; i++) {
-            List<Tuple2> data =  Arrays.asList(new Tuple2(Doubles.asList(d[i]), i));
-            JavaRDD rdd = sc.parallelize(data);
-            temp= JavaPairRDD.fromJavaRDD(rdd);
-            if(result == null){
-                result = temp;
-            }else {
-                result = result.union(temp);
-            }
-        }
-        return result;
-    };
 
     public SimilarityDetective(Parameters par) {
         super(par);
@@ -104,15 +58,29 @@ public class SimilarityDetective extends Algorithm {
                 stageRunner.run("Compute pairwise distances",
                         () -> lib.computePairwiseDistances(par.data, par.simMetric.distFunc, par.parallel), par.statBag.stopWatch)
         );
-        System.out.println("his: \n ");
-        System.out.println(Arrays.deepToString(par.pairwiseDistances));
 
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
+        System.out.println(Arrays.deepToString(par.pairwiseDistances));
 
 //        STAGE 3 - Recursive bounding
+        SparkConf sparkConf = new SparkConf().setAppName("RB")
+                .setMaster("local[8]").set("spark.executor.memory","4g");
+        // start a spark context
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
         Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+
+        System.out.println("HC.clusterTree: " + HC.clusterTree.get(0).size());
+        List<Cluster> list= new ArrayList<Cluster>();
+        for (int i = 0; i < HC.clusterTree.get(0).size(); i++) {
+            list.add(HC.clusterTree.get(0).get(i));
+        }
+        JavaRDD<Cluster> JavaRDD = sc.parallelize(list);
+        List<Cluster> returned = JavaRDD.collect();
+        for (int i = 0; i < HC.clusterTree.get(0).size(); i++) {
+            System.out.println(returned.get(i).pointsIdx);
+        }
 
         par.statBag.stopWatch.stop();
         par.statBag.totalDuration = lib.nanoToSec(par.statBag.stopWatch.getNanoTime());

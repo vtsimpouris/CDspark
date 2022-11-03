@@ -24,6 +24,8 @@ public class RecursiveBounding {
     public Set<ResultTuple> run() {
 
         Cluster rootCluster = clusterTree.get(0).get(0);
+        System.out.println("here: ");
+        System.out.println(clusterTree.get(0).size());
 
 //        Make initial cluster comparison
 //        Progressively build up complexity from (1,1) to (maxPLeft,maxPRight) and get all DCCs with complexity <= (maxPLeft,maxPRight) (unless custom aggregation)

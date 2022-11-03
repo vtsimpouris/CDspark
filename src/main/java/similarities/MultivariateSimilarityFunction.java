@@ -7,6 +7,7 @@ import clustering.Cluster;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,9 +16,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public abstract class MultivariateSimilarityFunction {
+public abstract class MultivariateSimilarityFunction implements Serializable {
     @Setter int totalClusters;
-    @Getter public DistanceFunction distFunc;
+    @Getter transient public DistanceFunction distFunc;
     public double MAX_SIMILARITY = 1;
     public double MIN_SIMILARITY = -1;
     public AtomicLong nLookups = new AtomicLong(0);

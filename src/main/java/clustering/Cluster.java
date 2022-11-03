@@ -7,9 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import similarities.DistanceFunction;
 
+import java.io.Serializable;
 import java.util.*;
 
-public class Cluster {
+public class Cluster implements Serializable {
     @Setter @Getter public int id;
     private DistanceFunction dist;
 

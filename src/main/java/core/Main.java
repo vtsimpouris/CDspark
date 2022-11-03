@@ -108,7 +108,7 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 10;
+            n = 3;
             m = (int) 500;
             partition = 0;
             tau = 0.8;
@@ -144,21 +144,13 @@ public class Main {
         //        Get similarity function from enum
         MultivariateSimilarityFunction simMetric;
         switch (simMetricName){
-            case EUCLIDEAN_SIMILARITY: default: simMetric = new EuclideanSimilarity(); break;
-            case SPEARMAN_CORRELATION: simMetric = new SpearmanCorrelation(); break;
-            case MULTIPOLE: simMetric = new Multipole(); break;
-            case PEARSON_CORRELATION: simMetric = new PearsonCorrelation(); break;
-            case MANHATTAN_SIMILARITY: simMetric = new MinkowskiSimilarity(1); break;
-            case CHEBYSHEV_SIMILARITY: simMetric = new ChebyshevSimilarity(); break;
-        }
-        /*switch (simMetricName){
             case PEARSON_CORRELATION: default: simMetric = new PearsonCorrelation(); break;
             case SPEARMAN_CORRELATION: simMetric = new SpearmanCorrelation(); break;
             case MULTIPOLE: simMetric = new Multipole(); break;
             case EUCLIDEAN_SIMILARITY: simMetric = new EuclideanSimilarity(); break;
             case MANHATTAN_SIMILARITY: simMetric = new MinkowskiSimilarity(1); break;
             case CHEBYSHEV_SIMILARITY: simMetric = new ChebyshevSimilarity(); break;
-        }*/
+        }
 
 
 //      ---  INPUT CORRECTIONS
@@ -313,13 +305,13 @@ public class Main {
 
         run(par);
     }
-    public static double[][] sparkComputePairwiseCorrelations(List<Double[]> list, JavaSparkContext sc, int n){
+    public static double[][] sparkComputePairwiseCorrelations(List<Double[]> list, JavaSparkContext sc,DistanceFunction df, int n){
         JavaRDD<Double[]> JavaRDD = sc.parallelize(list);
 
         JavaPairRDD<Double[], Double[]> cartesian = JavaRDD.cartesian(JavaRDD);
         List<Tuple2<Double[], Double[]>> temp = cartesian.collect();
         JavaDoubleRDD pairwise = cartesian.mapToDouble(s -> {
-            double d = Math.acos(Math.min(Math.max(lib.dot(ArrayUtils.toPrimitive(s._1), ArrayUtils.toPrimitive(s._2)), -1),1));
+            double d = df.dist(ArrayUtils.toPrimitive(s._1), ArrayUtils.toPrimitive(s._2));
             //l.add(d);
             return Double.valueOf(d);
         });
@@ -348,20 +340,21 @@ public class Main {
             case SMART_BASELINE: algorithm = new SmartBaseline(par); break;
         }
 
-        SparkConf sparkConf = new SparkConf().setAppName("Print Elements of RDD")
+        SparkConf sparkConf = new SparkConf().setAppName("pairwise")
                 .setMaster("local[8]").set("spark.executor.memory","4g");
         // start a spark context
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
-
+        DistanceFunction df = par.getSimMetric().distFunc;
         // prepare list of objects
         List<Double[]> list= new ArrayList<Double[]>();
         for (int i = 0; i < par.data.length; i++) {
             list.add(ArrayUtils.toObject(par.data[i]));
         }
         double[][] pairwiseDistances = new double[par.n][par.n];
-        pairwiseDistances = sparkComputePairwiseCorrelations(list, sc, par.n);
-        System.out.println("mine: \n");
+        pairwiseDistances = sparkComputePairwiseCorrelations(list, sc, df, par.n);
         System.out.println(Arrays.deepToString(pairwiseDistances));
+        sc.close();
+
         Set<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();
         algorithm.printStats(par.statBag);
