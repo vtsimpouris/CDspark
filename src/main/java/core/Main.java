@@ -108,7 +108,7 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 3;
+            n = 10;
             m = (int) 500;
             partition = 0;
             tau = 0.8;
@@ -120,7 +120,7 @@ public class Main {
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = true;
+            parallel = false;
             random = false;
             saveStats = true;
             saveResults = false;
@@ -352,7 +352,7 @@ public class Main {
         }
         double[][] pairwiseDistances = new double[par.n][par.n];
         pairwiseDistances = sparkComputePairwiseCorrelations(list, sc, df, par.n);
-        System.out.println(Arrays.deepToString(pairwiseDistances));
+        //System.out.println(Arrays.deepToString(pairwiseDistances));
         sc.close();
 
         Set<ResultTuple> results = algorithm.run();

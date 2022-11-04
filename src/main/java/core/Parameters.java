@@ -10,14 +10,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import similarities.MultivariateSimilarityFunction;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
 @RequiredArgsConstructor
-public class Parameters {
+public class Parameters implements Serializable {
 //    Logging
-    @NonNull @Getter public Logger LOGGER;
+    @NonNull @Getter public transient Logger LOGGER;
     @NonNull @Getter public String dateTime;
     @NonNull @Getter public String codeVersion;
     @NonNull @Getter public boolean saveStats;
@@ -71,7 +72,7 @@ public class Parameters {
     @NonNull @Getter public ApproximationStrategyEnum approximationStrategy;
 
 //    Misc
-    @Getter public StatBag statBag = new StatBag();
+    @Getter public transient StatBag statBag = new StatBag();
     @Getter public Random randomGenerator;
     @Setter @Getter public double[][] pairwiseDistances;
 

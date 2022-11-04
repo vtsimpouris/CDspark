@@ -7,24 +7,25 @@ import clustering.Cluster;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class RecursiveBounding {
+public class RecursiveBounding implements Serializable {
 
     @NonNull private Parameters par;
-    @NonNull private ArrayList<ArrayList<Cluster>> clusterTree;
+    @NonNull public ArrayList<ArrayList<Cluster>> clusterTree;
 
     public List<ClusterCombination> positiveDCCs = new ArrayList<>();
     public AtomicLong nNegDCCs = new AtomicLong(0);
     public double postProcessTime;
+    public transient Set<ResultTuple> results;
 
     public Set<ResultTuple> run() {
 
         Cluster rootCluster = clusterTree.get(0).get(0);
-        System.out.println("here: ");
         System.out.println(clusterTree.get(0).size());
 
 //        Make initial cluster comparison
@@ -93,6 +94,8 @@ public class RecursiveBounding {
         par.statBag.addStat("postProcessTime", postProcessTime);
 
 //        Convert to tuples
+
+        this.results = positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
         return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
     }
 

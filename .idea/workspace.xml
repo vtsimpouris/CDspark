@@ -6,15 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="added serializations">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/lib.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/lib.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/clustering/Cluster.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/clustering/Cluster.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/DistanceFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/DistanceFunction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/functions/PearsonCorrelation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Parameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Parameters.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,6 +182,8 @@
       <workItem from="1667210107858" duration="17231000" />
       <workItem from="1667393168370" duration="3330000" />
       <workItem from="1667469661262" duration="10404000" />
+      <workItem from="1667554740921" duration="3847000" />
+      <workItem from="1667559242308" duration="534000" />
     </task>
     <task id="LOCAL-00002" summary="Implemented pearson, CD stage 1 and 2">
       <created>1665664099115</created>

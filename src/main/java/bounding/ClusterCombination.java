@@ -10,13 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import similarities.MultivariateSimilarityFunction;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class ClusterCombination {
+public class ClusterCombination implements Serializable {
     @NonNull ArrayList<Cluster> LHS;
     @NonNull ArrayList<Cluster> RHS;
     @NonNull int level;

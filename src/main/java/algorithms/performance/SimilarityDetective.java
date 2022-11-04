@@ -14,9 +14,7 @@ import org.apache.curator.shaded.com.google.common.base.Stopwatch;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.*;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
@@ -34,6 +32,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
+import org.apache.commons.lang3.time.StopWatch;
 
 public class SimilarityDetective extends Algorithm implements Serializable {
     private static final long serialVersionUID = -2685444218382696361L;
@@ -62,25 +61,41 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
-        System.out.println(Arrays.deepToString(par.pairwiseDistances));
+        //System.out.println(Arrays.deepToString(par.pairwiseDistances));
 
 //        STAGE 3 - Recursive bounding
         SparkConf sparkConf = new SparkConf().setAppName("RB")
                 .setMaster("local[8]").set("spark.executor.memory","4g");
         // start a spark context
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+        List<RecursiveBounding> list= new ArrayList<RecursiveBounding>();
+        list.add(RB);
 
-        System.out.println("HC.clusterTree: " + HC.clusterTree.get(0).size());
-        List<Cluster> list= new ArrayList<Cluster>();
-        for (int i = 0; i < HC.clusterTree.get(0).size(); i++) {
-            list.add(HC.clusterTree.get(0).get(i));
-        }
-        JavaRDD<Cluster> JavaRDD = sc.parallelize(list);
-        List<Cluster> returned = JavaRDD.collect();
-        for (int i = 0; i < HC.clusterTree.get(0).size(); i++) {
-            System.out.println(returned.get(i).pointsIdx);
-        }
+        StopWatch stopWatch = new StopWatch();
+        JavaRDD<RecursiveBounding> JavaRDD = sc.parallelize(list);
+        JavaRDD<Set<ResultTuple>> returnedRDD;
+        stopWatch.start();
+        returnedRDD = JavaRDD.map(s -> {
+            s.run();
+            return s.results;
+        });
+
+        List<Set<ResultTuple>> returned = returnedRDD.collect();
+        System.out.println(returned.get(0));
+        stopWatch.stop();
+        // Print out the total time of the watch
+        System.out.println("Spark RB Time: " + stopWatch.getTime());
+
+
+        stopWatch.reset();
+        stopWatch.start();
+        Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+        stopWatch.stop();
+        System.out.println(RB.clusterTree);
+        // Print out the total time of the watch
+        System.out.println("Java RB Time: " + stopWatch.getTime());
+
+
 
         par.statBag.stopWatch.stop();
         par.statBag.totalDuration = lib.nanoToSec(par.statBag.stopWatch.getNanoTime());
