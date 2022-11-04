@@ -4,13 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="added serializations">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="working with recursive bounding">
+      <change afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding_spark.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/ResultTuple.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/ResultTuple.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ClusterCombination.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/Parameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Parameters.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +22,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Enum" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -184,13 +185,8 @@
       <workItem from="1667469661262" duration="10404000" />
       <workItem from="1667554740921" duration="3847000" />
       <workItem from="1667559242308" duration="534000" />
-    </task>
-    <task id="LOCAL-00002" summary="Implemented pearson, CD stage 1 and 2">
-      <created>1665664099115</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1665664099115</updated>
+      <workItem from="1667559801835" duration="40000" />
+      <workItem from="1667560131953" duration="2557000" />
     </task>
     <task id="LOCAL-00003" summary="Finished recusive bounding. Calling it a day">
       <created>1665689264493</created>
@@ -528,7 +524,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667472197999</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="working with recursive bounding">
+      <created>1667559825955</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1667559825955</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -552,7 +555,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed candidate generation for CD. Now considers potential side overlap" />
     <MESSAGE value="Added unit-tests for Clustering and HierarchicalClustering" />
     <MESSAGE value="Made HierarchicalClusteringTest more efficient" />
     <MESSAGE value="Finished RecursiveBoundingTest" />
@@ -577,7 +579,8 @@
     <MESSAGE value="run spark from main" />
     <MESSAGE value="pairwaise in spark complete, time is 1/7th of serial" />
     <MESSAGE value="added serializations" />
-    <option name="LAST_COMMIT_MESSAGE" value="added serializations" />
+    <MESSAGE value="working with recursive bounding" />
+    <option name="LAST_COMMIT_MESSAGE" value="working with recursive bounding" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

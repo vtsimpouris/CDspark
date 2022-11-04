@@ -5,6 +5,7 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
-public class StatBag {
+public class StatBag implements Serializable {
     public StopWatch stopWatch = new StopWatch();
     public double totalDuration;
     public long nResults;

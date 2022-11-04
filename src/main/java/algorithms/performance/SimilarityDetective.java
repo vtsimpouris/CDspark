@@ -4,6 +4,7 @@ import _aux.*;
 import algorithms.Algorithm;
 import algorithms.StageRunner;
 import bounding.RecursiveBounding;
+import bounding.RecursiveBounding_spark;
 import clustering.Cluster;
 import clustering.HierarchicalClustering;
 import com.google.common.collect.ImmutableList;
@@ -38,6 +39,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
     private static final long serialVersionUID = -2685444218382696361L;
     public transient HierarchicalClustering HC;
     public transient RecursiveBounding RB;
+    public transient RecursiveBounding_spark RBs;
 
 
     public SimilarityDetective(Parameters par) {
@@ -61,6 +63,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
+        //RBs = new RecursiveBounding_spark(par, HC.clusterTree);
         //System.out.println(Arrays.deepToString(par.pairwiseDistances));
 
 //        STAGE 3 - Recursive bounding
@@ -84,20 +87,21 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         System.out.println(returned.get(0));
         stopWatch.stop();
         // Print out the total time of the watch
-        System.out.println("Spark RB Time: " + stopWatch.getTime());
+        //System.out.println("Spark RB Time: " + stopWatch.getTime());
 
 
         stopWatch.reset();
         stopWatch.start();
         Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+        System.out.println(results);
         stopWatch.stop();
-        System.out.println(RB.clusterTree);
+        //System.out.println(RB.clusterTree);
         // Print out the total time of the watch
-        System.out.println("Java RB Time: " + stopWatch.getTime());
+        //System.out.println("Java RB Time: " + stopWatch.getTime());
 
 
 
-        par.statBag.stopWatch.stop();
+        //par.statBag.stopWatch.stop();
         par.statBag.totalDuration = lib.nanoToSec(par.statBag.stopWatch.getNanoTime());
         par.statBag.stageDurations = stageRunner.stageDurations;
         this.prepareStats();

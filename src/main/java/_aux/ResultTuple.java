@@ -4,11 +4,12 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-public class ResultTuple {
+public class ResultTuple implements Serializable {
     @NonNull @Getter public List<Integer> LHS;
     @NonNull @Getter public List<Integer> RHS;
     @NonNull @Getter public List<String> lHeaders;
