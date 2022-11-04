@@ -84,10 +84,10 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         });
 
         List<Set<ResultTuple>> returned = returnedRDD.collect();
-        System.out.println(returned.get(0));
+        //System.out.println(returned.get(0));
         stopWatch.stop();
         // Print out the total time of the watch
-        //System.out.println("Spark RB Time: " + stopWatch.getTime());
+        System.out.println("Spark RB Time: " + stopWatch.getTime());
 
 
         stopWatch.reset();
@@ -97,7 +97,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         stopWatch.stop();
         //System.out.println(RB.clusterTree);
         // Print out the total time of the watch
-        //System.out.println("Java RB Time: " + stopWatch.getTime());
+        System.out.println("Java RB Time: " + stopWatch.getTime());
 
 
 

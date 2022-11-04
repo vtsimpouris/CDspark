@@ -156,10 +156,19 @@ public class RecursiveBounding implements Serializable {
 
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
+            List<List<ClusterCombination>> subs = new ArrayList<>();
+            for (int i = 0; i < subCCs.size(); i++){
+                subs.add(recursiveBounding(subCCs.get(i), shrinkFactor, par));
+            }
 
-            return lib.getStream(subCCs, par.parallel).unordered()
+            List<ClusterCombination> flat =
+                    subs.stream()
+                            .flatMap(List::stream)
+                            .collect(Collectors.toList());
+            return flat;
+            /*return lib.getStream(subCCs, par.parallel).unordered()
                     .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList());*/
         } else { // CC is decisive, add to DCCs
             CC.setDecisive(true);
 

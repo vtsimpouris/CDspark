@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="working with recursive bounding">
-      <change afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding_spark.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="recursive bounding runs (non-parallel) in spark">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/ResultTuple.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/ResultTuple.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
@@ -186,14 +183,8 @@
       <workItem from="1667554740921" duration="3847000" />
       <workItem from="1667559242308" duration="534000" />
       <workItem from="1667559801835" duration="40000" />
-      <workItem from="1667560131953" duration="2557000" />
-    </task>
-    <task id="LOCAL-00003" summary="Finished recusive bounding. Calling it a day">
-      <created>1665689264493</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1665689264493</updated>
+      <workItem from="1667560131953" duration="2768000" />
+      <workItem from="1667569239125" duration="2239000" />
     </task>
     <task id="LOCAL-00004" summary="Checing and debugging WIP">
       <created>1665752793407</created>
@@ -531,7 +522,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667559825955</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="recursive bounding runs (non-parallel) in spark">
+      <created>1667562767659</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1667562767660</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -555,7 +553,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added unit-tests for Clustering and HierarchicalClustering" />
     <MESSAGE value="Made HierarchicalClusteringTest more efficient" />
     <MESSAGE value="Finished RecursiveBoundingTest" />
     <MESSAGE value="Fixed progressive complexity increasing in RecursiveBounding. Before it just did pairwise, then max" />
@@ -580,7 +577,8 @@
     <MESSAGE value="pairwaise in spark complete, time is 1/7th of serial" />
     <MESSAGE value="added serializations" />
     <MESSAGE value="working with recursive bounding" />
-    <option name="LAST_COMMIT_MESSAGE" value="working with recursive bounding" />
+    <MESSAGE value="recursive bounding runs (non-parallel) in spark" />
+    <option name="LAST_COMMIT_MESSAGE" value="recursive bounding runs (non-parallel) in spark" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
