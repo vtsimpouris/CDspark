@@ -19,6 +19,7 @@ import org.apache.spark.api.java.*;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.broadcast.Broadcast;
 import scala.Tuple2;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -67,14 +68,14 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         //System.out.println(Arrays.deepToString(par.pairwiseDistances));
 
 //        STAGE 3 - Recursive bounding
-        SparkConf sparkConf = new SparkConf().setAppName("RB")
-                .setMaster("local[8]").set("spark.executor.memory","4g");
+        //SparkConf sparkConf = new SparkConf().setAppName("RB")
+        //        .setMaster("local[8]").set("spark.executor.memory","4g");
         // start a spark context
-        JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        List<RecursiveBounding> list= new ArrayList<RecursiveBounding>();
-        list.add(RB);
+        //JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        //List<RecursiveBounding> list= new ArrayList<RecursiveBounding>();
+        //list.add(RB);
 
-        StopWatch stopWatch = new StopWatch();
+        /*StopWatch stopWatch = new StopWatch();
         JavaRDD<RecursiveBounding> JavaRDD = sc.parallelize(list);
         JavaRDD<Set<ResultTuple>> returnedRDD;
         stopWatch.start();
@@ -84,13 +85,12 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         });
 
         List<Set<ResultTuple>> returned = returnedRDD.collect();
-        //System.out.println(returned.get(0));
-        stopWatch.stop();
+        System.out.println(returned.get(0));
+        stopWatch.stop();*/
         // Print out the total time of the watch
-        System.out.println("Spark RB Time: " + stopWatch.getTime());
+        //System.out.println("Spark RB Time: " + stopWatch.getTime());
 
-
-        stopWatch.reset();
+        StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
         System.out.println(results);

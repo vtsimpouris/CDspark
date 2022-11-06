@@ -1,5 +1,6 @@
 package bounding;
 
+import _aux.Pair;
 import _aux.StatBag;
 import core.Parameters;
 import _aux.ResultTuple;
@@ -7,11 +8,15 @@ import _aux.lib;
 import clustering.Cluster;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
 
 @RequiredArgsConstructor
 public class RecursiveBounding implements Serializable {
@@ -24,9 +29,26 @@ public class RecursiveBounding implements Serializable {
     public double postProcessTime;
     public transient Set<ResultTuple> results;
 
+    public List<ClusterCombination> computeCC(ArrayList<ClusterCombination> subCCs, double shrinkFactor, Parameters par)
+
+    {
+        List<List<ClusterCombination>> subs = new ArrayList<>();
+        for (int i = 0; i < subCCs.size(); i++) {
+            subs.add(recursiveBounding(subCCs.get(i), shrinkFactor, par));
+        }
+        List<ClusterCombination> flat =
+                subs.stream()
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList());
+        return flat;
+    }
+
     public Set<ResultTuple> run() {
         par.statBag = new StatBag();
-
+        SparkConf sparkConf = new SparkConf().setAppName("RB")
+                .setMaster("local[8]").set("spark.executor.memory","4g");
+        // start a spark context
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
         Cluster rootCluster = clusterTree.get(0).get(0);
 
 //        Make initial cluster comparison
@@ -37,10 +59,11 @@ public class RecursiveBounding implements Serializable {
             ArrayList<Cluster> LHS = new ArrayList<>(Arrays.asList(rootCluster));
             ArrayList<Cluster> RHS = new ArrayList<>();
 
+
 //            Do first iteration with shrinkFactor 1
             double runningShrinkFactor = 1;
-
             while (LHS.size() < par.maxPLeft || RHS.size() < par.maxPRight){
+
 //                Make new lists to avoid concurrent modification
                 LHS = new ArrayList<>(LHS);
                 RHS = new ArrayList<>(RHS);
@@ -50,6 +73,7 @@ public class RecursiveBounding implements Serializable {
                 } else {
                     RHS.add(rootCluster);
                 }
+
                 ClusterCombination rootCandidate = new ClusterCombination(LHS, RHS, 0);
                 assessComparisonTree(rootCandidate, runningShrinkFactor);
 
@@ -103,13 +127,29 @@ public class RecursiveBounding implements Serializable {
 //    Get positive DCCs for a certain complexity
     public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor) {
         //        Make candidate list so that we can stream it
-        List<ClusterCombination> rootCandidateList = new ArrayList<>(); rootCandidateList.add(rootCandidate);
-
+        List<ClusterCombination> rootCandidateList = new ArrayList<>();
+        rootCandidateList.add(rootCandidate);
         Map<Boolean, List<ClusterCombination>> DCCs = lib.getStream(rootCandidateList, par.parallel)
                 .unordered()
                 .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
                 .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+        System.out.println("dccs:" + DCCs.toString());
+
+        //Map<Boolean, List<ClusterCombination>>
+        Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
+        List<ClusterCombination> cc = new ArrayList<>();
+        for (int i = 0; i < rootCandidateList.size(); i++){
+            //System.out.println("rootCandidateList:" + rootCandidateList.get(i));
+            cc = recursiveBounding(rootCandidate, shrinkFactor, par);
+            dccs.put(cc.get(i).isPositive,recursiveBounding(rootCandidate, shrinkFactor, par));
+            //dccs.y = recursiveBounding(rootCandidate, shrinkFactor, par);
+            //dccs.x = dccs.y.get(0).isPositive;
+        }
+        System.out.println("dccs mine:" + dccs.toString());
+
+        // Print out the total time of the watch
+
 
 //        Filter minJump confirming positives
         long start = System.nanoTime();
@@ -128,6 +168,7 @@ public class RecursiveBounding implements Serializable {
     }
 
     //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
+
     public static List<ClusterCombination> recursiveBounding(ClusterCombination CC, double shrinkFactor, Parameters par) {
         ArrayList<ClusterCombination> DCCs = new ArrayList<>();
 
@@ -156,19 +197,9 @@ public class RecursiveBounding implements Serializable {
 
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
-            List<List<ClusterCombination>> subs = new ArrayList<>();
-            for (int i = 0; i < subCCs.size(); i++){
-                subs.add(recursiveBounding(subCCs.get(i), shrinkFactor, par));
-            }
-
-            List<ClusterCombination> flat =
-                    subs.stream()
-                            .flatMap(List::stream)
-                            .collect(Collectors.toList());
-            return flat;
-            /*return lib.getStream(subCCs, par.parallel).unordered()
+            return lib.getStream(subCCs, par.parallel).unordered()
                     .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
-                    .collect(Collectors.toList());*/
+                    .collect(Collectors.toList());
         } else { // CC is decisive, add to DCCs
             CC.setDecisive(true);
 
