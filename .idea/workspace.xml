@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="working on recursive bounding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
@@ -186,14 +185,7 @@
       <workItem from="1667560131953" duration="2768000" />
       <workItem from="1667569239125" duration="4535000" />
       <workItem from="1667581373193" duration="1767000" />
-      <workItem from="1667737565093" duration="4941000" />
-    </task>
-    <task id="LOCAL-00005" summary="Debugged Pearson. now working">
-      <created>1666003904652</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1666003904652</updated>
+      <workItem from="1667737565093" duration="7444000" />
     </task>
     <task id="LOCAL-00006" summary="Added some simple stats to CD code">
       <created>1666010597281</created>
@@ -531,7 +523,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667571525793</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="working on recursive bounding">
+      <created>1667742571038</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1667742571038</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

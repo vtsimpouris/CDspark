@@ -14,6 +14,8 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -136,17 +138,18 @@ public class RecursiveBounding implements Serializable {
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
         System.out.println("dccs:" + DCCs.toString());
 
-        //Map<Boolean, List<ClusterCombination>>
-        Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
+        List<List<ClusterCombination>> dccs = new ArrayList<>();
         List<ClusterCombination> cc = new ArrayList<>();
+        Stream.Builder<ClusterCombination> s = Stream.builder();
         for (int i = 0; i < rootCandidateList.size(); i++){
-            //System.out.println("rootCandidateList:" + rootCandidateList.get(i));
             cc = recursiveBounding(rootCandidate, shrinkFactor, par);
-            dccs.put(cc.get(i).isPositive,recursiveBounding(rootCandidate, shrinkFactor, par));
-            //dccs.y = recursiveBounding(rootCandidate, shrinkFactor, par);
-            //dccs.x = dccs.y.get(0).isPositive;
+            for(int j = 0; j < cc.size(); j++) {
+                s.add(cc.get(i));
+            }
         }
-        System.out.println("dccs mine:" + dccs.toString());
+        Stream<ClusterCombination> x = s.build();
+        System.out.println("dccs " + x.collect(Collectors.partitioningBy(y -> true)));
+        //System.out.println("dccs mine:" + x.toString());
 
         // Print out the total time of the watch
 
