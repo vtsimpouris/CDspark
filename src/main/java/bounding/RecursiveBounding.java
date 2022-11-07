@@ -9,7 +9,7 @@ import clustering.Cluster;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.time.StopWatch;
-
+import java.util.List;
 import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.FlatMapFunction;
+
 
 @RequiredArgsConstructor
 public class RecursiveBounding implements Serializable {
@@ -30,27 +32,18 @@ public class RecursiveBounding implements Serializable {
     public AtomicLong nNegDCCs = new AtomicLong(0);
     public double postProcessTime;
     public transient Set<ResultTuple> results;
+    public static Boolean spark = false;
+    public static JavaSparkContext sc;
+    public static int i = 0;
 
-    public List<ClusterCombination> computeCC(ArrayList<ClusterCombination> subCCs, double shrinkFactor, Parameters par)
-
-    {
-        List<List<ClusterCombination>> subs = new ArrayList<>();
-        for (int i = 0; i < subCCs.size(); i++) {
-            subs.add(recursiveBounding(subCCs.get(i), shrinkFactor, par));
-        }
-        List<ClusterCombination> flat =
-                subs.stream()
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList());
-        return flat;
-    }
 
     public Set<ResultTuple> run() {
-        par.statBag = new StatBag();
         SparkConf sparkConf = new SparkConf().setAppName("RB")
                 .setMaster("local[8]").set("spark.executor.memory","4g");
         // start a spark context
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        sc.setLogLevel("ERROR");
+        this.sc = sc;
         Cluster rootCluster = clusterTree.get(0).get(0);
 
 //        Make initial cluster comparison
@@ -77,7 +70,7 @@ public class RecursiveBounding implements Serializable {
                 }
 
                 ClusterCombination rootCandidate = new ClusterCombination(LHS, RHS, 0);
-                assessComparisonTree(rootCandidate, runningShrinkFactor);
+                assessComparisonTree(rootCandidate, runningShrinkFactor, sc);
 
                 //            Set shrink factor back to original value
                 runningShrinkFactor = par.shrinkFactor;
@@ -98,7 +91,7 @@ public class RecursiveBounding implements Serializable {
             ClusterCombination rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
 
 //            Do pairwise with shrink factor 1
-            assessComparisonTree(rootCandidate, 1);
+            assessComparisonTree(rootCandidate, 1, sc);
 
 //        Now compute the high-order DCCs
             rootLeft = new ArrayList<>();
@@ -112,7 +105,7 @@ public class RecursiveBounding implements Serializable {
             }
 
             rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
-            assessComparisonTree(rootCandidate, par.shrinkFactor);
+            assessComparisonTree(rootCandidate, par.shrinkFactor, sc);
         }
 
 //        Set statistics
@@ -127,7 +120,7 @@ public class RecursiveBounding implements Serializable {
     }
 
 //    Get positive DCCs for a certain complexity
-    public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor) {
+    public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor, JavaSparkContext sc) {
         //        Make candidate list so that we can stream it
         List<ClusterCombination> rootCandidateList = new ArrayList<>();
         rootCandidateList.add(rootCandidate);
@@ -136,8 +129,7 @@ public class RecursiveBounding implements Serializable {
                 .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
                 .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-        System.out.println("dccs:" + DCCs.toString());
-
+        //System.out.println("dccs:" + DCCs.toString());
         List<List<ClusterCombination>> dccs = new ArrayList<>();
         List<ClusterCombination> cc = new ArrayList<>();
         Stream.Builder<ClusterCombination> s = Stream.builder();
@@ -148,7 +140,8 @@ public class RecursiveBounding implements Serializable {
             }
         }
         Stream<ClusterCombination> x = s.build();
-        System.out.println("dccs " + x.collect(Collectors.partitioningBy(y -> true)));
+        //System.out.println("dccs " + x.collect(Collectors.partitioningBy(y -> true)));
+        //DCCS = x.collect(Collectors.partitioningBy(y -> true);
         //System.out.println("dccs mine:" + x.toString());
 
         // Print out the total time of the watch
@@ -167,7 +160,7 @@ public class RecursiveBounding implements Serializable {
 //        TODO SEE IF WE CAN MEASURE THIS TIME SEPARATELY
 //        Handle negative DCCs using progressive approximation
         this.nNegDCCs.getAndAdd(DCCs.get(false).size());
-        this.positiveDCCs = ProgressiveApproximation.ApproximateProgressively(DCCs.get(false), this.positiveDCCs, par);
+        this.positiveDCCs = ProgressiveApproximation.ApproximateProgressively(DCCs.get(false), this.positiveDCCs, par, sc);
     }
 
     //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
@@ -182,8 +175,13 @@ public class RecursiveBounding implements Serializable {
                 par.pairwiseDistances);
 
 //      Update statistics
-        par.statBag.nCCs.getAndIncrement();
-        par.statBag.totalCCSize.addAndGet(CC.size());
+        //System.out.println("par.statBag.nCCs" + par.statBag.nCCs.set(1));
+        par.statBag = new StatBag();
+        par.statBag.nCCs = new AtomicLong(i);
+        par.statBag.totalCCSize = new AtomicLong(CC.size());
+        i++;
+        //par.statBag.nCCs.getAndIncrement();
+        //par.statBag.totalCCSize.addAndGet(CC.size());
 
 //        Shrink upper bound for progressive bounding
         double shrunkUB = CC.getShrunkUB(shrinkFactor, par.maxApproximationSize);
@@ -200,9 +198,44 @@ public class RecursiveBounding implements Serializable {
 
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
-            return lib.getStream(subCCs, par.parallel).unordered()
+
+
+
+            //System.out.println(subCCs.toString());
+
+
+            List<ClusterCombination> s = new ArrayList<>();
+            /*JavaRDD<ClusterCombination> rdd = sc.parallelize(subCCs);
+            spark = true;
+            if (spark) {
+                        JavaRDD returned = rdd.map(subCC -> recursiveBounding(subCC, shrinkFactor, par));
+                        s = returned.collect();
+            }
+            System.out.println("result_spark " + s);
+            spark = false;*/
+
+            List<List<ClusterCombination>> s2 = new ArrayList<>();
+            for(int i = 0; i < subCCs.size(); i++){
+                s2.add(recursiveBounding(subCCs.get(i), shrinkFactor, par));
+                System.out.println("result " + s2.get(i));
+            }
+            System.out.println("\n");
+            List<ClusterCombination> result = new ArrayList<>();
+            s2.forEach(result::addAll);
+
+            //System.out.println("result " + result);
+
+
+            List<ClusterCombination> ccs = lib.getStream(subCCs, par.parallel).unordered()
                     .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
                     .collect(Collectors.toList());
+            //System.out.println("ccs: " + ccs);
+            //System.out.println("ccs class: " + ccs.getClass());
+            //System.out.println("\n");*/
+            return result;
+            /*return lib.getStream(subCCs, par.parallel).unordered()
+                    .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
+                    .collect(Collectors.toList());*/
         } else { // CC is decisive, add to DCCs
             CC.setDecisive(true);
 

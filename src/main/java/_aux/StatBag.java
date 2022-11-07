@@ -22,7 +22,7 @@ public class StatBag implements Serializable {
     public List<Stage> stageDurations = new ArrayList<>();
 
 //    Algorithm specific stats
-    public AtomicLong nCCs = new AtomicLong(0);
+    public transient AtomicLong nCCs = new AtomicLong(0);
     public AtomicLong totalCCSize = new AtomicLong(0);
     public AtomicLong nNegDCCs = new AtomicLong(0);
     public HashMap<String, Object> otherStats = new HashMap<>();

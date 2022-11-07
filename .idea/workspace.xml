@@ -6,7 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="working on recursive bounding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/StatBag.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding_spark.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -185,14 +189,8 @@
       <workItem from="1667560131953" duration="2768000" />
       <workItem from="1667569239125" duration="4535000" />
       <workItem from="1667581373193" duration="1767000" />
-      <workItem from="1667737565093" duration="7444000" />
-    </task>
-    <task id="LOCAL-00006" summary="Added some simple stats to CD code">
-      <created>1666010597281</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1666010597281</updated>
+      <workItem from="1667737565093" duration="7605000" />
+      <workItem from="1667813488480" duration="14728000" />
     </task>
     <task id="LOCAL-00007" summary="Implemented Euclidean Similarity. Still have to debug">
       <created>1666039896038</created>
@@ -530,7 +528,14 @@
       <option name="project" value="LOCAL" />
       <updated>1667742571038</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="working on recursive bounding">
+      <created>1667745054072</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1667745054072</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

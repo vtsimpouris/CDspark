@@ -2,6 +2,7 @@ package bounding;
 
 import _aux.lib;
 import core.Parameters;
+import org.apache.spark.api.java.JavaSparkContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,8 +10,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ProgressiveApproximation {
+    JavaSparkContext sc;
 
-    public static List<ClusterCombination> ApproximateProgressively(List<ClusterCombination> approximatedCCs, List<ClusterCombination> runningPosDCCs, Parameters par){
+    public static List<ClusterCombination> ApproximateProgressively(List<ClusterCombination> approximatedCCs, List<ClusterCombination> runningPosDCCs, Parameters par, JavaSparkContext sc){
         if (approximatedCCs.size() == 0){return runningPosDCCs;}
 
         // First group the approximated cluster combinations by their critical shrinkfactor

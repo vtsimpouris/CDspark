@@ -4,43 +4,19 @@ import _aux.*;
 import algorithms.Algorithm;
 import algorithms.StageRunner;
 import bounding.RecursiveBounding;
-import bounding.RecursiveBounding_spark;
-import clustering.Cluster;
 import clustering.HierarchicalClustering;
-import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Doubles;
 import core.Parameters;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.curator.shaded.com.google.common.base.Stopwatch;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.*;
-import org.apache.spark.api.java.function.Function;
-import org.apache.spark.api.java.function.Function2;
-import org.apache.spark.api.java.function.PairFunction;
-import org.apache.spark.broadcast.Broadcast;
-import scala.Tuple2;
+
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
-import com.google.common.collect.ImmutableList;
-import similarities.DistanceFunction;
 
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import java.util.stream.DoubleStream;
+
 import org.apache.commons.lang3.time.StopWatch;
 
 public class SimilarityDetective extends Algorithm implements Serializable {
     private static final long serialVersionUID = -2685444218382696361L;
     public transient HierarchicalClustering HC;
     public transient RecursiveBounding RB;
-    public transient RecursiveBounding_spark RBs;
 
 
     public SimilarityDetective(Parameters par) {
@@ -122,8 +98,8 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         boundingStage.setDuration(boundingStage.getDuration() - postProcessTime);
 
         par.statBag.otherStats.put("nLookups", par.simMetric.nLookups.get());
-        par.statBag.otherStats.put("nCCs", par.statBag.nCCs.get());
-        par.statBag.otherStats.put("avgCCSize", par.statBag.totalCCSize.get() / (double) par.statBag.nCCs.get());
+        par.statBag.otherStats.put("nCCs", par.statBag.nCCs.longValue());
+        par.statBag.otherStats.put("avgCCSize", par.statBag.totalCCSize.get() / (double) par.statBag.nCCs.longValue());
     }
 
     @Override
