@@ -20,6 +20,7 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.FlatMapFunction;
+import org.apache.spark.storage.StorageLevel;
 
 
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class RecursiveBounding implements Serializable {
     public static Boolean spark = false;
     public static JavaSparkContext sc;
     public static int i = 0;
+    public static int level = 0;
 
 
     public Set<ResultTuple> run() {
@@ -122,32 +124,52 @@ public class RecursiveBounding implements Serializable {
 //    Get positive DCCs for a certain complexity
     public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor, JavaSparkContext sc) {
         //        Make candidate list so that we can stream it
+        this.level++;
         List<ClusterCombination> rootCandidateList = new ArrayList<>();
         rootCandidateList.add(rootCandidate);
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        Map<Boolean, List<ClusterCombination>> DCCs = lib.getStream(rootCandidateList, par.parallel)
+        Map<Boolean, List<ClusterCombination>> DCCs = new HashMap<>();
+        DCCs = lib.getStream(rootCandidateList, par.parallel)
                 .unordered()
                 .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
                 .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-        //System.out.println("dccs:" + DCCs.toString());
+        //System.out.println("DCCs size " + DCCs.size());
+        //System.out.println("dccs: " + DCCs.toString());
+
+
+        List<List<ClusterCombination>> ccs = new ArrayList<>();
+        //System.out.println(rootCandidate.size());
+
         stopWatch.stop();
         System.out.println("Java RB Time: " + stopWatch.getTime());
 
+        ClusterCombination cc = rootCandidate;
+        /*List<List<ClusterCombination>> temp = new ArrayList<>();
+        //temp.add(cc);
+        for (i = 0; i < 1; i++) {
+                temp.add(recursiveBounding(cc, shrinkFactor, par));
+        }*/
+        //System.out.println(temp.get(0).size());
 
-        JavaRDD<ClusterCombination> rdd = sc.parallelize(recursiveBounding(rootCandidate, shrinkFactor, par));
         stopWatch.reset();
         stopWatch.start();
-        //System.out.println("par sizes: " + rdd.count());
-
+        JavaRDD<ClusterCombination> rdd = sc.parallelize(recursiveBounding(cc, shrinkFactor, par),4).map(x -> x);
         rdd.map(subCC -> recursiveBounding(subCC, shrinkFactor, par));
         //System.out.println("result_spark " + rdd.collect());
-        //List<ClusterCombination> subCCs = rdd.collect();
         Stream<ClusterCombination> stream = rdd.collect().stream();
-        Map<Boolean, List<ClusterCombination>> dccs = stream.collect(Collectors.partitioningBy(y -> true));
         stopWatch.stop();
         System.out.println("spark RB Time: " + stopWatch.getTime());
+
+        //stopWatch.stop();
+        Map<Boolean, List<ClusterCombination>> dccs = stream.collect(Collectors.partitioningBy(y -> true));
+        DCCs = dccs;
+
+        //System.out.println("DCCs mine " + DCCs);
+        //System.out.println("spark RB Time: " + stopWatch.getTime());
+
+        //System.out.println("dccs mine:" + DCCs.toString());
 
         // Print out the total time of the watch
 
