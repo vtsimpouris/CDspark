@@ -37,15 +37,11 @@ public class RecursiveBounding implements Serializable {
     public static JavaSparkContext sc;
     public static int i = 0;
     public static int level = 0;
+    public List<ClusterCombination> cc = new ArrayList<>();
 
 
     public Set<ResultTuple> run() {
-        SparkConf sparkConf = new SparkConf().setAppName("RB")
-                .setMaster("local[8]").set("spark.executor.memory","8g");
-        // start a spark context
-        JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        sc.setLogLevel("ERROR");
-        this.sc = sc;
+        //this.sc = sc;
         Cluster rootCluster = clusterTree.get(0).get(0);
 
 //        Make initial cluster comparison
@@ -72,7 +68,7 @@ public class RecursiveBounding implements Serializable {
                 }
 
                 ClusterCombination rootCandidate = new ClusterCombination(LHS, RHS, 0);
-                assessComparisonTree(rootCandidate, runningShrinkFactor, sc);
+                assessComparisonTree(rootCandidate, runningShrinkFactor);
 
                 //            Set shrink factor back to original value
                 runningShrinkFactor = par.shrinkFactor;
@@ -93,7 +89,7 @@ public class RecursiveBounding implements Serializable {
             ClusterCombination rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
 
 //            Do pairwise with shrink factor 1
-            assessComparisonTree(rootCandidate, 1, sc);
+            assessComparisonTree(rootCandidate, 1);
 
 //        Now compute the high-order DCCs
             rootLeft = new ArrayList<>();
@@ -107,7 +103,7 @@ public class RecursiveBounding implements Serializable {
             }
 
             rootCandidate = new ClusterCombination(rootLeft, rootRight, 0);
-            assessComparisonTree(rootCandidate, par.shrinkFactor, sc);
+            assessComparisonTree(rootCandidate, par.shrinkFactor);
         }
 
 //        Set statistics
@@ -122,49 +118,63 @@ public class RecursiveBounding implements Serializable {
     }
 
 //    Get positive DCCs for a certain complexity
-    public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor, JavaSparkContext sc) {
+    public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor) {
         //        Make candidate list so that we can stream it
         this.level++;
-        List<ClusterCombination> rootCandidateList = new ArrayList<>();
-        rootCandidateList.add(rootCandidate);
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        Map<Boolean, List<ClusterCombination>> DCCs = new HashMap<>();
-        DCCs = lib.getStream(rootCandidateList, par.parallel)
+        List<ClusterCombination> rootCandidateList = new ArrayList<>();
+        rootCandidateList.add(rootCandidate);
+        Map<Boolean, List<ClusterCombination>> DCCs = lib.getStream(rootCandidateList, par.parallel)
                 .unordered()
                 .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
                 .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-        //System.out.println("DCCs size " + DCCs.size());
-        //System.out.println("dccs: " + DCCs.toString());
+        //System.out.println("DCCs.size: " + DCCs.size());
 
 
-        List<List<ClusterCombination>> ccs = new ArrayList<>();
-        //System.out.println(rootCandidate.size());
-
+        //System.out.println("dccs:" + DCCs.toString());
         stopWatch.stop();
         System.out.println("Java RB Time: " + stopWatch.getTime());
 
-        ClusterCombination cc = rootCandidate;
-        /*List<List<ClusterCombination>> temp = new ArrayList<>();
-        //temp.add(cc);
-        for (i = 0; i < 1; i++) {
-                temp.add(recursiveBounding(cc, shrinkFactor, par));
-        }*/
-        //System.out.println(temp.get(0).size());
+        //Map<Boolean, List<ClusterCombination>>
+
+        SparkConf sparkConf = new SparkConf().setAppName("RB")
+                .setMaster("local[*]").set("spark.executor.memory","20g");
+        // start a spark context
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        sc.setLogLevel("ERROR");
+        //System.out.println(sc.defaultParallelism());
+
 
         stopWatch.reset();
+
+
+        List<ClusterCombination> temp = recursiveBounding(rootCandidate, shrinkFactor, par);
+        //System.out.println(temp.size());
+
         stopWatch.start();
-        JavaRDD<ClusterCombination> rdd = sc.parallelize(recursiveBounding(cc, shrinkFactor, par),4).map(x -> x);
-        rdd.map(subCC -> recursiveBounding(subCC, shrinkFactor, par));
-        //System.out.println("result_spark " + rdd.collect());
-        Stream<ClusterCombination> stream = rdd.collect().stream();
+        JavaRDD<ClusterCombination> rdd = sc.parallelize(temp,32);
+        rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
+        rdd = rdd.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
+        rdd = rdd.filter(dcc -> dcc.slack < -2);
+        rdd.collect();
+        /*List<ClusterCombination> flat =
+                rdd2.collect().stream()
+                        .flatMap(List::stream)
+                        .collect(Collectors.toList());*/
         stopWatch.stop();
+        System.out.println("rdd count: " + rdd.count());
+        sc.close();
+        //Stream<ClusterCombination> stream = flat.stream();
+
+        //Map<Boolean, List<ClusterCombination>> dccs = stream.collect(Collectors.partitioningBy(y -> true));
+        //stopWatch.stop();
         System.out.println("spark RB Time: " + stopWatch.getTime());
 
+
         //stopWatch.stop();
-        Map<Boolean, List<ClusterCombination>> dccs = stream.collect(Collectors.partitioningBy(y -> true));
-        DCCs = dccs;
+        //System.out.println("spark RB Time: " + stopWatch.getTime());
 
         //System.out.println("DCCs mine " + DCCs);
         //System.out.println("spark RB Time: " + stopWatch.getTime());

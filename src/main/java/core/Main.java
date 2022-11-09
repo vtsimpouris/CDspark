@@ -122,7 +122,7 @@ public class Main {
             seed = 0;
             parallel = false;
             random = false;
-            saveStats = true;
+            saveStats = false;
             saveResults = false;
         }
 
@@ -341,7 +341,7 @@ public class Main {
         }
 
         SparkConf sparkConf = new SparkConf().setAppName("pairwise")
-                .setMaster("local[8]").set("spark.executor.memory","4g");
+                .setMaster("local[16]").set("spark.executor.memory","32g");
         // start a spark context
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         DistanceFunction df = par.getSimMetric().distFunc;
@@ -419,7 +419,7 @@ public class Main {
             } break;
             case "stock":
             default: {
-                dataPath = String.format("/home/vtsimpouris/Desktop/stock/stock_0021daily/0021daily/stocks_0021daily_interpolated_full.csv");
+                dataPath = String.format("C:\\Users\\SKIKK\\Desktop\\stocks\\0021daily\\stocks_0021daily_interpolated_full.csv");
                 dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
         }
