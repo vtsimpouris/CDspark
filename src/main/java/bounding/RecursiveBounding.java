@@ -8,6 +8,7 @@ import _aux.lib;
 import clustering.Cluster;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import java.util.List;
 import java.io.Serializable;
@@ -120,6 +121,12 @@ public class RecursiveBounding implements Serializable {
 //    Get positive DCCs for a certain complexity
     public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor) {
         //        Make candidate list so that we can stream it
+        SparkConf sparkConf = new SparkConf().setAppName("RB")
+                .setMaster("local[*]").set("spark.executor.memory","20g");
+        // start a spark context
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        sc.setLogLevel("ERROR");
+
         this.level++;
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
@@ -130,58 +137,40 @@ public class RecursiveBounding implements Serializable {
                 .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
                 .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-        //System.out.println("DCCs.size: " + DCCs.size());
+        //System.out.println("DCCs: " + DCCs);
+        List<ClusterCombination> results = new ArrayList<>();
+        results = iterativeBounding(rootCandidate,shrinkFactor, par);
+        System.out.println(results);
+        Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
 
 
-        //System.out.println("dccs:" + DCCs.toString());
+        dccs = results.stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+        //DCCs = dccs;
+        System.out.println(dccs.get(true).size());
+        System.out.println(DCCs.get(true).size());
+
         stopWatch.stop();
         System.out.println("Java RB Time: " + stopWatch.getTime());
-
-        //Map<Boolean, List<ClusterCombination>>
-
-        SparkConf sparkConf = new SparkConf().setAppName("RB")
-                .setMaster("local[*]").set("spark.executor.memory","20g");
-        // start a spark context
-        JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        sc.setLogLevel("ERROR");
-        //System.out.println(sc.defaultParallelism());
+        List<ClusterCombination> temp = new ArrayList<>();
 
 
-        stopWatch.reset();
 
 
-        List<ClusterCombination> temp = recursiveBounding(rootCandidate, shrinkFactor, par);
-        //System.out.println(temp.size());
 
-        stopWatch.start();
-        JavaRDD<ClusterCombination> rdd = sc.parallelize(temp,32);
+
+        JavaRDD<ClusterCombination> rdd = sc.parallelize(rootCandidateList,16);
         rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
         rdd = rdd.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
         rdd = rdd.filter(dcc -> dcc.slack < -2);
         rdd.collect();
-        /*List<ClusterCombination> flat =
-                rdd2.collect().stream()
-                        .flatMap(List::stream)
-                        .collect(Collectors.toList());*/
-        stopWatch.stop();
-        System.out.println("rdd count: " + rdd.count());
+
+        //System.out.println("rdd count: " + rdd.count());
         sc.close();
-        //Stream<ClusterCombination> stream = flat.stream();
 
-        //Map<Boolean, List<ClusterCombination>> dccs = stream.collect(Collectors.partitioningBy(y -> true));
-        //stopWatch.stop();
-        System.out.println("spark RB Time: " + stopWatch.getTime());
-
-
-        //stopWatch.stop();
         //System.out.println("spark RB Time: " + stopWatch.getTime());
 
-        //System.out.println("DCCs mine " + DCCs);
-        //System.out.println("spark RB Time: " + stopWatch.getTime());
 
-        //System.out.println("dccs mine:" + DCCs.toString());
 
-        // Print out the total time of the watch
 
 
 //        Filter minJump confirming positives
@@ -212,7 +201,7 @@ public class RecursiveBounding implements Serializable {
                 par.pairwiseDistances);
 
 //      Update statistics
-        //System.out.println("par.statBag.nCCs" + par.statBag.nCCs.set(1));
+        //System.out.println("par.statBag.nCCs " + i);
         par.statBag = new StatBag();
         par.statBag.nCCs = new AtomicLong(i);
         par.statBag.totalCCSize = new AtomicLong(CC.size());
@@ -236,54 +225,7 @@ public class RecursiveBounding implements Serializable {
 
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
-            //System.out.println("subCCs: " + subCCs);
 
-
-            //System.out.println(subCCs.toString());
-
-            // this is in the wrong place
-
-
-            /*List<ClusterCombination> s = new ArrayList<>();
-            JavaRDD<ClusterCombination> rdd = sc.parallelize(subCCs);
-            spark = true;
-            if (spark && i < 80) {
-                        rdd.map(subCC -> recursiveBounding(subCC, shrinkFactor, par, false));
-                        System.out.println("result_spark " + rdd.collect());
-                        rdd.collect();
-            }
-
-            spark = false;
-            return rdd.collect();*/
-            /*List<List<ClusterCombination>> s2 = new ArrayList<>();
-            for(int i = 0; i < subCCs.size(); i++){
-                s2.add(recursiveBounding(subCCs.get(i), shrinkFactor, par, false));
-                System.out.println("result " + s2.get(i));
-            }
-            //System.out.println("\n");
-            List<ClusterCombination> result = new ArrayList<>();
-            s2.forEach(result::addAll);
-            return result;*/
-
-            /*List<List<ClusterCombination>> s2 = new ArrayList<>();
-            for(int i = 0; i < subCCs.size(); i++){
-                s2.add(recursiveBounding(subCCs.get(i), shrinkFactor, par));
-                //System.out.println("result " + s2.get(i));
-            }
-            //System.out.println("\n");
-            List<ClusterCombination> result = new ArrayList<>();
-            s2.forEach(result::addAll);
-
-            //System.out.println("result " + result);
-
-
-            List<ClusterCombination> ccs = lib.getStream(subCCs, par.parallel).unordered()
-                    .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
-                    .collect(Collectors.toList());
-            //System.out.println("ccs: " + ccs);
-            //System.out.println("ccs class: " + ccs.getClass());
-            //System.out.println("\n");*/
-            //return returned.collect();
             return lib.getStream(subCCs, par.parallel).unordered()
                     .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
                     .collect(Collectors.toList());
@@ -340,6 +282,74 @@ public class RecursiveBounding implements Serializable {
         return positiveDCCs;
 
     }
+    public static List<ClusterCombination> iterativeBounding(ClusterCombination CC, double shrinkFactor, Parameters par) {
+        ArrayList<ClusterCombination> DCCs = new ArrayList<>();
+        ArrayList<ClusterCombination> subccs = new ArrayList<>();
+        subccs.add(CC);
+        int j = 0;
+        while(j < 1e2) {
+            j = j +1;
+            for(int k = 0; k < subccs.size(); k++) {
+                CC = subccs.get(k);
 
+                double threshold = par.tau;
+
+                //        Get bounds
+                CC.bound(par.simMetric, par.empiricalBounding, par.Wl.get(CC.LHS.size() - 1), CC.RHS.size() > 0 ? par.Wr.get(CC.RHS.size() - 1) : null,
+                        par.pairwiseDistances);
+
+                //      Update statistics
+                //System.out.println("par.statBag.nCCs " + i);
+                par.statBag = new StatBag();
+                par.statBag.nCCs = new AtomicLong(i);
+                par.statBag.totalCCSize = new AtomicLong(CC.size());
+                i++;
+                //par.statBag.nCCs.getAndIncrement();
+                //par.statBag.totalCCSize.addAndGet(CC.size());
+
+                //        Shrink upper bound for progressive bounding
+                double shrunkUB = CC.getShrunkUB(shrinkFactor, par.maxApproximationSize);
+
+
+                //        Update threshold based on minJump if we have CC > 2
+                double jumpBasedThreshold = CC.getMaxPairwiseLB() + par.minJump;
+                if (CC.LHS.size() + CC.RHS.size() > 2) {
+                    threshold = Math.max(threshold, jumpBasedThreshold);
+                }
+
+                //        Check if CC is (in)decisive
+                if ((CC.getLB() < threshold) && (shrunkUB >= threshold)) {
+                    CC.setDecisive(false);
+
+                    //            Get splitted CCs
+                    ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1) : null, par.allowSideOverlap);
+                    subccs = subCCs;
+                    continue;
+                    /*return lib.getStream(subCCs, par.parallel).unordered()
+                            .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
+                            .collect(Collectors.toList());*/
+                } else { // CC is decisive, add to DCCs
+                    CC.setDecisive(true);
+
+                    //            Negative DCC, set critical shrink factor in order to investigate later when using progressive approximation
+                    if (shrunkUB < threshold) {
+                        CC.setCriticalShrinkFactor(threshold);
+                        if (CC.getCriticalShrinkFactor() <= 1 && threshold <= 1) {
+                            DCCs.add(CC);
+                        }
+                    } else if (CC.getLB() >= threshold) { //  Positive DCC
+                        CC.setPositive(true);
+                        CC.criticalShrinkFactor = -10;
+                        DCCs.add(CC);
+                    }
+                }
+            }
+        }
+        subccs.addAll(DCCs);
+        Stream<ClusterCombination> pos = subccs.stream().distinct();
+        List<ClusterCombination> list = pos.collect(Collectors.toList());
+        ArrayList<ClusterCombination> subCCs = new ArrayList<ClusterCombination>(list);
+        return subCCs;
+    }
 
 }

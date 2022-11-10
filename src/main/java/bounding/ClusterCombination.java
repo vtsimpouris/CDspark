@@ -111,7 +111,7 @@ public class ClusterCombination implements Serializable {
 
     public void setCriticalShrinkFactor(double threshold){
 //        value of 10 is arbitrary, can be any number > 1; point is to stop investigating since CC can never become positive
-        this.criticalShrinkFactor = this.getSlack() > 0 && threshold <= 1 ? (threshold - this.getCenterOfBounds()) / this.getSlack(): 10;
+        this.criticalShrinkFactor = this.getSlack() >= 0 && threshold <= 1 ? (threshold - this.getCenterOfBounds())  : 10;
     }
 
     public void bound(MultivariateSimilarityFunction simMetric, boolean empiricalBounding, double[] Wl, double[] Wr, double[][] pairwiseDistances){
@@ -125,7 +125,12 @@ public class ClusterCombination implements Serializable {
         this.checkAndSetUB(bounds.getUB());
         this.checkAndSetMaxPairwiseLB(bounds.getMaxLowerBoundSubset());
         this.setCenterOfBounds((bounds.getUB() + bounds.getLB()) / 2);
+        //System.out.println("bounds.getUB(): " + bounds.getUB());
+        //System.out.println("this.getCenterOfBounds(): " + this.getCenterOfBounds());
+
         this.setSlack(bounds.getUB() - this.getCenterOfBounds());
+        //System.out.println("this.getSlack()" + this.getSlack());
+        //System.out.println("\n");
     }
 
 //    Split cluster combination into 'smaller' combinations by replacing the largest cluster with its children
@@ -137,7 +142,7 @@ public class ClusterCombination implements Serializable {
 //        Get cluster with largest radius and more than one point
         int cToBreak = 0;
         double maxRadius = -Double.MAX_VALUE;
-
+        //System.out.println(this.getClusters().size());
         for (int i = 0; i < this.getClusters().size(); i++) {
             Cluster c = this.getClusters().get(i);
             if (c.size() > 1 && c.getRadius() > 0 && c.getRadius() > maxRadius){

@@ -69,7 +69,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
-        //System.out.println(results);
+        System.out.println(results);
         stopWatch.stop();
         //System.out.println(RB.clusterTree);
         // Print out the total time of the watch

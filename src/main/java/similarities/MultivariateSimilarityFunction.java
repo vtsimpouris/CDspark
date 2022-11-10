@@ -79,6 +79,9 @@ public abstract class MultivariateSimilarityFunction implements Serializable {
                     double dist = pairwiseDistances[C1.get(i)][C2.get(j)];
                     lb = Math.min(lb, dist);
                     ub = Math.max(ub, dist);
+                    /*if (ub > lb) {
+                        ub = 0.8;
+                    }*/
                     nLookups.incrementAndGet();
                 }
             }
