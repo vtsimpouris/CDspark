@@ -133,6 +133,9 @@ public class RecursiveBounding implements Serializable {
                 .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
                 .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+        stopWatch.stop();
+        System.out.println("Java RB Time: " + stopWatch.getTime());
+        stopWatch.reset();
 
         List<Cluster> Clusters = new ArrayList<>();
         for (int i = 0; i < clusterTree.size(); i++) {
@@ -141,8 +144,10 @@ public class RecursiveBounding implements Serializable {
                 Clusters.add(clusterTree.get(i).get(j));
             }
         }
-        System.out.println(Clusters.size());
+        System.out.println("spark starting....");
+
         JavaRDD<Cluster> rdd = sc.parallelize(Clusters,16);
+
         JavaRDD<ArrayList<Cluster>> rdd2;
         rdd2 = rdd.map((c1 -> {
             ArrayList<Cluster> temp = new ArrayList<Cluster>(1);
@@ -154,50 +159,22 @@ public class RecursiveBounding implements Serializable {
             ClusterCombination cc = new ClusterCombination(c1._1,c1._2,0);
             return cc;
         }));
+        stopWatch.start();
         rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-        rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
+        rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() < 1);
+        stopWatch.stop();
         Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
         dccs = rdd3.collect().stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-        System.out.println(dccs);
-        System.out.println(DCCs);
+        //System.out.println(dccs);
+        //System.out.println(DCCs);
         DCCs = dccs;
 
         //System.out.println("rdd count: " + rdd.count());
         sc.close();
-        //System.out.println("DCCs: " + DCCs);
-       // List<ClusterCombination> results = new ArrayList<>();
-        //results = iterativeBounding(rootCandidate,shrinkFactor, par);
-       // System.out.println(results);
-        //Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
 
 
-        //dccs = results.stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-        //DCCs = dccs;
-        //System.out.println(dccs.get(true).size());
-        //System.out.println(DCCs.get(true).size());
-
-        stopWatch.stop();
-        System.out.println("Java RB Time: " + stopWatch.getTime());
+        System.out.println("Spark RB Time: " + stopWatch.getTime());
         List<ClusterCombination> temp = new ArrayList<>();
-
-
-
-
-
-
-        /*JavaRDD<ClusterCombination> rdd = sc.parallelize(rootCandidateList,16);
-        rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-        rdd = rdd.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
-        rdd = rdd.filter(dcc -> dcc.slack < -2);
-        rdd.collect();
-
-        //System.out.println("rdd count: " + rdd.count());
-        sc.close();*/
-
-        //System.out.println("spark RB Time: " + stopWatch.getTime());
-
-
-
 
 
 //        Filter minJump confirming positives

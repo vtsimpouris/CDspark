@@ -6,9 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="working on recursive bounding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/similarities/MultivariateSimilarityFunction.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -195,14 +194,7 @@
       <workItem from="1668076319767" duration="11721000" />
       <workItem from="1668088730774" duration="1334000" />
       <workItem from="1668160644139" duration="639000" />
-      <workItem from="1668161976385" duration="3055000" />
-    </task>
-    <task id="LOCAL-00011" summary="Implemented subset weights, debugged multipole and pearson metric">
-      <created>1666122545339</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1666122545339</updated>
+      <workItem from="1668161976385" duration="3859000" />
     </task>
     <task id="LOCAL-00012" summary="Created unit-tets for datareader&#10;and lib. Also fixed some bugs in methods as a result from it">
       <created>1666174737448</created>
@@ -540,7 +532,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668087294083</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="working on recursive bounding">
+      <created>1668165089246</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1668165089246</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
