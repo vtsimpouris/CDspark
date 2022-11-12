@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="working on recursive bounding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
@@ -205,14 +204,7 @@
       <workItem from="1668175940870" duration="291000" />
       <workItem from="1668176348559" duration="677000" />
       <workItem from="1668257460457" duration="153000" />
-      <workItem from="1668258146503" duration="4772000" />
-    </task>
-    <task id="LOCAL-00013" summary="Added unit-tests for pearson correlation">
-      <created>1666186297671</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1666186297671</updated>
+      <workItem from="1668258146503" duration="8534000" />
     </task>
     <task id="LOCAL-00014" summary="Added unit-tests for Multipole">
       <created>1666188009683</created>
@@ -550,7 +542,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668165853299</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="working on recursive bounding">
+      <created>1668263013342</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1668263013343</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -632,6 +631,7 @@
       <configuration name="Application">
         <watch expression="lib.var(row)" language="JAVA" />
         <watch expression="lib.var(row) / (lib.max(row) - lib.min(row))" language="JAVA" />
+        <watch expression="((java.util.stream.Collectors.Partition)DCCs).entrySet().toArray()[0]" custom="java.util.stream.Collectors.Partition" />
       </configuration>
     </watches-manager>
   </component>

@@ -36,6 +36,7 @@ public class RecursiveBounding implements Serializable {
     public static int level = 0;
     public List<ClusterCombination> ccs = new ArrayList<>();
     List<Cluster> Clusters = new ArrayList<>();
+    public transient Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
 
 
     public Set<ResultTuple> run() {
@@ -136,7 +137,7 @@ public class RecursiveBounding implements Serializable {
                 .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
         stopWatch.stop();
-        System.out.println(DCCs);
+        //System.out.println(DCCs);
         System.out.println("Java RB Time: " + stopWatch.getTime());
 
 
@@ -170,9 +171,9 @@ public class RecursiveBounding implements Serializable {
             rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
             rdd3 = rdd3.filter(dcc -> dcc.isPositive);
             rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() < 1);
-            ccs = rdd3.take(10);
+            ccs = rdd3.take(100);
             //ccs = rdd3.collect();
-            Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
+            //Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
             dccs = rdd3.take(10).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
             DCCs = dccs;
             stopWatch.stop();
@@ -182,7 +183,14 @@ public class RecursiveBounding implements Serializable {
         else{
             stopWatch.reset();
             stopWatch.start();
+            for(int j = 0; j < Clusters.size(); j++){
+                for (int k = 0; k < dccs.get(false).size(); k++) {
+                    if (Clusters.get(j) == dccs.get(false).get(k).getClusters().get(1)) {
+                        Clusters.remove(Clusters.get(j));
+                    }
+                }
 
+            }
             JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
 
             JavaRDD<ClusterCombination> rdd2 = sc.parallelize(ccs);
@@ -242,7 +250,7 @@ public class RecursiveBounding implements Serializable {
                 par.pairwiseDistances);
 
 //      Update statistics
-        System.out.println("LHS: " + CC.LHS + "RHS: " + CC.RHS);
+        //System.out.println("LHS: " + CC.LHS + "RHS: " + CC.RHS);
         par.statBag = new StatBag();
         par.statBag.nCCs = new AtomicLong(i);
         par.statBag.totalCCSize = new AtomicLong(CC.size());
