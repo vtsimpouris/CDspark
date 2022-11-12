@@ -8,6 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -194,14 +195,17 @@
       <workItem from="1668076319767" duration="11721000" />
       <workItem from="1668088730774" duration="1334000" />
       <workItem from="1668160644139" duration="639000" />
-      <workItem from="1668161976385" duration="3859000" />
-    </task>
-    <task id="LOCAL-00012" summary="Created unit-tets for datareader&#10;and lib. Also fixed some bugs in methods as a result from it">
-      <created>1666174737448</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1666174737448</updated>
+      <workItem from="1668161976385" duration="3887000" />
+      <workItem from="1668165994679" duration="204000" />
+      <workItem from="1668166338450" duration="79000" />
+      <workItem from="1668169008058" duration="835000" />
+      <workItem from="1668171628256" duration="347000" />
+      <workItem from="1668172928292" duration="1051000" />
+      <workItem from="1668175692803" duration="169000" />
+      <workItem from="1668175940870" duration="291000" />
+      <workItem from="1668176348559" duration="677000" />
+      <workItem from="1668257460457" duration="153000" />
+      <workItem from="1668258146503" duration="4772000" />
     </task>
     <task id="LOCAL-00013" summary="Added unit-tests for pearson correlation">
       <created>1666186297671</created>
@@ -539,7 +543,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668165089246</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="working on recursive bounding">
+      <created>1668165853299</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1668165853299</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

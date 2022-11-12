@@ -40,36 +40,12 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
-        //RBs = new RecursiveBounding_spark(par, HC.clusterTree);
-        //System.out.println(Arrays.deepToString(par.pairwiseDistances));
 
-//        STAGE 3 - Recursive bounding
-        //SparkConf sparkConf = new SparkConf().setAppName("RB")
-        //        .setMaster("local[8]").set("spark.executor.memory","4g");
-        // start a spark context
-        //JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        //List<RecursiveBounding> list= new ArrayList<RecursiveBounding>();
-        //list.add(RB);
-
-        /*StopWatch stopWatch = new StopWatch();
-        JavaRDD<RecursiveBounding> JavaRDD = sc.parallelize(list);
-        JavaRDD<Set<ResultTuple>> returnedRDD;
-        stopWatch.start();
-        returnedRDD = JavaRDD.map(s -> {
-            s.run();
-            return s.results;
-        });
-
-        List<Set<ResultTuple>> returned = returnedRDD.collect();
-        System.out.println(returned.get(0));
-        stopWatch.stop();*/
-        // Print out the total time of the watch
-        //System.out.println("Spark RB Time: " + stopWatch.getTime());
 
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
-        //System.out.println(results);
+        System.out.println(results);
         stopWatch.stop();
         //System.out.println(RB.clusterTree);
         // Print out the total time of the watch
