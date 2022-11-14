@@ -49,7 +49,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 
         while (iter.hasNext()) {
             ResultTuple element = (ResultTuple) iter.next();
-            if (element.RHS.size() == 5) {
+            if (element.RHS.size() > 2) {
                 System.out.println(element);
             }
         }

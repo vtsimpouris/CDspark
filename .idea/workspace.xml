@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="working on recursive bounding">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="fully spark scalable recursive bounding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/_aux/ResultTuple.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/_aux/ResultTuple.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
@@ -210,14 +209,7 @@
       <workItem from="1668267897661" duration="129000" />
       <workItem from="1668270790294" duration="568000" />
       <workItem from="1668417082185" duration="12349000" />
-      <workItem from="1668430815235" duration="518000" />
-    </task>
-    <task id="LOCAL-00015" summary="Added unit-tests for EuclideanSimilarity">
-      <created>1666189748934</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1666189748934</updated>
+      <workItem from="1668430815235" duration="3674000" />
     </task>
     <task id="LOCAL-00016" summary="Added unit-tests for MinkowskiSimilarity">
       <created>1666190044128</created>
@@ -555,7 +547,14 @@
       <option name="project" value="LOCAL" />
       <updated>1668266790707</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="fully spark scalable recursive bounding">
+      <created>1668431490591</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1668431490591</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -579,7 +578,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed progressive complexity increasing in RecursiveBounding. Before it just did pairwise, then max" />
     <MESSAGE value="Fixed ambiguous problem of finding subset similarities (and to even do that)" />
     <MESSAGE value="created github workflow" />
     <MESSAGE value="changed github workflow" />
@@ -604,7 +602,8 @@
     <MESSAGE value="recursive bounding runs (non-parallel) in spark" />
     <MESSAGE value="working on recursive bounding WITH SPARK" />
     <MESSAGE value="working on recursive bounding" />
-    <option name="LAST_COMMIT_MESSAGE" value="working on recursive bounding" />
+    <MESSAGE value="fully spark scalable recursive bounding" />
+    <option name="LAST_COMMIT_MESSAGE" value="fully spark scalable recursive bounding" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

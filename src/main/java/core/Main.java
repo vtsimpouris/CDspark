@@ -111,7 +111,7 @@ public class Main {
             n = 50;
             m = (int) 500;
             partition = 0;
-            tau = 0.6;
+            tau = 0.8;
             minJump = 0.05;
             maxPLeft = 1;
             maxPRight = 5;

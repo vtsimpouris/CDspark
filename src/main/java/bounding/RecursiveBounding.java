@@ -143,7 +143,7 @@ public class RecursiveBounding implements Serializable {
 
 
         System.out.println("spark starting....");
-        int max_results = 10000;
+        int max_results = 1000;
         if(this.level == 1) {
             stopWatch.reset();
             stopWatch.start();
