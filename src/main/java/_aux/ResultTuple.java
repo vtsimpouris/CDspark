@@ -16,6 +16,7 @@ public class ResultTuple implements Serializable {
     @NonNull @Getter public List<String> rHeaders;
     @NonNull @Getter public double similarity;
 
+
     public String toString() {
         return String.format("%s | %s -> %.3f",
                 LHS.stream().map(Object::toString).collect(Collectors.joining("-")),

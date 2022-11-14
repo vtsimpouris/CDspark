@@ -116,7 +116,7 @@ public class RecursiveBounding implements Serializable {
         return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
     }
 
-//    Get positive DCCs for a certain complexity
+    //    Get positive DCCs for a certain complexity
     public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor) {
         //        Make candidate list so that we can stream it
         SparkConf sparkConf = new SparkConf().setAppName("RB")
@@ -131,18 +131,19 @@ public class RecursiveBounding implements Serializable {
         stopWatch.start();
         List<ClusterCombination> rootCandidateList = new ArrayList<>();
         rootCandidateList.add(rootCandidate);
-        Map<Boolean, List<ClusterCombination>> DCCs = lib.getStream(rootCandidateList, par.parallel)
+        Map<Boolean, List<ClusterCombination>> DCCs = new HashMap<>();
+        /*DCCs = lib.getStream(rootCandidateList, par.parallel)
                 .unordered()
                 .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
                 .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
         stopWatch.stop();
         //System.out.println(DCCs);
-        System.out.println("Java RB Time: " + stopWatch.getTime());
+        System.out.println("Java RB Time: " + stopWatch.getTime());*/
 
 
         System.out.println("spark starting....");
-
+        int max_results = 10000;
         if(this.level == 1) {
             stopWatch.reset();
             stopWatch.start();
@@ -171,10 +172,10 @@ public class RecursiveBounding implements Serializable {
             rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
             rdd3 = rdd3.filter(dcc -> dcc.isPositive);
             rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() < 1);
-            ccs = rdd3.take(100);
+            ccs = rdd3.take(max_results);
             //ccs = rdd3.collect();
             //Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
-            dccs = rdd3.take(10).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+            dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
             DCCs = dccs;
             stopWatch.stop();
             System.out.println("Spark RB Time: " + stopWatch.getTime());
@@ -195,24 +196,26 @@ public class RecursiveBounding implements Serializable {
 
             JavaRDD<ClusterCombination> rdd2 = sc.parallelize(ccs);
 
+
             JavaPairRDD<ClusterCombination, Cluster> cartesian = rdd2.cartesian(rdd);
             JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
                 ArrayList<Cluster> LHS = new ArrayList<>();
                 LHS = c1._1.LHS;
                 ArrayList<Cluster> RHS = new ArrayList<>();
                 RHS.add(c1._1.RHS.get(0));
-                RHS.add(c1._2);
+                for(int j = 0; j < this.level - 1; j++) {
+                    RHS.add(c1._2);
+                }
                 ClusterCombination cc = new ClusterCombination(LHS, RHS, 1);
                 return cc;
             }));
-
             rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
             rdd3 = rdd3.filter(dcc -> dcc.isPositive);
             rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() < 1);
             //ccs = rdd3.take(10);
             Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
 
-            dccs = rdd3.take(10).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+            dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
             DCCs = dccs;
             sc.close();
             stopWatch.stop();
