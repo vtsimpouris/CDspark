@@ -11,6 +11,7 @@ import java.io.Serializable;
 
 import java.util.*;
 
+
 import org.apache.commons.lang3.time.StopWatch;
 
 public class SimilarityDetective extends Algorithm implements Serializable {
@@ -42,22 +43,30 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
 
 
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
-        Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
-        Iterator iter = results.iterator();
 
-        while (iter.hasNext()) {
+        RB.spark = false;
+        Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+        System.out.println("Java results: " + results.size());
+        //Iterator iter = results.iterator();
+
+        /*while (iter.hasNext()) {
             ResultTuple element = (ResultTuple) iter.next();
-            if (element.RHS.size() > 2) {
+            if (element.RHS.size() > 0) {
                 System.out.println(element);
             }
-        }
-        //System.out.println(results);
-        stopWatch.stop();
-        //System.out.println(RB.clusterTree);
-        // Print out the total time of the watch
-        //System.out.println("Java RB Time: " + stopWatch.getTime());
+        }*/
+        par.statBag.stopWatch.reset();
+        par.statBag.stopWatch.start();
+        RB.spark = true;
+        results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+        //iter = results.iterator();
+        System.out.println("spark results: " + results.size());
+        /*while (iter.hasNext()) {
+            ResultTuple element = (ResultTuple) iter.next();
+            if (element.RHS.size() > 0) {
+                System.out.println(element);
+            }
+        }*/
 
 
 

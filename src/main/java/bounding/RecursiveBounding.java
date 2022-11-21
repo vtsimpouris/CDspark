@@ -18,7 +18,8 @@ import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-
+import org.apache.log4j.Logger;
+import org.apache.log4j.Level;
 
 @RequiredArgsConstructor
 public class RecursiveBounding implements Serializable {
@@ -30,7 +31,7 @@ public class RecursiveBounding implements Serializable {
     public AtomicLong nNegDCCs = new AtomicLong(0);
     public double postProcessTime;
     public transient Set<ResultTuple> results;
-    public static Boolean spark = false;
+    public static Boolean spark = true;
     public static JavaSparkContext sc;
     public static int i = 0;
     public static int level = 0;
@@ -119,108 +120,116 @@ public class RecursiveBounding implements Serializable {
     //    Get positive DCCs for a certain complexity
     public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor) {
         //        Make candidate list so that we can stream it
+        //sc.close();
+        Logger.getLogger("org").setLevel(Level.OFF);
+        Logger.getLogger("akka").setLevel(Level.OFF);
         SparkConf sparkConf = new SparkConf().setAppName("RB")
-                .setMaster("local[*]").set("spark.executor.memory","32g");
+                .setMaster("local[16]").set("spark.executor.memory","20g");
         // start a spark context
-        sparkConf.set("spark.driver.maxResultSize", "6g");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         sc.setLogLevel("ERROR");
-
         this.level++;
         StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
+
         List<ClusterCombination> rootCandidateList = new ArrayList<>();
         rootCandidateList.add(rootCandidate);
         Map<Boolean, List<ClusterCombination>> DCCs = new HashMap<>();
-        /*DCCs = lib.getStream(rootCandidateList, par.parallel)
-                .unordered()
-                .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
-                .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
-                .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-        stopWatch.stop();
-        //System.out.println(DCCs);
-        System.out.println("Java RB Time: " + stopWatch.getTime());*/
-
-
-        System.out.println("spark starting....");
-        int max_results = 1000;
-        if(this.level == 1) {
-            stopWatch.reset();
-            stopWatch.start();
-
-            for (int i = 0; i < clusterTree.size(); i++) {
-                for (int j = 0; j < clusterTree.get(i).size(); j++) {
-                    //System.out.println(clusterTree.get(i).get(j).id);
-                    Clusters.add(clusterTree.get(i).get(j));
-                }
-            }
-
-            JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
-
-            JavaRDD<ArrayList<Cluster>> rdd2;
-            rdd2 = rdd.map((c1 -> {
-                ArrayList<Cluster> temp = new ArrayList<Cluster>(1);
-                temp.add(c1);
-                return temp;
-            }));
-            JavaPairRDD<ArrayList<Cluster>, ArrayList<Cluster>> cartesian = rdd2.cartesian(rdd2);
-            cartesian = cartesian.filter(c1 -> !c1._1.equals(c1._2));
-            JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
-                ClusterCombination cc = new ClusterCombination(c1._1, c1._2, 0);
-                return cc;
-            }));
-            rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-            rdd3 = rdd3.filter(dcc -> dcc.isPositive);
-            rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() < 1);
-            ccs = rdd3.take(max_results);
-            //ccs = rdd3.collect();
-            //Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
-            dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-            DCCs = dccs;
-            stopWatch.stop();
-            System.out.println("Spark RB Time: " + stopWatch.getTime());
+        if(!spark) {
             sc.close();
-        }
-        else{
-            stopWatch.reset();
             stopWatch.start();
-            for(int j = 0; j < Clusters.size(); j++){
-                for (int k = 0; k < dccs.get(false).size(); k++) {
-                    if (Clusters.get(j) == dccs.get(false).get(k).getClusters().get(1)) {
-                        Clusters.remove(Clusters.get(j));
+            System.out.println("Java starting....");
+            DCCs = lib.getStream(rootCandidateList, par.parallel)
+                    .unordered()
+                    .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
+                    .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
+                    .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+            stopWatch.stop();
+            //System.out.println(DCCs);
+            System.out.println("Java RB Time: " + stopWatch.getTime());
+        }
+        else {
+
+
+            System.out.println("spark starting....");
+            int max_results = 10;
+            if (this.level == 1) {
+                //stopWatch.reset();
+                stopWatch.start();
+
+                for (int i = 0; i < clusterTree.size(); i++) {
+                    for (int j = 0; j < clusterTree.get(i).size(); j++) {
+                        //System.out.println(clusterTree.get(i).get(j).id);
+                        Clusters.add(clusterTree.get(i).get(j));
                     }
                 }
 
-            }
-            JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
+                JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
 
-            JavaRDD<ClusterCombination> rdd2 = sc.parallelize(ccs);
+                JavaRDD<ArrayList<Cluster>> rdd2;
+                rdd2 = rdd.map((c1 -> {
+                    ArrayList<Cluster> temp = new ArrayList<Cluster>(1);
+                    temp.add(c1);
+                    return temp;
+                }));
+                JavaPairRDD<ArrayList<Cluster>, ArrayList<Cluster>> cartesian = rdd2.cartesian(rdd2);
+                cartesian = cartesian.filter(c1 -> !c1._1.equals(c1._2));
+                JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
+                    ClusterCombination cc = new ClusterCombination(c1._1, c1._2, 0);
+                    return cc;
+                }));
+                rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
+                rdd3 = rdd3.filter(dcc -> dcc.isPositive);
+                rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
+                ccs = rdd3.take(max_results);
+                //ccs = rdd3.collect();
+                //Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
+                dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+                DCCs = dccs;
+                stopWatch.stop();
+                System.out.println("Spark RB Time: " + stopWatch.getTime());
+                sc.close();
+            } else {
+                stopWatch.reset();
+                stopWatch.start();
+                for (int j = 0; j < Clusters.size(); j++) {
+                    for (int k = 0; k < dccs.get(false).size(); k++) {
+                        if (Clusters.get(j) == dccs.get(false).get(k).getClusters().get(1)) {
+                            Clusters.remove(Clusters.get(j));
+                        }
+                    }
 
-
-            JavaPairRDD<ClusterCombination, Cluster> cartesian = rdd2.cartesian(rdd);
-            JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
-                ArrayList<Cluster> LHS = new ArrayList<>();
-                LHS = c1._1.LHS;
-                ArrayList<Cluster> RHS = new ArrayList<>();
-                RHS.add(c1._1.RHS.get(0));
-                for(int j = 0; j < this.level - 1; j++) {
-                    RHS.add(c1._2);
                 }
-                ClusterCombination cc = new ClusterCombination(LHS, RHS, 1);
-                return cc;
-            }));
-            rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-            rdd3 = rdd3.filter(dcc -> dcc.isPositive);
-            rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() < 1);
-            //ccs = rdd3.take(10);
-            Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
+                JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
 
-            dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-            DCCs = dccs;
-            sc.close();
-            stopWatch.stop();
-            System.out.println("Spark RB Time: " + stopWatch.getTime());
+                JavaRDD<ClusterCombination> rdd2 = sc.parallelize(ccs);
 
+
+                JavaPairRDD<ClusterCombination, Cluster> cartesian = rdd2.cartesian(rdd);
+                JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
+                    ArrayList<Cluster> LHS = new ArrayList<>();
+                    LHS = c1._1.LHS;
+                    ArrayList<Cluster> RHS = new ArrayList<>();
+                    RHS.add(c1._1.RHS.get(0));
+                    for (int j = 0; j < this.level - 1; j++) {
+                        RHS.add(c1._2);
+                    }
+                    ClusterCombination cc = new ClusterCombination(LHS, RHS, 1);
+                    return cc;
+                }));
+                rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
+                rdd3 = rdd3.filter(dcc -> dcc.isPositive);
+                rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
+                //ccs = rdd3.take(10);
+                Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
+
+                dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+                //dccs = rdd3.collect().stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+                DCCs = dccs;
+                sc.close();
+                stopWatch.stop();
+                System.out.println("Spark RB Time: " + stopWatch.getTime());
+
+            }
         }
 
 
