@@ -26,8 +26,8 @@ public class StageRunner {
         } finally {
             stopWatch.split();
             double splitTime = lib.nanoToSec(stopWatch.getSplitNanoTime());
-            double splitDuration = stageDurations.isEmpty() ? splitTime : splitTime - stageDurations.get(stageDurations.size() - 1).getDuration();
-            stageDurations.add(new Stage(name, splitDuration));
+            double splitDuration = stageDurations.isEmpty() ? splitTime : splitTime + stageDurations.get(stageDurations.size() - 1).getDuration();
+            stageDurations.add(new Stage(name, splitTime));
         }
 
     }

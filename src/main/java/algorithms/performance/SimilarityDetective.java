@@ -18,6 +18,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
     private static final long serialVersionUID = -2685444218382696361L;
     public transient HierarchicalClustering HC;
     public transient RecursiveBounding RB;
+    public transient RecursiveBounding RB_spark;
 
 
     public SimilarityDetective(Parameters par) {
@@ -30,6 +31,8 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         StageRunner stageRunner = new StageRunner(par.LOGGER);
 //        Start the timer
         par.statBag.stopWatch.start();
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
 
 //        STAGE 1 - Compute pairwise distances if using empirical bounds
         //System.out.println(par.pairwiseDistances);
@@ -55,10 +58,11 @@ public class SimilarityDetective extends Algorithm implements Serializable {
                 System.out.println(element);
             }
         }*/
-        par.statBag.stopWatch.reset();
+        //par.statBag.stopWatch.stop();
+        //par.statBag.stopWatch.reset();
         par.statBag.stopWatch.start();
         RB.spark = true;
-        Set<ResultTuple> results_spark = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+        Set<ResultTuple> results_spark = stageRunner.run("Recursive bounding spark", () -> RB.run(), par.statBag.stopWatch);
         //iter = results.iterator();
         System.out.println("spark results: " + results_spark.size());
         /*while (iter.hasNext()) {
@@ -71,11 +75,11 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 
 
         //par.statBag.stopWatch.stop();
-        par.statBag.totalDuration = lib.nanoToSec(par.statBag.stopWatch.getNanoTime());
+        par.statBag.totalDuration = lib.nanoToSec(stopWatch.getNanoTime());
         par.statBag.stageDurations = stageRunner.stageDurations;
         this.prepareStats();
 
-        return results_spark;
+        return results;
     }
 
 
