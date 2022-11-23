@@ -173,6 +173,7 @@ public class RecursiveBounding implements Serializable {
         else {
             this.level++;
             System.out.println("spark starting....");
+            JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
             //int max_results = 10000;
             if (this.level == 1) {
                 //stopWatch.reset();
@@ -185,7 +186,7 @@ public class RecursiveBounding implements Serializable {
                     }
                 }
 
-                JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
+                //JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
 
                 JavaRDD<ArrayList<Cluster>> rdd2;
                 rdd2 = rdd.map((c1 -> {
@@ -224,10 +225,8 @@ public class RecursiveBounding implements Serializable {
                         }
 
                     }
-                    JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
 
                     JavaRDD<ClusterCombination> rdd2 = sc.parallelize(ccs);
-
 
                     JavaPairRDD<ClusterCombination, Cluster> cartesian = rdd2.cartesian(rdd);
                     JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
