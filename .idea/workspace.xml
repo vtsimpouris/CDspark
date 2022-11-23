@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="fully spark scalable recursive bounding">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="nice results to show">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
@@ -224,14 +224,7 @@
       <workItem from="1669199174961" duration="1195000" />
       <workItem from="1669200643407" duration="9647000" />
       <workItem from="1669212755295" duration="603000" />
-      <workItem from="1669225650671" duration="1067000" />
-    </task>
-    <task id="LOCAL-00021" summary="Fixed candidate generation for CD. Now considers potential side overlap">
-      <created>1666258805223</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1666258805223</updated>
+      <workItem from="1669225650671" duration="1914000" />
     </task>
     <task id="LOCAL-00022" summary="Added unit-tests for Clustering and HierarchicalClustering">
       <created>1666265091971</created>
@@ -569,7 +562,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669210270525</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="nice results to show">
+      <created>1669226798212</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1669226798213</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -593,7 +593,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed ambiguous problem of finding subset similarities (and to even do that)" />
     <MESSAGE value="created github workflow" />
     <MESSAGE value="changed github workflow" />
     <MESSAGE value="added ClusterCombination unit-tests" />
@@ -618,7 +617,8 @@
     <MESSAGE value="working on recursive bounding WITH SPARK" />
     <MESSAGE value="working on recursive bounding" />
     <MESSAGE value="fully spark scalable recursive bounding" />
-    <option name="LAST_COMMIT_MESSAGE" value="fully spark scalable recursive bounding" />
+    <MESSAGE value="nice results to show" />
+    <option name="LAST_COMMIT_MESSAGE" value="nice results to show" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

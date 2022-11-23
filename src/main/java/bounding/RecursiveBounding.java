@@ -259,11 +259,11 @@ public class RecursiveBounding implements Serializable {
             }
         }
 
-
+        //System.out.println(DCCs);
 //        Filter minJump confirming positives
         long start = System.nanoTime();
         this.positiveDCCs.addAll(unpackAndCheckMinJump(DCCs.get(true), par));
-        postProcessTime += lib.nanoToSec(System.nanoTime() - start);
+        /*postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
 //        Sort (descending) and filter positive DCCs to comply to topK parameter
         if (par.topK > 0) {
@@ -273,7 +273,7 @@ public class RecursiveBounding implements Serializable {
 //        TODO SEE IF WE CAN MEASURE THIS TIME SEPARATELY
 //        Handle negative DCCs using progressive approximation
         this.nNegDCCs.getAndAdd(DCCs.get(false).size());
-        this.positiveDCCs = ProgressiveApproximation.ApproximateProgressively(DCCs.get(false), this.positiveDCCs, par, sc);
+        this.positiveDCCs = ProgressiveApproximation.ApproximateProgressively(DCCs.get(false), this.positiveDCCs, par, sc);*/
     }
 
     //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
