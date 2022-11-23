@@ -27,6 +27,9 @@
       </list>
     </option>
   </component>
+  <component name="Git.Rebase.Settings">
+    <option name="NEW_BASE" value="origin/master" />
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RESET_MODE" value="HARD" />
@@ -221,6 +224,7 @@
       <workItem from="1669199174961" duration="1195000" />
       <workItem from="1669200643407" duration="9647000" />
       <workItem from="1669212755295" duration="603000" />
+      <workItem from="1669225650671" duration="1067000" />
     </task>
     <task id="LOCAL-00021" summary="Fixed candidate generation for CD. Now considers potential side overlap">
       <created>1666258805223</created>

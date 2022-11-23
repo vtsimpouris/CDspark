@@ -211,10 +211,10 @@ public class RecursiveBounding implements Serializable {
                 DCCs = dccs;
                 stopWatch.stop();
                 System.out.println("Spark RB Time: " + stopWatch.getTime());
-                sc.close();
-            } else if (this.level == 2) {
+                this.level++;
+            }
+            if (this.level > 1) {
                 for(int i = 0; i < par.maxPRight; i++) {
-                    System.out.println("i: " + i);
                     stopWatch.reset();
                     stopWatch.start();
                     for (int j = 0; j < Clusters.size(); j++) {
@@ -247,18 +247,17 @@ public class RecursiveBounding implements Serializable {
                     Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
                     if(i == par.maxPRight - 1){
                         dccs = rdd3.collect().stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+                        DCCs = dccs;
                     }
                 }
-
+                this.level++;
                 //dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-                DCCs = dccs;
                 sc.close();
                 stopWatch.stop();
                 System.out.println("Spark RB Time: " + stopWatch.getTime());
 
             }
         }
-
 
 
 //        Filter minJump confirming positives
