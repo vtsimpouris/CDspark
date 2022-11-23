@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="fully spark scalable recursive bounding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/StageRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/StageRunner.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
@@ -220,14 +219,7 @@
       <workItem from="1669048503770" duration="853000" />
       <workItem from="1669049592685" duration="514000" />
       <workItem from="1669199174961" duration="1195000" />
-      <workItem from="1669200643407" duration="6001000" />
-    </task>
-    <task id="LOCAL-00019" summary="Created Baseline algorithm">
-      <created>1666256072668</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1666256072668</updated>
+      <workItem from="1669200643407" duration="9604000" />
     </task>
     <task id="LOCAL-00020" summary="Finished both baselines">
       <created>1666257246360</created>
@@ -565,7 +557,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669043977489</updated>
     </task>
-    <option name="localTasksCounter" value="68" />
+    <task id="LOCAL-00068" summary="fully spark scalable recursive bounding">
+      <created>1669206714402</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1669206714402</updated>
+    </task>
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
