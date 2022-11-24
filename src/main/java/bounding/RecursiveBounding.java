@@ -148,7 +148,7 @@ public class RecursiveBounding implements Serializable {
         Logger.getLogger("org").setLevel(Level.OFF);
         Logger.getLogger("akka").setLevel(Level.OFF);
         SparkConf sparkConf = new SparkConf().setAppName("RB")
-                .setMaster("local[16]").set("spark.executor.memory","32g");
+                .setMaster("local[16]").set("spark.executor.memory","32g").set("spark.driver.maxResultSize", "6g");
         // start a spark context
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         sc.setLogLevel("ERROR");
@@ -204,7 +204,9 @@ public class RecursiveBounding implements Serializable {
                 rdd3 = rdd3.filter(dcc -> dcc.isPositive);
                 rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
                 //ccs = rdd3.take(max_results);
-                ccs = rdd3.collect();
+                if(par.maxPRight == 1) {
+                    ccs = rdd3.distinct().collect();
+                }
                 //Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
                 //dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
                 dccs = ccs.stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
@@ -213,7 +215,7 @@ public class RecursiveBounding implements Serializable {
                 System.out.println("Spark RB Time: " + stopWatch.getTime());
                 this.level++;
             }
-            if (this.level > 1) {
+            if (this.level > 1 && par.maxPRight > 1) {
                 for(int i = 0; i < par.maxPRight; i++) {
                     stopWatch.reset();
                     stopWatch.start();
@@ -314,11 +316,11 @@ public class RecursiveBounding implements Serializable {
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
             if(spark){
                 par.parallel = false;
-            }else{
+            }
                 return lib.getStream(subCCs, par.parallel).unordered()
                         .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
                         .collect(Collectors.toList());
-            }
+
         } else { // CC is decisive, add to DCCs
             CC.setDecisive(true);
 

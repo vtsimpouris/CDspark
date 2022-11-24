@@ -108,10 +108,10 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 100;
+            n = 300;
             m = (int) 500;
             partition = 0;
-            tau = 0.94;
+            tau = 0.98;
             minJump = 0.05;
             maxPLeft = 1;
             maxPRight = 3;
@@ -342,6 +342,8 @@ public class Main {
 
         SparkConf sparkConf = new SparkConf().setAppName("pairwise")
                 .setMaster("local[16]").set("spark.executor.memory","32g");
+        org.apache.log4j.Logger.getLogger("org").setLevel(org.apache.log4j.Level.OFF);
+        org.apache.log4j.Logger.getLogger("akka").setLevel(org.apache.log4j.Level.OFF);
         // start a spark context
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         DistanceFunction df = par.getSimMetric().distFunc;
