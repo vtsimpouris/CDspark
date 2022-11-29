@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="bug fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -44,12 +46,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "WebServerToolWindowFactoryState": "false",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/test/resources" />
@@ -225,13 +228,7 @@
       <workItem from="1669225650671" duration="1914000" />
       <workItem from="1669234387225" duration="425000" />
       <workItem from="1669294848942" duration="3111000" />
-    </task>
-    <task id="LOCAL-00024" summary="Finished RecursiveBoundingTest">
-      <created>1666351165227</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1666351165227</updated>
+      <workItem from="1669736945276" duration="5891000" />
     </task>
     <task id="LOCAL-00025" summary="Fixed progressive complexity increasing in RecursiveBounding. Before it just did pairwise, then max">
       <created>1666356416658</created>
@@ -569,7 +566,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669297401039</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="bug fixes">
+      <created>1669737010552</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1669737010552</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

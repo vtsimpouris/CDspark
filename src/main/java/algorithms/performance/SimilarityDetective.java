@@ -46,7 +46,6 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
 
 
-        RB.spark = false;
         Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("Java results: " + results.size());
 
@@ -64,7 +63,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 
 
 
-        RB.spark = true;
+        /*RB.spark = true;
         Set<ResultTuple> results_spark = stageRunner.run("Recursive bounding spark", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("spark results: " + results_spark.size());
         Iterator iter2 = results_spark.iterator();
@@ -73,7 +72,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
             if (element.RHS.size() > 0) {
                 //System.out.println(element);
             }
-        }
+        }*/
 
 
 
@@ -82,7 +81,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         par.statBag.stageDurations = stageRunner.stageDurations;
         this.prepareStats();
 
-        return results_spark;
+        return results;
     }
 
 
