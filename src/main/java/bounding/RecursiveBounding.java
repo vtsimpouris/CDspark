@@ -173,7 +173,7 @@ public class RecursiveBounding implements Serializable {
         else {
             this.level++;
             System.out.println("spark starting....");
-            JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
+            JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 4);
             //int max_results = 10000;
             if (this.level == 1) {
                 //stopWatch.reset();
@@ -197,7 +197,7 @@ public class RecursiveBounding implements Serializable {
                 JavaPairRDD<ArrayList<Cluster>, ArrayList<Cluster>> cartesian = rdd2.cartesian(rdd2);
                 cartesian = cartesian.filter(c1 -> !c1._1.equals(c1._2));
                 JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
-                    ClusterCombination cc = new ClusterCombination(c1._1, c1._2, 0);
+                    ClusterCombination cc = new ClusterCombination(c1._1, c1._2, 1);
                     return cc;
                 }));
                 rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
@@ -228,7 +228,7 @@ public class RecursiveBounding implements Serializable {
 
                     }
 
-                    JavaRDD<ClusterCombination> rdd2 = sc.parallelize(ccs);
+                    JavaRDD<ClusterCombination> rdd2 = sc.parallelize(ccs,4);
 
                     JavaPairRDD<ClusterCombination, Cluster> cartesian = rdd2.cartesian(rdd);
                     JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
@@ -239,7 +239,7 @@ public class RecursiveBounding implements Serializable {
                         for (int j = 0; j < this.level - 1; j++) {
                             RHS.add(c1._2);
                         }
-                        ClusterCombination cc = new ClusterCombination(LHS, RHS, 1);
+                        ClusterCombination cc = new ClusterCombination(LHS, RHS, this.level - 1);
                         return cc;
                     }));
                     rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
