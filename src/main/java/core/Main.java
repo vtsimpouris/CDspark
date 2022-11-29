@@ -111,7 +111,7 @@ public class Main {
             n = 1000;
             m = (int) 500;
             partition = 0;
-            tau = 0.98;
+            tau = 0.9;
             minJump = 0.05;
             maxPLeft = 1;
             maxPRight = 2;
@@ -120,7 +120,7 @@ public class Main {
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = false;
+            parallel = true;
             random = false;
             saveStats = false;
             saveResults = false;

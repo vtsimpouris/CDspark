@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="nice results to show">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="bug fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -226,13 +225,6 @@
       <workItem from="1669225650671" duration="1914000" />
       <workItem from="1669234387225" duration="425000" />
       <workItem from="1669294848942" duration="2464000" />
-    </task>
-    <task id="LOCAL-00023" summary="Made HierarchicalClusteringTest more efficient">
-      <created>1666265761817</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1666265761817</updated>
     </task>
     <task id="LOCAL-00024" summary="Finished RecursiveBoundingTest">
       <created>1666351165227</created>
@@ -570,7 +562,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669231766360</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="bug fixes">
+      <created>1669743208533</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1669743208533</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -594,7 +593,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="created github workflow" />
     <MESSAGE value="changed github workflow" />
     <MESSAGE value="added ClusterCombination unit-tests" />
     <MESSAGE value="- Implemented topK queries (to be tested)&#10;- Bugfixes for RecursiveBounding with one-sided metrics&#10;- Bugfixes for multiClusterBound caching" />
@@ -619,7 +617,8 @@
     <MESSAGE value="working on recursive bounding" />
     <MESSAGE value="fully spark scalable recursive bounding" />
     <MESSAGE value="nice results to show" />
-    <option name="LAST_COMMIT_MESSAGE" value="nice results to show" />
+    <MESSAGE value="bug fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="bug fixes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
