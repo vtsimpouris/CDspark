@@ -57,9 +57,9 @@ public class SimilarityDetective extends Algorithm implements Serializable {
                 }
             }
         }
-
+        Set<ResultTuple> results = null;
         {RB.spark = false;
-        Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+        results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("Java results: " + results.size());
 
 
@@ -83,7 +83,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         par.statBag.stageDurations = stageRunner.stageDurations;
         this.prepareStats();
 
-        return results_spark;
+        return results;
     }
 
 

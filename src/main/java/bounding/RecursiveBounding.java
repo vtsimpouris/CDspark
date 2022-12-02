@@ -271,6 +271,9 @@ public class RecursiveBounding implements Serializable {
         //System.out.println(DCCs);
 //        Filter minJump confirming positives
         long start = System.nanoTime();
+        if(!spark){
+            this.positiveDCCs.addAll(unpackAndCheckMinJump(DCCs.get(true), par));
+        }
         postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
         //Sort (descending) and filter positive DCCs to comply to topK parameter
