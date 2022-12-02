@@ -158,7 +158,7 @@ public class RecursiveBounding implements Serializable {
         rootCandidateList.add(rootCandidate);
         Map<Boolean, List<ClusterCombination>> DCCs = new HashMap<>();
         if(!spark) {
-            sc.close();
+
             stopWatch.start();
             System.out.println("Java starting....");
             DCCs = lib.getStream(rootCandidateList, par.parallel)
@@ -167,8 +167,9 @@ public class RecursiveBounding implements Serializable {
                     .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                     .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
             stopWatch.stop();
+            sc.close();
             //System.out.println(DCCs);
-            System.out.println("Java RB Time: " + stopWatch.getTime());
+            //System.out.println("Java RB Time: " + stopWatch.getTime());
         }
         else {
             this.level++;
@@ -203,16 +204,21 @@ public class RecursiveBounding implements Serializable {
                 rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
                 rdd3 = rdd3.filter(dcc -> dcc.isPositive);
                 rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
+
                 //ccs = rdd3.take(max_results);
-                if(par.maxPRight == 1) {
-                    ccs = rdd3.distinct().collect();
-                }
+                ccs = rdd3.distinct().collect();
+
                 //Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
                 //dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
                 dccs = ccs.stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
                 DCCs = dccs;
+                this.positiveDCCs.addAll(unpackAndCheckMinJump(DCCs.get(true), par));
+                //Sort (descending) and filter positive DCCs to comply to topK parameter
                 stopWatch.stop();
-                System.out.println("Spark RB Time: " + stopWatch.getTime());
+                if(par.maxPRight == 1) {
+                    sc.close();
+                }
+                //System.out.println("Spark RB Time: " + stopWatch.getTime());
                 this.level++;
             }
             if (this.level > 1 && par.maxPRight > 1) {
@@ -250,13 +256,14 @@ public class RecursiveBounding implements Serializable {
                     if(i == par.maxPRight - 1){
                         dccs = rdd3.collect().stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
                         DCCs = dccs;
+                        this.positiveDCCs.addAll(unpackAndCheckMinJump(DCCs.get(true), par));
                     }
                 }
                 this.level++;
                 //dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
                 sc.close();
                 stopWatch.stop();
-                System.out.println("Spark RB Time: " + stopWatch.getTime());
+                //System.out.println("Spark RB Time: " + stopWatch.getTime());
 
             }
         }
@@ -264,18 +271,17 @@ public class RecursiveBounding implements Serializable {
         //System.out.println(DCCs);
 //        Filter minJump confirming positives
         long start = System.nanoTime();
-        this.positiveDCCs.addAll(unpackAndCheckMinJump(DCCs.get(true), par));
-        /*postProcessTime += lib.nanoToSec(System.nanoTime() - start);
+        postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
-//        Sort (descending) and filter positive DCCs to comply to topK parameter
+        //Sort (descending) and filter positive DCCs to comply to topK parameter
         if (par.topK > 0) {
             this.positiveDCCs = updateTopK(this.positiveDCCs, par);
         }
 
 //        TODO SEE IF WE CAN MEASURE THIS TIME SEPARATELY
 //        Handle negative DCCs using progressive approximation
-        this.nNegDCCs.getAndAdd(DCCs.get(false).size());
-        this.positiveDCCs = ProgressiveApproximation.ApproximateProgressively(DCCs.get(false), this.positiveDCCs, par, sc);*/
+        //this.nNegDCCs.getAndAdd(DCCs.get(false).size());
+        //this.positiveDCCs = ProgressiveApproximation.ApproximateProgressively(DCCs.get(false), this.positiveDCCs, par, sc);
     }
 
     //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD

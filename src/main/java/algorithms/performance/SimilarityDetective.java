@@ -44,9 +44,21 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
+        Set<ResultTuple> results_spark = null;
+        {
+            RB.spark = true;
+            results_spark = stageRunner.run("Recursive bounding spark", () -> RB.run(), par.statBag.stopWatch);
+            System.out.println("spark results: " + results_spark.size());
+            Iterator iter2 = results_spark.iterator();
+            while (iter2.hasNext()) {
+                ResultTuple element = (ResultTuple) iter2.next();
+                if (element.RHS.size() == par.maxPRight) {
+                    //System.out.println(element);
+                }
+            }
+        }
 
-
-        RB.spark = false;
+        {RB.spark = false;
         Set<ResultTuple> results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("Java results: " + results.size());
 
@@ -55,25 +67,14 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         while (iter.hasNext()) {
 
             ResultTuple element = (ResultTuple) iter.next();
-            if (element.RHS.size() == par.maxPRight) {
-                //System.out.println(element);
-            }
+            /*if (element.RHS.size() == par.maxPRight) {
+                System.out.println(element);
+            }*/
         }
         results.clear();
-        par.statBag.stopWatch.start();
+        par.statBag.stopWatch.start();}
 
 
-
-        RB.spark = true;
-        Set<ResultTuple> results_spark = stageRunner.run("Recursive bounding spark", () -> RB.run(), par.statBag.stopWatch);
-        System.out.println("spark results: " + results_spark.size());
-        Iterator iter2 = results_spark.iterator();
-        while (iter2.hasNext()) {
-            ResultTuple element = (ResultTuple) iter2.next();
-            if (element.RHS.size() > 0) {
-                //System.out.println(element);
-            }
-        }
 
 
 

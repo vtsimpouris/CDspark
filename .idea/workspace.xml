@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="bug fixes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,6 +72,7 @@
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="core.Main" />
       <module name="CDspark" />
+      <option name="VM_PARAMETERS" value="-Xmx18g" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="core.*" />
@@ -225,13 +228,9 @@
       <workItem from="1669225650671" duration="1914000" />
       <workItem from="1669234387225" duration="425000" />
       <workItem from="1669294848942" duration="2464000" />
-    </task>
-    <task id="LOCAL-00024" summary="Finished RecursiveBoundingTest">
-      <created>1666351165227</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1666351165227</updated>
+      <workItem from="1669745406468" duration="247000" />
+      <workItem from="1669968100471" duration="3592000" />
+      <workItem from="1669972162756" duration="2634000" />
     </task>
     <task id="LOCAL-00025" summary="Fixed progressive complexity increasing in RecursiveBounding. Before it just did pairwise, then max">
       <created>1666356416658</created>
@@ -569,7 +568,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669743208533</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="bug fixes">
+      <created>1669743442333</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1669743442333</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
