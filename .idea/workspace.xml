@@ -231,14 +231,12 @@
       <workItem from="1669745406468" duration="247000" />
       <workItem from="1669968100471" duration="3592000" />
       <workItem from="1669972162756" duration="2657000" />
-      <workItem from="1669974903349" duration="908000" />
-    </task>
-    <task id="LOCAL-00026" summary="Fixed ambiguous problem of finding subset similarities (and to even do that)">
-      <created>1666361694426</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1666361694426</updated>
+      <workItem from="1669974903349" duration="957000" />
+      <workItem from="1669975950370" duration="155000" />
+      <workItem from="1669976531709" duration="145000" />
+      <workItem from="1669976705971" duration="2000" />
+      <workItem from="1670315249084" duration="12515000" />
+      <workItem from="1670413335035" duration="3103000" />
     </task>
     <task id="LOCAL-00027" summary="created github workflow">
       <created>1666362347439</created>
@@ -576,7 +574,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669974812528</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="bug fixes">
+      <created>1669975850172</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1669975850172</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

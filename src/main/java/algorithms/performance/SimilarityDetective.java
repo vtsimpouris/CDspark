@@ -19,6 +19,8 @@ public class SimilarityDetective extends Algorithm implements Serializable {
     public transient HierarchicalClustering HC;
     public transient RecursiveBounding RB;
     public transient RecursiveBounding RB_spark;
+    Set<ResultTuple> results = null;
+    Set<ResultTuple> java_results = null;
 
 
     public SimilarityDetective(Parameters par) {
@@ -44,35 +46,38 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
-        Set<ResultTuple> results_spark = null;
-        {
+        {            par.statBag.stopWatch.reset();
+            par.statBag.stopWatch.start();
+            RB = new RecursiveBounding(par, HC.clusterTree);
             RB.spark = true;
-            results_spark = stageRunner.run("Recursive bounding spark", () -> RB.run(), par.statBag.stopWatch);
-            System.out.println("spark results: " + results_spark.size());
-            Iterator iter2 = results_spark.iterator();
+            results = stageRunner.run("Recursive bounding spark", () -> RB.run(), par.statBag.stopWatch);
+            Iterator iter2 = results.iterator();
+            update_results();
             while (iter2.hasNext()) {
                 ResultTuple element = (ResultTuple) iter2.next();
-                if (element.RHS.size() == par.maxPRight) {
-                    //System.out.println(element);
+                if (element.RHS.size() > 0 && par.n < 20) {
+                    System.out.println(element);
                 }
             }
+            System.out.println("spark results: " + results.size());
         }
-        Set<ResultTuple> results = null;
-        {RB.spark = false;
-        results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
-        System.out.println("Java results: " + results.size());
+        //Set<ResultTuple> results = null;
 
-
-        Iterator iter = results.iterator();
-        while (iter.hasNext()) {
+        {
+            RB.spark = false;
+            par.statBag.stopWatch.reset();
+            par.statBag.stopWatch.start();
+            results = stageRunner.run("Recursive bounding", () -> RB.run(), par.statBag.stopWatch);
+            Iterator iter = results.iterator();
+            while (iter.hasNext()) {
 
             ResultTuple element = (ResultTuple) iter.next();
-            /*if (element.RHS.size() == par.maxPRight) {
+            if (element.RHS.size() > 0 && par.n < 20) {
                 System.out.println(element);
-            }*/
+            }
         }
-        results.clear();
-        par.statBag.stopWatch.start();}
+        par.statBag.stopWatch.start();
+        System.out.println("Java results: " + java_results.size());}
 
 
 
@@ -83,7 +88,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         par.statBag.stageDurations = stageRunner.stageDurations;
         this.prepareStats();
 
-        return results;
+        return java_results;
     }
 
 
@@ -102,7 +107,12 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         par.statBag.otherStats.put("nCCs", par.statBag.nCCs.longValue());
         par.statBag.otherStats.put("avgCCSize", par.statBag.totalCCSize.get() / (double) par.statBag.nCCs.longValue());
     }
+    public void update_results(){
+        if(RB.spark == true) {
+            this.java_results = this.results;
+        }
 
+    }
     @Override
     public void printStats(StatBag statBag) {
         par.LOGGER.fine("----------- Run statistics --------------");
