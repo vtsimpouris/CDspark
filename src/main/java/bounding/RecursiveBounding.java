@@ -250,13 +250,13 @@ public class RecursiveBounding implements Serializable {
                         RHS.add(c1._1._2);
                         RHS.add(c1._2);
                         ClusterCombination cc = new ClusterCombination(LHS, RHS, 0);
-                        return cc;
+                        return recursiveBounding_spark(cc, shrinkFactor, par);
                     }));
-                    /*rdd4 = rdd4.filter(cc -> {
+                    rdd4 = rdd4.filter(cc -> {
                         boolean b = cc.RHS.get(0) != cc.RHS.get(1);
                         return b;
-                    });*/
-                    rdd4 = rdd4.flatMap(cc -> {return recursiveBounding(cc, shrinkFactor, par).iterator();});
+                    });
+                    //rdd4 = rdd4.flatMap(cc -> {return recursiveBounding_spark(cc, shrinkFactor, par);});
                     rdd4 = rdd4.filter(dcc -> dcc.isPositive);
                     rdd4 = rdd4.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
 
@@ -301,7 +301,61 @@ public class RecursiveBounding implements Serializable {
     }
 
     //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
+    public static ClusterCombination recursiveBounding_spark(ClusterCombination CC, double shrinkFactor, Parameters par) {
+        ArrayList<ClusterCombination> DCCs = new ArrayList<>();
 
+        double threshold = par.tau;
+
+//        Get bounds
+        CC.bound(par.simMetric, par.empiricalBounding, par.Wl.get(CC.LHS.size() - 1), CC.RHS.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null,
+                par.pairwiseDistances);
+
+//      Update statistics
+        //System.out.println("LHS: " + CC.LHS + "RHS: " + CC.RHS);
+        par.statBag = new StatBag();
+        par.statBag.nCCs = new AtomicLong(i);
+        par.statBag.totalCCSize = new AtomicLong(CC.size());
+        i++;
+        //par.statBag.nCCs.getAndIncrement();
+        //par.statBag.totalCCSize.addAndGet(CC.size());
+
+//        Shrink upper bound for progressive bounding
+        double shrunkUB = CC.getShrunkUB(shrinkFactor, par.maxApproximationSize);
+
+
+//        Update threshold based on minJump if we have CC > 2
+        double jumpBasedThreshold = CC.getMaxPairwiseLB() + par.minJump;
+        if (CC.LHS.size() + CC.RHS.size() > 2){
+            threshold = Math.max(threshold, jumpBasedThreshold);
+        }
+
+//        Check if CC is (in)decisive
+        if ((CC.getLB() < threshold) && (shrunkUB >= threshold)){
+            CC.setDecisive(false);
+
+//            Get splitted CCs
+            ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
+            if(spark){
+                par.parallel = false;
+            }
+
+        } else { // CC is decisive, add to DCCs
+            CC.setDecisive(true);
+
+//            Negative DCC, set critical shrink factor in order to investigate later when using progressive approximation
+            if (shrunkUB < threshold) {
+                CC.setCriticalShrinkFactor(threshold);
+                if (CC.getCriticalShrinkFactor() <= 1 && threshold <= 1) {
+                    DCCs.add(CC);
+                }
+            } else if (CC.getLB() >= threshold){ //  Positive DCC
+                CC.setPositive(true);
+                CC.criticalShrinkFactor = -10;
+                DCCs.add(CC);
+            }
+        }
+        return CC;
+    }
     public static List<ClusterCombination> recursiveBounding(ClusterCombination CC, double shrinkFactor, Parameters par) {
         ArrayList<ClusterCombination> DCCs = new ArrayList<>();
 
