@@ -239,6 +239,10 @@ public class RecursiveBounding implements Serializable {
                             > rdd3 = cartesian.cartesian(rdd);
 
                     //System.out.println(cartesian.count());
+                   rdd3 = rdd3.filter(cc -> {
+                        boolean b1 = cc._1._2 != cc._2;
+                        return b1;
+                    });
                     JavaRDD<ClusterCombination> rdd4 = rdd3.map((c1 -> {
                         ArrayList<Cluster> LHS = new ArrayList<>();
                         LHS.add(c1._1._1);
@@ -248,17 +252,23 @@ public class RecursiveBounding implements Serializable {
                         ClusterCombination cc = new ClusterCombination(LHS, RHS, 0);
                         return cc;
                     }));
+                    /*rdd4 = rdd4.filter(cc -> {
+                        boolean b = cc.RHS.get(0) != cc.RHS.get(1);
+                        return b;
+                    });*/
                     rdd4 = rdd4.flatMap(cc -> {return recursiveBounding(cc, shrinkFactor, par).iterator();});
                     rdd4 = rdd4.filter(dcc -> dcc.isPositive);
                     rdd4 = rdd4.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
+
                     //ccs = rdd3.take(10);
                     Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
 
                     if(this.level == par.maxPRight){
                         dccs = rdd4.collect().stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+                        //System.out.println(dccs.get(true).stream().distinct().collect(Collectors.toList()));
                         DCCs = dccs;
-                        //System.out.println(dccs.get(true));
                         this.positiveDCCs.addAll(unpackAndCheckMinJump(DCCs.get(true), par));
+
                     }
                     this.level++;
                 }
