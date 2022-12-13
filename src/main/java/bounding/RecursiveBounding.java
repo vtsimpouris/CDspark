@@ -57,10 +57,7 @@ public class RecursiveBounding implements Serializable {
 //            Do first iteration with shrinkFactor 1
             double runningShrinkFactor = 1;
             int i = 0;
-            //while (LHS.size() < par.maxPLeft || RHS.size() < par.maxPRight){
-            if(spark) {
-                while (i < 1) {
-                    i++;
+            while (LHS.size() < par.maxPLeft || RHS.size() < par.maxPRight){
 
 //                Make new lists to avoid concurrent modification
                     LHS = new ArrayList<>(LHS);
@@ -79,26 +76,6 @@ public class RecursiveBounding implements Serializable {
                     runningShrinkFactor = par.shrinkFactor;
                 }
             }
-            if(!spark){
-                while (LHS.size() < par.maxPLeft || RHS.size() < par.maxPRight){
-                    LHS = new ArrayList<>(LHS);
-                    RHS = new ArrayList<>(RHS);
-
-                    if ((LHS.size() == RHS.size() && LHS.size() < par.maxPLeft) || RHS.size() == par.maxPRight) { // always increase LHS first
-                        LHS.add(rootCluster);
-                    } else {
-                        RHS.add(rootCluster);
-                    }
-
-                    ClusterCombination rootCandidate = new ClusterCombination(LHS, RHS, 0);
-                    assessComparisonTree(rootCandidate, runningShrinkFactor);
-
-                    //            Set shrink factor back to original value
-                    runningShrinkFactor = par.shrinkFactor;
-                }
-
-            }
-        }
 //        Do pairwise and max complexity
         else{
             //        First compute all pairwise cluster bounds to fill cache and increase threshold in case of topK
@@ -141,44 +118,85 @@ public class RecursiveBounding implements Serializable {
         this.results = positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
         return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
     }
+    public static List<ClusterCombination> recursiveBounding_spark(ClusterCombination CC, double shrinkFactor, Parameters par) {
+        ArrayList<ClusterCombination> DCCs = new ArrayList<>();
+
+        double threshold = par.tau;
+
+//        Get bounds
+        CC.bound(par.simMetric, par.empiricalBounding, par.Wl.get(CC.LHS.size() - 1), CC.RHS.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null,
+                par.pairwiseDistances);
+
+//      Update statistics
+        //System.out.println("LHS: " + CC.LHS + "RHS: " + CC.RHS);
+        par.statBag = new StatBag();
+        par.statBag.nCCs = new AtomicLong(i);
+        par.statBag.totalCCSize = new AtomicLong(CC.size());
+        i++;
+        //par.statBag.nCCs.getAndIncrement();
+        //par.statBag.totalCCSize.addAndGet(CC.size());
+
+//        Shrink upper bound for progressive bounding
+        double shrunkUB = CC.getShrunkUB(shrinkFactor, par.maxApproximationSize);
+
+
+//        Update threshold based on minJump if we have CC > 2
+        double jumpBasedThreshold = CC.getMaxPairwiseLB() + par.minJump;
+        if (CC.LHS.size() + CC.RHS.size() > 2){
+            threshold = Math.max(threshold, jumpBasedThreshold);
+        }
+
+//        Check if CC is (in)decisive
+        if ((CC.getLB() < threshold) && (shrunkUB >= threshold)){
+            CC.setDecisive(false);
+
+//            Get splitted CCs
+            ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
+            JavaRDD<ClusterCombination> rdd = sc.parallelize(subCCs,16);
+            rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
+            //lib.getStream(subCCs, par.parallel).unordered()
+            //                    .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
+            //                    .collect(Collectors.toList());
+            return rdd.collect();
+
+
+        } else { // CC is decisive, add to DCCs
+            CC.setDecisive(true);
+
+//            Negative DCC, set critical shrink factor in order to investigate later when using progressive approximation
+            if (shrunkUB < threshold) {
+                CC.setCriticalShrinkFactor(threshold);
+                if (CC.getCriticalShrinkFactor() <= 1 && threshold <= 1) {
+                    DCCs.add(CC);
+                }
+            } else if (CC.getLB() >= threshold){ //  Positive DCC
+                CC.setPositive(true);
+                CC.criticalShrinkFactor = -10;
+                DCCs.add(CC);
+            }
+        }
+        return DCCs;
+    }
     public void sparkRB(ClusterCombination rootCandidate, double shrinkFactor) {
         Logger.getLogger("org").setLevel(Level.OFF);
         Logger.getLogger("akka").setLevel(Level.OFF);
         SparkConf sparkConf = new SparkConf().setAppName("RB")
                 .setMaster("local[16]").set("spark.executor.memory","32g").set("spark.driver.maxResultSize", "6g");
         // start a spark context
-        JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        sc = new JavaSparkContext(sparkConf);
         sc.setLogLevel("ERROR");
-        for (int i = 0; i < clusterTree.size(); i++) {
-            for (int j = 0; j < clusterTree.get(i).size(); j++) {
-                //System.out.println(clusterTree.get(i).get(j).id);
-                ArrayList<Cluster> temp = new ArrayList<Cluster>(1);
-                temp.add(clusterTree.get(i).get(j));
-                Clusters.add(temp);
-            }
-        }
-        spark = true;
-        System.out.println("spark starting....");
+        //spark = true;
+        //System.out.println("spark starting....");
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        JavaRDD<ArrayList<Cluster>> rdd = sc.parallelize(Clusters, 4);
-        JavaPairRDD<ArrayList<Cluster>, ArrayList<Cluster>> cartesian = rdd.cartesian(rdd);
-        cartesian = cartesian.filter(c1 -> !c1._1.equals(c1._2));
-        JavaRDD<ClusterCombination> rdd1 = cartesian.map((c1 -> {
-            ClusterCombination cc = new ClusterCombination(c1._1, c1._2, 1);
-            return cc;
-        }));
-        rdd1 = rdd1.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-        rdd1 = rdd1.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
-        dccs = rdd1.collect().stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+
+        List<ClusterCombination> ccs_spark = new ArrayList<>();
+        ccs_spark =  recursiveBounding_spark(rootCandidate, shrinkFactor, par);
+        //System.out.println(ccs_spark);
         stopWatch.stop();
-        this.positiveDCCs.addAll(unpackAndCheckMinJump(dccs.get(true), par));
+        //this.positiveDCCs.addAll(unpackAndCheckMinJump(dccs.get(true), par));
         //System.out.println(this.positiveDCCs);
         System.out.println("Spark RB Time: " + stopWatch.getTime());
-
-
-
-
         sc.close();
 
     }
@@ -193,113 +211,22 @@ public class RecursiveBounding implements Serializable {
         Map<Boolean, List<ClusterCombination>> DCCs = new HashMap<>();
         spark = false;
         stopWatch.start();
-        System.out.println("Java starting....");
+        //System.out.println("Java starting....");
         DCCs = lib.getStream(rootCandidateList, par.parallel)
                 .unordered()
                 .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
                 .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
                 .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
         stopWatch.stop();
+        //System.out.println(DCCs);
         long start = System.nanoTime();
         this.positiveDCCs.addAll(unpackAndCheckMinJump(DCCs.get(true), par));
         //System.out.println(this.positiveDCCs);
         System.out.println("Java RB Time: " + stopWatch.getTime());
         sparkRB(rootCandidate,shrinkFactor);
-        /*else {
-            this.level++;
-            System.out.println("spark starting....");
-            JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
-            //int max_results = 10000;
-            if (this.level == 1) {
-                //stopWatch.reset();
-                stopWatch.start();
-
-                for (int i = 0; i < clusterTree.size(); i++) {
-                    for (int j = 0; j < clusterTree.get(i).size(); j++) {
-                        //System.out.println(clusterTree.get(i).get(j).id);
-                        Clusters.add(clusterTree.get(i).get(j));
-                    }
-                }
-
-                //JavaRDD<Cluster> rdd = sc.parallelize(Clusters, 16);
-
-                JavaRDD<ArrayList<Cluster>> rdd2;
-                rdd2 = rdd.map((c1 -> {
-                    ArrayList<Cluster> temp = new ArrayList<Cluster>(1);
-                    temp.add(c1);
-                    return temp;
-                }));
-                JavaPairRDD<ArrayList<Cluster>, ArrayList<Cluster>> cartesian = rdd2.cartesian(rdd2);
-                cartesian = cartesian.filter(c1 -> !c1._1.equals(c1._2));
-                JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
-                    ClusterCombination cc = new ClusterCombination(c1._1, c1._2, 0);
-                    return cc;
-                }));
-                rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-                rdd3 = rdd3.filter(dcc -> dcc.isPositive);
-                rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
-                //ccs = rdd3.take(max_results);
-                if(par.maxPRight == 1) {
-                    ccs = rdd3.distinct().collect();
-                }
-                //Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
-                //dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-                dccs = ccs.stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-                DCCs = dccs;
-                stopWatch.stop();
-                System.out.println("Spark RB Time: " + stopWatch.getTime());
-                this.level++;
-            }
-            if (this.level > 1 && par.maxPRight > 1) {
-                for(int i = 0; i < par.maxPRight; i++) {
-                    stopWatch.reset();
-                    stopWatch.start();
-                    for (int j = 0; j < Clusters.size(); j++) {
-                        for (int k = 0; k < dccs.get(false).size(); k++) {
-                            if (Clusters.get(j) == dccs.get(false).get(k).getClusters().get(1)) {
-                                Clusters.remove(Clusters.get(j));
-                            }
-                        }
-
-                    }
-
-                    JavaRDD<ClusterCombination> rdd2 = sc.parallelize(ccs);
-
-                    JavaPairRDD<ClusterCombination, Cluster> cartesian = rdd2.cartesian(rdd);
-                    JavaRDD<ClusterCombination> rdd3 = cartesian.map((c1 -> {
-                        ArrayList<Cluster> LHS = new ArrayList<>();
-                        LHS = c1._1.LHS;
-                        ArrayList<Cluster> RHS = new ArrayList<>();
-                        RHS.add(c1._1.RHS.get(0));
-                        for (int j = 0; j < this.level - 1; j++) {
-                            RHS.add(c1._2);
-                        }
-                        ClusterCombination cc = new ClusterCombination(LHS, RHS, 1);
-                        return cc;
-                    }));
-                    rdd3 = rdd3.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-                    rdd3 = rdd3.filter(dcc -> dcc.isPositive);
-                    rdd3 = rdd3.filter(dcc -> dcc.getCriticalShrinkFactor() <= 1);
-                    //ccs = rdd3.take(10);
-                    Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
-                    if(i == par.maxPRight - 1){
-                        dccs = rdd3.collect().stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-                        DCCs = dccs;
-                    }
-                }
-                this.level++;
-                //dccs = rdd3.take(max_results).stream().collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-                sc.close();
-                stopWatch.stop();
-                System.out.println("Spark RB Time: " + stopWatch.getTime());
-
-            }
-        }*/
-
-        //System.out.println(DCCs);
 //        Filter minJump confirming positives
 
-        /*postProcessTime += lib.nanoToSec(System.nanoTime() - start);
+        postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
 //        Sort (descending) and filter positive DCCs to comply to topK parameter
         if (par.topK > 0) {
@@ -309,7 +236,7 @@ public class RecursiveBounding implements Serializable {
 //        TODO SEE IF WE CAN MEASURE THIS TIME SEPARATELY
 //        Handle negative DCCs using progressive approximation
         this.nNegDCCs.getAndAdd(DCCs.get(false).size());
-        this.positiveDCCs = ProgressiveApproximation.ApproximateProgressively(DCCs.get(false), this.positiveDCCs, par, sc);*/
+        this.positiveDCCs = ProgressiveApproximation.ApproximateProgressively(DCCs.get(false), this.positiveDCCs, par, sc);
     }
 
     //    TODO FIX WHAT HAPPENS FOR DISTANCES, WHERE YOU WANT EVERYTHING LOWER THAN A THRESHOLD
@@ -376,12 +303,6 @@ public class RecursiveBounding implements Serializable {
 
     public static List<ClusterCombination> unpackAndCheckMinJump(List<ClusterCombination> positiveDCCs, Parameters par){
         List<ClusterCombination> out;
-        if(spark) {
-            par.parallel = true;
-        }
-        else{
-            par.parallel = false;
-        }
         out = lib.getStream(positiveDCCs, par.parallel).unordered()
                 .flatMap(cc -> cc.getSingletons(par.Wl.get(cc.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(cc.RHS.size() - 1): null, par.allowSideOverlap).stream())
                 .filter(cc -> {

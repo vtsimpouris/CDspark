@@ -54,25 +54,12 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         while (iter.hasNext()) {
 
             ResultTuple element = (ResultTuple) iter.next();
-            if (element.RHS.size() == par.maxPRight) {
-                //System.out.println(element);
+            if (element.RHS.size() > 100) {
+                System.out.println(element);
             }
         }
-        results.clear();
+        //results.clear();
         par.statBag.stopWatch.start();
-
-
-
-        /*RB.spark = true;
-        Set<ResultTuple> results_spark = stageRunner.run("Recursive bounding spark", () -> RB.run(), par.statBag.stopWatch);
-        System.out.println("spark results: " + results_spark.size());
-        Iterator iter2 = results_spark.iterator();
-        while (iter2.hasNext()) {
-            ResultTuple element = (ResultTuple) iter2.next();
-            if (element.RHS.size() > 0) {
-                //System.out.println(element);
-            }
-        }*/
 
 
 
