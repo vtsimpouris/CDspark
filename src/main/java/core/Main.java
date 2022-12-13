@@ -108,13 +108,13 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 100;
+            n = 200;
             m = (int) 500;
             partition = 0;
             tau = 0.8;
             minJump = 0.05;
             maxPLeft = 1;
-            maxPRight = 2;
+            maxPRight = 3;
             allowSideOverlap = false;
             shrinkFactor = 0;
             topK = -1;
@@ -140,6 +140,7 @@ public class Main {
         int breakFirstKLevelsToMoreClusters = 0;
         int clusteringRetries = 50;
         int nPriorityBuckets = 50;
+
 
         //        Get similarity function from enum
         MultivariateSimilarityFunction simMetric;
