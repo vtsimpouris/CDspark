@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="bug fixes">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="major rework">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Parameters.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Parameters.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -229,13 +229,9 @@
       <workItem from="1669234387225" duration="425000" />
       <workItem from="1669294848942" duration="3111000" />
       <workItem from="1669736945276" duration="5891000" />
-    </task>
-    <task id="LOCAL-00025" summary="Fixed progressive complexity increasing in RecursiveBounding. Before it just did pairwise, then max">
-      <created>1666356416658</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1666356416658</updated>
+      <workItem from="1670945200179" duration="163000" />
+      <workItem from="1671901882030" duration="116000" />
+      <workItem from="1671902948195" duration="2116000" />
     </task>
     <task id="LOCAL-00026" summary="Fixed ambiguous problem of finding subset similarities (and to even do that)">
       <created>1666361694426</created>
@@ -573,7 +569,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669737010552</updated>
     </task>
-    <option name="localTasksCounter" value="74" />
+    <task id="LOCAL-00074" summary="major rework">
+      <created>1670944648333</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1670944648333</updated>
+    </task>
+    <option name="localTasksCounter" value="75" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -597,7 +600,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="changed github workflow" />
     <MESSAGE value="added ClusterCombination unit-tests" />
     <MESSAGE value="- Implemented topK queries (to be tested)&#10;- Bugfixes for RecursiveBounding with one-sided metrics&#10;- Bugfixes for multiClusterBound caching" />
     <MESSAGE value="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting" />
@@ -622,7 +624,8 @@
     <MESSAGE value="fully spark scalable recursive bounding" />
     <MESSAGE value="nice results to show" />
     <MESSAGE value="bug fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="bug fixes" />
+    <MESSAGE value="major rework" />
+    <option name="LAST_COMMIT_MESSAGE" value="major rework" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

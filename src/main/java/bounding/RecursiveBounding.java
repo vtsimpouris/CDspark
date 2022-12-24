@@ -32,7 +32,6 @@ public class RecursiveBounding implements Serializable {
     public AtomicLong nNegDCCs = new AtomicLong(0);
     public double postProcessTime;
     public transient Set<ResultTuple> results;
-    public static Boolean spark = true;
     public static JavaSparkContext sc;
     public static int i = 0;
     public static int level = 0;
@@ -177,7 +176,7 @@ public class RecursiveBounding implements Serializable {
         }
         return DCCs;
     }
-    public void sparkRB(ClusterCombination rootCandidate, double shrinkFactor) {
+    public Map<Boolean, List<ClusterCombination>> sparkRB(ClusterCombination rootCandidate, double shrinkFactor) {
         Logger.getLogger("org").setLevel(Level.OFF);
         Logger.getLogger("akka").setLevel(Level.OFF);
         SparkConf sparkConf = new SparkConf().setAppName("RB")
@@ -185,46 +184,41 @@ public class RecursiveBounding implements Serializable {
         // start a spark context
         sc = new JavaSparkContext(sparkConf);
         sc.setLogLevel("ERROR");
-        //spark = true;
-        //System.out.println("spark starting....");
-        StopWatch stopWatch = new StopWatch();
-        stopWatch.start();
 
         List<ClusterCombination> ccs_spark = new ArrayList<>();
         ccs_spark =  recursiveBounding_spark(rootCandidate, shrinkFactor, par);
-        //System.out.println(ccs_spark);
-        stopWatch.stop();
-        //this.positiveDCCs.addAll(unpackAndCheckMinJump(dccs.get(true), par));
-        //System.out.println(this.positiveDCCs);
-        System.out.println("Spark RB Time: " + stopWatch.getTime());
         sc.close();
-
+        return ccs_spark
+                .stream()
+                .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
+                .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
     }
 
     //    Get positive DCCs for a certain complexity
     public void assessComparisonTree(ClusterCombination rootCandidate, double shrinkFactor) {
-        //        Make candidate list so that we can stream it
-        StopWatch stopWatch = new StopWatch();
 
+        //        Make candidate list so that we can stream it
         List<ClusterCombination> rootCandidateList = new ArrayList<>();
         rootCandidateList.add(rootCandidate);
         Map<Boolean, List<ClusterCombination>> DCCs = new HashMap<>();
-        spark = false;
-        stopWatch.start();
         //System.out.println("Java starting....");
-        DCCs = lib.getStream(rootCandidateList, par.parallel)
-                .unordered()
-                .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
-                .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
-                .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
-        stopWatch.stop();
-        //System.out.println(DCCs);
+        par.java = true;
+        par.spark = false;
+
+        if(par.java) {
+            DCCs = lib.getStream(rootCandidateList, par.parallel)
+                    .unordered()
+                    .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
+                    .filter(dcc -> dcc.getCriticalShrinkFactor() <= 1)
+                    .collect(Collectors.partitioningBy(ClusterCombination::isPositive));
+        }
+        if(par.spark) {
+            DCCs = sparkRB(rootCandidate, shrinkFactor);
+        }
+
+//        Filter minJump confirming positives
         long start = System.nanoTime();
         this.positiveDCCs.addAll(unpackAndCheckMinJump(DCCs.get(true), par));
-        //System.out.println(this.positiveDCCs);
-        System.out.println("Java RB Time: " + stopWatch.getTime());
-        sparkRB(rootCandidate,shrinkFactor);
-//        Filter minJump confirming positives
 
         postProcessTime += lib.nanoToSec(System.nanoTime() - start);
 
@@ -275,9 +269,6 @@ public class RecursiveBounding implements Serializable {
 
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
-            if(spark){
-                par.parallel = false;
-            }
                 return lib.getStream(subCCs, par.parallel).unordered()
                         .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
                         .collect(Collectors.toList());

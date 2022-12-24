@@ -70,6 +70,8 @@ public class Main {
         double shrinkFactor;
         int topK;
         ApproximationStrategyEnum approximationStrategy;
+        Boolean spark = false;
+        Boolean java = false;
 
 //        Read parameters from args
         if (args.length>0){
@@ -113,14 +115,14 @@ public class Main {
             partition = 0;
             tau = 0.85;
             minJump = 0.0;
-            maxPLeft = 1;
-            maxPRight = 6;
+            maxPLeft = 2;
+            maxPRight = 3;
             allowSideOverlap = false;
             shrinkFactor = 0;
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = false;
+            parallel = true;
             random = false;
             saveStats = false;
             saveResults = false;
@@ -132,7 +134,7 @@ public class Main {
                 n, m, partition, tau);
         String dateTime = (new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")).format(new Date());
         int threads = ForkJoinPool.getCommonPoolParallelism();
-        int defaultDesiredClusters = 10; // set to Integer.MAX_VALUE for unrestricted and clustering based on epsilon only
+        int defaultDesiredClusters = 16; // set to Integer.MAX_VALUE for unrestricted and clustering based on epsilon only
 
         double epsilonMultiplier = 0.8;
         int maxLevels = 20;
@@ -299,7 +301,9 @@ public class Main {
                 maxApproximationSize,
                 nPriorityBuckets,
                 topK,
-                approximationStrategy
+                approximationStrategy,
+                spark,
+                java
         );
         par.init();
 

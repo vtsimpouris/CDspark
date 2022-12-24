@@ -75,6 +75,9 @@ public class Parameters implements Serializable {
     @Getter public transient StatBag statBag = new StatBag();
     @Getter public Random randomGenerator;
     @Setter @Getter public double[][] pairwiseDistances;
+    @NonNull @Getter public boolean spark;
+    @NonNull @Getter public boolean java;
+
 
 
     public void init(){
