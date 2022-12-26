@@ -1,7 +1,14 @@
 package _aux;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.curator.shaded.com.google.common.base.Stopwatch;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaDoubleRDD;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import scala.Tuple2;
 import similarities.DistanceFunction;
 
 import java.io.BufferedReader;
@@ -215,7 +222,43 @@ public class lib {
         }
         return Z;
     }
+    public static double[][] computePairwiseDistances_spark(double[][] data, DistanceFunction distFunc, boolean parallel){
+        SparkConf sparkConf = new SparkConf().setAppName("pairwise")
+                .setMaster("local[16]").set("spark.executor.memory","16g");
+        org.apache.log4j.Logger.getLogger("org").setLevel(org.apache.log4j.Level.OFF);
+        org.apache.log4j.Logger.getLogger("akka").setLevel(org.apache.log4j.Level.OFF);
+        // start a spark context
+        JavaSparkContext sc = new JavaSparkContext(sparkConf);
+        sc.setLogLevel("ERROR");
 
+        DistanceFunction df = distFunc;
+        int n = data.length;
+        // prepare list of objects
+        List<Double[]> list= new ArrayList<Double[]>();
+        for (int i = 0; i < data.length; i++) {
+            list.add(ArrayUtils.toObject(data[i]));
+        }
+        double[][] pairwiseDistances = new double[n][n];
+        //System.out.println(Arrays.deepToString(pairwiseDistances));
+
+        JavaRDD<Double[]> JavaRDD = sc.parallelize(list);
+
+        JavaPairRDD<Double[], Double[]> cartesian = JavaRDD.cartesian(JavaRDD);
+        JavaDoubleRDD pairwise = cartesian.mapToDouble(s -> {
+            double d = df.dist(ArrayUtils.toPrimitive(s._1), ArrayUtils.toPrimitive(s._2));
+            //l.add(d);
+            return Double.valueOf(d);
+        });
+        List<Double> returned = pairwise.collect();
+        sc.close();
+        for (int i = 0; i < n; i++) {
+            for (int j = i + 1; j < n; j++) {
+                pairwiseDistances[i][j] = returned.get(n * i + j);
+                pairwiseDistances[j][i] = returned.get(n * i + j);
+            }
+        }
+        return pairwiseDistances;
+    }
 
     public static double[][] computePairwiseDistances(double[][] data, DistanceFunction distFunc, boolean parallel) {
         int n = data.length;

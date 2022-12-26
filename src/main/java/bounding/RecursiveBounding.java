@@ -180,7 +180,7 @@ public class RecursiveBounding implements Serializable {
         Logger.getLogger("org").setLevel(Level.OFF);
         Logger.getLogger("akka").setLevel(Level.OFF);
         SparkConf sparkConf = new SparkConf().setAppName("RB")
-                .setMaster("local[16]").set("spark.executor.memory","32g").set("spark.driver.maxResultSize", "6g");
+                .setMaster("local[16]").set("spark.executor.memory","16g").set("spark.driver.maxResultSize", "4g");
         // start a spark context
         sc = new JavaSparkContext(sparkConf);
         sc.setLogLevel("ERROR");
@@ -202,8 +202,7 @@ public class RecursiveBounding implements Serializable {
         rootCandidateList.add(rootCandidate);
         Map<Boolean, List<ClusterCombination>> DCCs = new HashMap<>();
         //System.out.println("Java starting....");
-        par.java = true;
-        par.spark = false;
+
 
         if(par.java) {
             DCCs = lib.getStream(rootCandidateList, par.parallel)

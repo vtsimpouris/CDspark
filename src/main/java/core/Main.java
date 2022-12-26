@@ -110,19 +110,19 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 40;
+            n = 1000;
             m = (int) 500;
             partition = 0;
             tau = 0.85;
             minJump = 0.0;
-            maxPLeft = 2;
-            maxPRight = 3;
+            maxPLeft = 1;
+            maxPRight = 1;
             allowSideOverlap = false;
             shrinkFactor = 0;
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = true;
+            parallel = false;
             random = false;
             saveStats = false;
             saveResults = false;
@@ -344,22 +344,6 @@ public class Main {
             case SMART_BASELINE: algorithm = new SmartBaseline(par); break;
         }
 
-        SparkConf sparkConf = new SparkConf().setAppName("pairwise")
-                .setMaster("local[16]").set("spark.executor.memory","32g");
-        org.apache.log4j.Logger.getLogger("org").setLevel(org.apache.log4j.Level.OFF);
-        org.apache.log4j.Logger.getLogger("akka").setLevel(org.apache.log4j.Level.OFF);
-        // start a spark context
-        JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        DistanceFunction df = par.getSimMetric().distFunc;
-        // prepare list of objects
-        List<Double[]> list= new ArrayList<Double[]>();
-        for (int i = 0; i < par.data.length; i++) {
-            list.add(ArrayUtils.toObject(par.data[i]));
-        }
-        double[][] pairwiseDistances = new double[par.n][par.n];
-        pairwiseDistances = sparkComputePairwiseCorrelations(list, sc, df, par.n);
-        //System.out.println(Arrays.deepToString(pairwiseDistances));
-        sc.close();
 
         Set<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();
@@ -424,8 +408,9 @@ public class Main {
                 dataPair = DataReader.readColumnMajorCSV(dataPath, n, m, true, partition);
             } break;
             case "stock":
+                //C:\Users\vtsim\Desktop\0021daily
             default: {
-                dataPath = String.format("C:\\Users\\SKIKK\\Desktop\\stocks\\0021daily\\stocks_0021daily_interpolated_full.csv");
+                dataPath = String.format("C:\\Users\\vtsim\\Desktop\\0021daily\\stocks_0021daily_interpolated_full.csv");
                 dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
         }
