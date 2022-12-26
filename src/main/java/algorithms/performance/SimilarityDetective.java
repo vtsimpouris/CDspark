@@ -42,7 +42,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         );
 
         par.setPairwiseDistances(
-                stageRunner.run("Compute pairwise distances",
+                stageRunner.run("Compute pairwise distances spark",
                         () -> lib.computePairwiseDistances_spark(par.data, par.simMetric.distFunc, par.parallel), par.statBag.stopWatch)
         );
 
