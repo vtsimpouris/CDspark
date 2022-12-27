@@ -293,6 +293,7 @@ public class RecursiveBounding implements Serializable {
 
     public static List<ClusterCombination> unpackAndCheckMinJump(List<ClusterCombination> positiveDCCs, Parameters par){
         List<ClusterCombination> out;
+        par.parallel = true;
         out = lib.getStream(positiveDCCs, par.parallel).unordered()
                 .flatMap(cc -> cc.getSingletons(par.Wl.get(cc.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(cc.RHS.size() - 1): null, par.allowSideOverlap).stream())
                 .filter(cc -> {
@@ -311,6 +312,7 @@ public class RecursiveBounding implements Serializable {
 
     public static List<ClusterCombination> updateTopK(List<ClusterCombination> positiveDCCs, Parameters par){
         //        Sort (descending) and filter positive DCCs to comply to topK parameter
+        par.parallel = true;
         if (positiveDCCs.size() > par.topK){
             positiveDCCs = lib.getStream(positiveDCCs, par.parallel)
                     .sorted((cc1, cc2) -> Double.compare(cc2.getLB(), cc1.getLB()))

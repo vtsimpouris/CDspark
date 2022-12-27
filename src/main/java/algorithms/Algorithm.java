@@ -22,6 +22,10 @@ public abstract class Algorithm implements Serializable {
         lib.printBar(par.LOGGER);
         for (int i = 0; i < statBag.stageDurations.size(); i++) {
             Stage stageDuration = statBag.stageDurations.get(i);
+            // bug fix for Hierarchical clustering duration (sometimes system gives negative duration)
+            if(stageDuration.duration < 0){
+                stageDuration.duration = -stageDuration.duration;
+            }
 
             if (stageDuration.expectedDuration != null){
                 par.LOGGER.fine(String.format("Duration stage %d. %-50s: %.5f sec (estimated %.5f sec)",

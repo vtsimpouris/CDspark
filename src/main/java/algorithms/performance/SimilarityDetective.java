@@ -20,7 +20,15 @@ public class SimilarityDetective extends Algorithm implements Serializable {
     public transient RecursiveBounding RB;
     public transient RecursiveBounding RB_spark;
 
-
+    public void print_results(Set<ResultTuple> results){
+        Iterator iter = results.iterator();
+        int i = 0;
+        while (iter.hasNext() && i <10) {
+            ResultTuple element = (ResultTuple) iter.next();
+            System.out.println(element);
+            i++;
+            }
+        }
     public SimilarityDetective(Parameters par) {
         super(par);
         HC = new HierarchicalClustering(par);
@@ -50,37 +58,30 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
 
+        {
         par.java = true;
+        par.parallel = true;
         Set<ResultTuple> results = stageRunner.run("Recursive bounding local", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("Results: " + results.size());
-        results.clear();
+        results.clear();}
 
         RB = new RecursiveBounding(par, HC.clusterTree);
+        {
         par.spark = true;
-        par.statBag.stopWatch.start();
+        par.parallel = false;
+        if(par.statBag.stopWatch.isStopped()) {
+            par.statBag.stopWatch.start();
+        }
         Set<ResultTuple> spark_results = stageRunner.run("Recursive bounding spark", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("Results: " + spark_results.size());
+        print_results(spark_results);
 
-
-        Iterator iter = results.iterator();
-        while (iter.hasNext()) {
-
-            ResultTuple element = (ResultTuple) iter.next();
-            if (element.RHS.size() > 100) {
-                System.out.println(element);
-            }
-        }
-        //results.clear();
         par.statBag.stopWatch.start();
-
-
-
         //par.statBag.stopWatch.stop();
         par.statBag.totalDuration = lib.nanoToSec(stopWatch.getNanoTime());
         par.statBag.stageDurations = stageRunner.stageDurations;
         this.prepareStats();
-
-        return spark_results;
+        return spark_results;}
     }
 
 

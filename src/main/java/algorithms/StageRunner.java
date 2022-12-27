@@ -19,7 +19,7 @@ public class StageRunner {
     public final List<Stage> stageDurations = new ArrayList<>();
 
     public <T> T run(String name, Supplier<T> stage, StopWatch stopWatch) {
-        LOGGER.fine(String.format("----------- %d. %s --------------",stageDurations.size(), name));
+        LOGGER.fine(String.format("----------- %d. %s ------------",stageDurations.size(), name));
 
         try {
             return stage.get();
@@ -33,7 +33,7 @@ public class StageRunner {
     }
 
     public void run(String name, Runnable stage, StopWatch stopWatch) {
-        LOGGER.fine(String.format("----------- %d. %s --------------",stageDurations.size(), name));
+        LOGGER.fine(String.format("----------- %d. %s -------------",stageDurations.size(), name));
 
         long start = System.currentTimeMillis();
         try {
