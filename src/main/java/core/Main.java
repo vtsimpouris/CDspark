@@ -110,13 +110,13 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 40;
+            n = 10;
             m = (int) 500;
             partition = 0;
             tau = 0.85;
             minJump = 0.0;
             maxPLeft = 1;
-            maxPRight = 4;
+            maxPRight = 1;
             allowSideOverlap = false;
             shrinkFactor = 0;
             topK = -1;
@@ -134,7 +134,7 @@ public class Main {
                 n, m, partition, tau);
         String dateTime = (new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")).format(new Date());
         int threads = ForkJoinPool.getCommonPoolParallelism();
-        int defaultDesiredClusters = 16; // set to Integer.MAX_VALUE for unrestricted and clustering based on epsilon only
+        int defaultDesiredClusters = Integer.MAX_VALUE; // set to Integer.MAX_VALUE for unrestricted and clustering based on epsilon only
 
         double epsilonMultiplier = 0.8;
         int maxLevels = 20;

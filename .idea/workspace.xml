@@ -4,12 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="bug fixes">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="bug fixes on clocks and parallelism">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/Algorithm.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/StageRunner.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/StageRunner.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
@@ -57,16 +53,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "WebServerToolWindowFactoryState": "false",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/test/resources" />
@@ -259,14 +255,8 @@
       <workItem from="1670510866148" duration="668000" />
       <workItem from="1670755821060" duration="4102000" />
       <workItem from="1670832749708" duration="228000" />
-      <workItem from="1672145996172" duration="10601000" />
-    </task>
-    <task id="LOCAL-00029" summary="changed github workflow">
-      <created>1666362473669</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1666362473669</updated>
+      <workItem from="1672145996172" duration="11168000" />
+      <workItem from="1672508165713" duration="967000" />
     </task>
     <task id="LOCAL-00030" summary="changed github workflow">
       <created>1666362693839</created>
@@ -604,7 +594,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672067022698</updated>
     </task>
-    <option name="localTasksCounter" value="78" />
+    <task id="LOCAL-00078" summary="bug fixes on clocks and parallelism">
+      <created>1672156772916</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1672156772916</updated>
+    </task>
+    <option name="localTasksCounter" value="79" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -628,7 +625,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="changed github workflow" />
     <MESSAGE value="added ClusterCombination unit-tests" />
     <MESSAGE value="- Implemented topK queries (to be tested)&#10;- Bugfixes for RecursiveBounding with one-sided metrics&#10;- Bugfixes for multiClusterBound caching" />
     <MESSAGE value="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting" />
@@ -653,7 +649,8 @@
     <MESSAGE value="fully spark scalable recursive bounding" />
     <MESSAGE value="nice results to show" />
     <MESSAGE value="bug fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="bug fixes" />
+    <MESSAGE value="bug fixes on clocks and parallelism" />
+    <option name="LAST_COMMIT_MESSAGE" value="bug fixes on clocks and parallelism" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

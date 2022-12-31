@@ -150,7 +150,15 @@ public class RecursiveBounding implements Serializable {
             CC.setDecisive(false);
 
 //            Get splitted CCs
+            // TODO : SPLIT TO SPARK (?)
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
+            // TODO : SORT SUBCCS WITH BIGGEST RADIUS AND SEND TO SPARK THE TOP #CORES SUBCCS FOR RECURSION
+            for(int i = 0; i < subCCs.size(); i++) {
+                for(int j = 0; j < subCCs.get(i).getClusters().size(); j++) {
+                    System.out.println(subCCs.get(i).getClusters().get(j).getRadius());
+                }
+            }
+            System.out.println();
             JavaRDD<ClusterCombination> rdd = sc.parallelize(subCCs,16);
             rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
             //lib.getStream(subCCs, par.parallel).unordered()
