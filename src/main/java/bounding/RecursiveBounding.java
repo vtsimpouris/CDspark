@@ -7,7 +7,7 @@ import _aux.lib;
 import clustering.Cluster;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.time.StopWatch;
+
 import java.util.List;
 import java.io.Serializable;
 import java.util.*;
@@ -15,12 +15,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.Arrays;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Level;
-import scala.Tuple2;
 
 @RequiredArgsConstructor
 public class RecursiveBounding implements Serializable {
@@ -128,7 +126,7 @@ public class RecursiveBounding implements Serializable {
         }
 
         public int compareTo(Element e) {
-            return (int) (this.value - e.value);
+            return Double.compare(this.value, e.value);
         }
     }
     public static List<ClusterCombination> recursiveBounding_spark(ClusterCombination CC, double shrinkFactor, Parameters par) {
@@ -170,29 +168,13 @@ public class RecursiveBounding implements Serializable {
 
             for(int i = 0; i < subCCs.size(); i++) {
                 radiusList.add(new Element(i,subCCs.get(i).getClusters().get(0).getRadius()));
-                System.out.println(subCCs.get(i).getClusters().get(0).getRadius());
             }
-            System.out.println();
             Collections.sort(radiusList);
-            //Collections.reverse(radiusList); // If you want reverse order
+            Collections.reverse(radiusList); // If you want reverse order
             for (Element element : radiusList) {
-                System.out.println(element.value + " " + element.index);
+                System.out.println(element.value + " " +
+                        "" + element.index);
             }
-
-            //Double[] radius = radiusList.stream().toArray(Double[]::new);
-
-
-            //System.out.println(Arrays.toString(radiusList.toArray()));
-            //System.out.println(Arrays.toString(radius));
-
-
-
-            /*radius = radius.stream()
-                    .sorted(Collections.reverseOrder())
-                    .collect(Collectors.toList());
-            System.out.println(Arrays.toString(radius.toArray()));*/
-            //System.out.println(radius.size());
-            //System.out.println(subCCs.size());
 
 
             JavaRDD<ClusterCombination> rdd = sc.parallelize(subCCs,16);
