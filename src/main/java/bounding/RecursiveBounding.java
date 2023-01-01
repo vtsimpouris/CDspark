@@ -117,6 +117,20 @@ public class RecursiveBounding implements Serializable {
         this.results = positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
         return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
     }
+    public static class Element implements Comparable<Element> {
+
+        int index;
+        Double value;
+
+        Element(int index, Double value){
+            this.index = index;
+            this.value = value;
+        }
+
+        public int compareTo(Element e) {
+            return (int) (this.value - e.value);
+        }
+    }
     public static List<ClusterCombination> recursiveBounding_spark(ClusterCombination CC, double shrinkFactor, Parameters par) {
         ArrayList<ClusterCombination> DCCs = new ArrayList<>();
 
@@ -150,15 +164,37 @@ public class RecursiveBounding implements Serializable {
             CC.setDecisive(false);
 
 //            Get splitted CCs
-            // TODO : SPLIT TO SPARK (?)
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
             // TODO : SORT SUBCCS WITH BIGGEST RADIUS AND SEND TO SPARK THE TOP #CORES SUBCCS FOR RECURSION
+            List<Element> radiusList = new ArrayList<Element>();
+
             for(int i = 0; i < subCCs.size(); i++) {
-                for(int j = 0; j < subCCs.get(i).getClusters().size(); j++) {
-                    System.out.println(subCCs.get(i).getClusters().get(j).getRadius());
-                }
+                radiusList.add(new Element(i,subCCs.get(i).getClusters().get(0).getRadius()));
+                System.out.println(subCCs.get(i).getClusters().get(0).getRadius());
             }
             System.out.println();
+            Collections.sort(radiusList);
+            //Collections.reverse(radiusList); // If you want reverse order
+            for (Element element : radiusList) {
+                System.out.println(element.value + " " + element.index);
+            }
+
+            //Double[] radius = radiusList.stream().toArray(Double[]::new);
+
+
+            //System.out.println(Arrays.toString(radiusList.toArray()));
+            //System.out.println(Arrays.toString(radius));
+
+
+
+            /*radius = radius.stream()
+                    .sorted(Collections.reverseOrder())
+                    .collect(Collectors.toList());
+            System.out.println(Arrays.toString(radius.toArray()));*/
+            //System.out.println(radius.size());
+            //System.out.println(subCCs.size());
+
+
             JavaRDD<ClusterCombination> rdd = sc.parallelize(subCCs,16);
             rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
             //lib.getStream(subCCs, par.parallel).unordered()
