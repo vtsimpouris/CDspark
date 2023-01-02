@@ -58,12 +58,12 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
 
-        {
+        /*{
         par.java = true;
         par.parallel = true;
         Set<ResultTuple> results = stageRunner.run("Recursive bounding local", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("Results: " + results.size());
-        results.clear();}
+        results.clear();}*/
 
         RB = new RecursiveBounding(par, HC.clusterTree);
         {

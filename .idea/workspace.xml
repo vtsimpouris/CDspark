@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="sorting radius's">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
@@ -260,14 +261,7 @@
       <workItem from="1672568625012" duration="6521000" />
       <workItem from="1672576498279" duration="33000" />
       <workItem from="1672576542693" duration="174000" />
-      <workItem from="1672655833088" duration="4474000" />
-    </task>
-    <task id="LOCAL-00033" summary="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting">
-      <created>1666622510726</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1666622510726</updated>
+      <workItem from="1672655833088" duration="6020000" />
     </task>
     <task id="LOCAL-00034" summary="Broke out multiClusterCache as it had many collisions and did not really lead to speedups">
       <created>1666623473488</created>
@@ -605,7 +599,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672576440886</updated>
     </task>
-    <option name="localTasksCounter" value="82" />
+    <task id="LOCAL-00082" summary="sorting radius's">
+      <created>1672660751417</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1672660751417</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

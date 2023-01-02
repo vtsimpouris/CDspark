@@ -39,7 +39,7 @@ public class RecursiveBounding implements Serializable {
     List<ArrayList<Cluster>> Clusters = new ArrayList<ArrayList<Cluster>>();
     public transient Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
     public static int executors = 0;
-    public static int max_executors = 4;
+    public static int max_executors = 16;
 
 
     public Set<ResultTuple> run() {
@@ -197,19 +197,20 @@ public class RecursiveBounding implements Serializable {
             // TODO : SORT AND SPLIT SUBCCS WITH BIGGEST RADIUS AND SEND TO SPARK THE TOP #EXECUTORS SUBCCS FOR RECURSION
             //SubCCs splitSubCCs
             SubCCs allSubCCs = splitSubCCs(subCCs);
-            for(int i = 0; i < allSubCCs.bigSubCCs.size(); i++) {
-                System.out.println(allSubCCs.bigSubCCs.get(i).getClusters().get(0).getRadius());
-            }
-            for(int i = 0; i < allSubCCs.smallSubCCs.size(); i++) {
-                System.out.println(allSubCCs.smallSubCCs.get(i).getClusters().get(0).getRadius());
-            }
+            ArrayList<ClusterCombination> bigSubCCs = new ArrayList<ClusterCombination>(allSubCCs.bigSubCCs);
+            ArrayList<ClusterCombination> smallSubCCs = new ArrayList<ClusterCombination>(allSubCCs.smallSubCCs);
+            List<ClusterCombination> spark_CCs = new ArrayList<ClusterCombination>();
+            List<ClusterCombination> local_CCs = new ArrayList<ClusterCombination>();
 
-            JavaRDD<ClusterCombination> rdd = sc.parallelize(subCCs,16);
+            JavaRDD<ClusterCombination> rdd = sc.parallelize(bigSubCCs,16);
             rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-            //lib.getStream(subCCs, par.parallel).unordered()
-            //                    .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
-            //                    .collect(Collectors.toList());
-            return rdd.collect();
+            spark_CCs = rdd.collect();
+            local_CCs = lib.getStream(subCCs, par.parallel).unordered()
+                                .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
+                                .collect(Collectors.toList());
+            List<ClusterCombination> CCs = Stream.concat(spark_CCs.stream().parallel(), local_CCs.stream().parallel())
+                    .collect(Collectors.toList());
+            return CCs;
 
 
         } else { // CC is decisive, add to DCCs
