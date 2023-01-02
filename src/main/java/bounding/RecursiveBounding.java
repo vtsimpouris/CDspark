@@ -194,20 +194,24 @@ public class RecursiveBounding implements Serializable {
 
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
-            // TODO : SORT AND SPLIT SUBCCS WITH BIGGEST RADIUS AND SEND TO SPARK THE TOP #EXECUTORS SUBCCS FOR RECURSION
-            //SubCCs splitSubCCs
+
+            // Split CCs with biggest radius for spark computation. Smallest clusters are send for local computation.
             SubCCs allSubCCs = splitSubCCs(subCCs);
             ArrayList<ClusterCombination> bigSubCCs = new ArrayList<ClusterCombination>(allSubCCs.bigSubCCs);
             ArrayList<ClusterCombination> smallSubCCs = new ArrayList<ClusterCombination>(allSubCCs.smallSubCCs);
             List<ClusterCombination> spark_CCs = new ArrayList<ClusterCombination>();
             List<ClusterCombination> local_CCs = new ArrayList<ClusterCombination>();
 
+            // spark computation
             JavaRDD<ClusterCombination> rdd = sc.parallelize(bigSubCCs,16);
             rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
             spark_CCs = rdd.collect();
+
+            // local computation
             local_CCs = lib.getStream(subCCs, par.parallel).unordered()
                                 .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
                                 .collect(Collectors.toList());
+            // merge results
             List<ClusterCombination> CCs = Stream.concat(spark_CCs.stream().parallel(), local_CCs.stream().parallel())
                     .collect(Collectors.toList());
             return CCs;
