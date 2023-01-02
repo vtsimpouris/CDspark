@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="RecursiveBounding splitted structure">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="added comments">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -259,14 +261,7 @@
       <workItem from="1672568625012" duration="6521000" />
       <workItem from="1672576498279" duration="33000" />
       <workItem from="1672576542693" duration="174000" />
-      <workItem from="1672655833088" duration="6448000" />
-    </task>
-    <task id="LOCAL-00035" summary="parallelized clustering">
-      <created>1666697770795</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1666697770795</updated>
+      <workItem from="1672655833088" duration="7095000" />
     </task>
     <task id="LOCAL-00036" summary="Updated some tests to comply with new parallel clustering">
       <created>1666698794929</created>
@@ -604,7 +599,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672665814097</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="added comments">
+      <created>1672666191903</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1672666191903</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -628,7 +630,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Broke out multiClusterCache as it had many collisions and did not really lead to speedups" />
     <MESSAGE value="WIP merging" />
     <MESSAGE value="parallelized clustering" />
     <MESSAGE value="Updated some tests to comply with new parallel clustering" />
@@ -653,7 +654,8 @@
     <MESSAGE value="new TODO" />
     <MESSAGE value="sorting radius's" />
     <MESSAGE value="RecursiveBounding splitted structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="RecursiveBounding splitted structure" />
+    <MESSAGE value="added comments" />
+    <option name="LAST_COMMIT_MESSAGE" value="added comments" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

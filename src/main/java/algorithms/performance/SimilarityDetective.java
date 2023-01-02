@@ -49,21 +49,21 @@ public class SimilarityDetective extends Algorithm implements Serializable {
                         () -> lib.computePairwiseDistances(par.data, par.simMetric.distFunc, par.parallel), par.statBag.stopWatch)
         );
 
-        par.setPairwiseDistances(
+        /*par.setPairwiseDistances(
                 stageRunner.run("Compute pairwise distances spark",
                         () -> lib.computePairwiseDistances_spark(par.data, par.simMetric.distFunc, par.parallel), par.statBag.stopWatch)
-        );
+        );*/
 
 //        STAGE 2 - Hierarchical clustering
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
 
-        /*{
+        {
         par.java = true;
         par.parallel = true;
         Set<ResultTuple> results = stageRunner.run("Recursive bounding local", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("Results: " + results.size());
-        results.clear();}*/
+        results.clear();}
 
         RB = new RecursiveBounding(par, HC.clusterTree);
         {
