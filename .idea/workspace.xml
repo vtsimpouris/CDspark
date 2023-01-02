@@ -7,6 +7,7 @@
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="sorting radius's">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -256,14 +257,10 @@
       <workItem from="1670832749708" duration="228000" />
       <workItem from="1672145996172" duration="11168000" />
       <workItem from="1672508165713" duration="1111000" />
-      <workItem from="1672568625012" duration="6458000" />
-    </task>
-    <task id="LOCAL-00032" summary="- Implemented topK queries (to be tested)&#10;- Bugfixes for RecursiveBounding with one-sided metrics&#10;- Bugfixes for multiClusterBound caching">
-      <created>1666616268783</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1666616268783</updated>
+      <workItem from="1672568625012" duration="6521000" />
+      <workItem from="1672576498279" duration="33000" />
+      <workItem from="1672576542693" duration="174000" />
+      <workItem from="1672655833088" duration="4474000" />
     </task>
     <task id="LOCAL-00033" summary="- Added topk and threshold unit-tests&#10;- Bugfixes on candidate generation / splitting">
       <created>1666622510726</created>
@@ -601,7 +598,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672573946643</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <task id="LOCAL-00081" summary="sorting radius's">
+      <created>1672576440886</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1672576440886</updated>
+    </task>
+    <option name="localTasksCounter" value="82" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

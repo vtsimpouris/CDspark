@@ -110,10 +110,10 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 20;
+            n = 30;
             m = (int) 500;
             partition = 0;
-            tau = 0.85;
+            tau = 0.8;
             minJump = 0.0;
             maxPLeft = 1;
             maxPRight = 1;

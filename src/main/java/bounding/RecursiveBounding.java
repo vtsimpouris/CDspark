@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import java.util.Arrays;
+import java.util.stream.Stream;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -36,6 +38,8 @@ public class RecursiveBounding implements Serializable {
     public List<ClusterCombination> ccs = new ArrayList<>();
     List<ArrayList<Cluster>> Clusters = new ArrayList<ArrayList<Cluster>>();
     public transient Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
+    public static int executors = 0;
+    public static int max_executors = 4;
 
 
     public Set<ResultTuple> run() {
@@ -116,19 +120,46 @@ public class RecursiveBounding implements Serializable {
         return positiveDCCs.stream().map(cc -> cc.toResultTuple(par.headers)).collect(Collectors.toSet());
     }
     public static class Element implements Comparable<Element> {
-
         int index;
         Double value;
-
         Element(int index, Double value){
             this.index = index;
             this.value = value;
         }
-
         public int compareTo(Element e) {
             return Double.compare(this.value, e.value);
         }
     }
+    public static class SubCCs{
+        List<ClusterCombination> bigSubCCs = new ArrayList<ClusterCombination>();
+        List<ClusterCombination> smallSubCCs = new ArrayList<ClusterCombination>();
+    }
+
+    public static SubCCs splitSubCCs(ArrayList<ClusterCombination> subCCs){
+        List<Element> radiusList = new ArrayList<Element>();
+
+        for(int i = 0; i < subCCs.size(); i++) {
+                radiusList.add(new Element(i,subCCs.get(i).getClusters().get(0).getRadius()));
+        }
+        Collections.sort(radiusList);
+        Collections.reverse(radiusList); // If you want reverse order
+        /*for (Element element : radiusList) {
+                System.out.println(element.value + " " +
+                        "" + element.index);
+        }*/
+        SubCCs allSubCCs = new SubCCs();
+        for (Element element : radiusList) {
+            if(executors > max_executors){
+                allSubCCs.smallSubCCs.add(subCCs.get(element.index));
+            }else{
+                allSubCCs.bigSubCCs.add(subCCs.get(element.index));
+            }
+            executors++;
+        }
+        return allSubCCs;
+    }
+
+
     public static List<ClusterCombination> recursiveBounding_spark(ClusterCombination CC, double shrinkFactor, Parameters par) {
         ArrayList<ClusterCombination> DCCs = new ArrayList<>();
 
@@ -163,19 +194,15 @@ public class RecursiveBounding implements Serializable {
 
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
-            // TODO : SORT SUBCCS WITH BIGGEST RADIUS AND SEND TO SPARK THE TOP #CORES SUBCCS FOR RECURSION
-            List<Element> radiusList = new ArrayList<Element>();
-
-            for(int i = 0; i < subCCs.size(); i++) {
-                radiusList.add(new Element(i,subCCs.get(i).getClusters().get(0).getRadius()));
+            // TODO : SORT AND SPLIT SUBCCS WITH BIGGEST RADIUS AND SEND TO SPARK THE TOP #EXECUTORS SUBCCS FOR RECURSION
+            //SubCCs splitSubCCs
+            SubCCs allSubCCs = splitSubCCs(subCCs);
+            for(int i = 0; i < allSubCCs.bigSubCCs.size(); i++) {
+                System.out.println(allSubCCs.bigSubCCs.get(i).getClusters().get(0).getRadius());
             }
-            Collections.sort(radiusList);
-            Collections.reverse(radiusList); // If you want reverse order
-            for (Element element : radiusList) {
-                System.out.println(element.value + " " +
-                        "" + element.index);
+            for(int i = 0; i < allSubCCs.smallSubCCs.size(); i++) {
+                System.out.println(allSubCCs.smallSubCCs.get(i).getClusters().get(0).getRadius());
             }
-
 
             JavaRDD<ClusterCombination> rdd = sc.parallelize(subCCs,16);
             rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
