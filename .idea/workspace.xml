@@ -56,6 +56,8 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -262,6 +264,8 @@
       <workItem from="1672576498279" duration="33000" />
       <workItem from="1672576542693" duration="174000" />
       <workItem from="1672655833088" duration="7095000" />
+      <workItem from="1672746608578" duration="2118000" />
+      <workItem from="1672750063046" duration="386000" />
     </task>
     <task id="LOCAL-00036" summary="Updated some tests to comply with new parallel clustering">
       <created>1666698794929</created>

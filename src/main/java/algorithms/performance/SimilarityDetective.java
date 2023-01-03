@@ -67,6 +67,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 
         RB = new RecursiveBounding(par, HC.clusterTree);
         {
+        par.java = false;
         par.spark = true;
         par.parallel = false;
         if(par.statBag.stopWatch.isStopped()) {

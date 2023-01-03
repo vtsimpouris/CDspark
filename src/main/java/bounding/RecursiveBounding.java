@@ -324,6 +324,9 @@ public class RecursiveBounding implements Serializable {
 //        Check if CC is (in)decisive
         if ((CC.getLB() < threshold) && (shrunkUB >= threshold)){
             CC.setDecisive(false);
+            if(par.java && !par.parallel){
+                par.parallel=false;
+            }
 
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
