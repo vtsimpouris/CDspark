@@ -110,13 +110,14 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 40;
+            n = 100;
             m = (int) 500;
             partition = 0;
             tau = 0.8;
             minJump = 0.0;
             maxPLeft = 1;
-            maxPRight = 5;
+            maxPRight = 4;
+            // max computations are: n choose (maxPLeft + maxPright -1)
             allowSideOverlap = false;
             shrinkFactor = 0;
             topK = -1;
@@ -410,8 +411,8 @@ public class Main {
             case "stock":
                 //C:\Users\vtsim\Desktop\0021daily
             default: {
-                //dataPath = String.format("C:\\Users\\vtsim\\Desktop\\0021daily\\stocks_0021daily_interpolated_full.csv");
-                dataPath = String.format("/home/vtsimp/Desktop/0021daily/stocks_0021daily_interpolated_full.csv");
+                dataPath = String.format("C:\\Users\\SKIKK\\Desktop\\stocks\\0021daily\\stocks_0021daily_interpolated_full.csv");
+                //dataPath = String.format("/home/vtsimp/Desktop/0021daily/stocks_0021daily_interpolated_full.csv");
                 dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
         }

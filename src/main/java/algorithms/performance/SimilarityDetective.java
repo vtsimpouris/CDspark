@@ -60,7 +60,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
 
         {
         par.java = true;
-        par.parallel = true;
+        par.spark = false;
         Set<ResultTuple> results = stageRunner.run("Recursive bounding local", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("Results: " + results.size());
         results.clear();}
@@ -69,7 +69,6 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         {
         par.java = false;
         par.spark = true;
-        par.parallel = false;
         if(par.statBag.stopWatch.isStopped()) {
             par.statBag.stopWatch.start();
         }
