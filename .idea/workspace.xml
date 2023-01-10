@@ -7,7 +7,20 @@
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="implementation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/_aux/LibTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/algorithms/SimilarityDetectiveTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/bounding/ClusterCombinationTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/bounding/RecursiveBoundingTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/clustering/ClusteringTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/clustering/HierarchicalClusteringTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/data_reading/DataReaderTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/ChebyshevSimilarityTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/EuclideanSimilarityTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/ManhattanSimilarityTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/MultipoleTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/PearsonCorrelationTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/tools/ClusterKit.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +98,7 @@
   <component name="RunManager" selected="Docker.Dockerfile">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="core.Main" />
-      <module name="CDspark" />
+      <module name="SimilarityDetective" />
       <option name="VM_PARAMETERS" value="-Xmx18g" />
       <extension name="coverage">
         <pattern>
@@ -158,8 +171,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
         <item itemvalue="Docker.Dockerfile" />
+        <item itemvalue="Application.Main" />
         <item itemvalue="Shell Script.run_sd.sh" />
         <item itemvalue="Application.Sandbox" />
         <item itemvalue="JUnit.DataReaderTest.testFMRIData" />
