@@ -264,7 +264,7 @@ public class RecursiveBounding implements Serializable {
 
 
         if(par.java) {
-            par.parallel = false;
+            par.parallel = true;
             //System.out.println(par.parallel);
             DCCs = lib.getStream(rootCandidateList, par.parallel)
                     .unordered()
