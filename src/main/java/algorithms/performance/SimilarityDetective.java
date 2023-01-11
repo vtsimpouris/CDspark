@@ -94,7 +94,7 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         this.prepareStats();
             System.out.println("Total Spark Bounding execution time: "
                     + SBwatch.getTime(TimeUnit.MILLISECONDS) + " milli-seconds");
-            System.out.println("Total Spark Bounding execution time: "
+            System.out.println("Total Recursive Bounding execution time: "
                     + RBwatch.getTime(TimeUnit.MILLISECONDS) + " milli-seconds");
         return results;}
     }

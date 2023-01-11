@@ -116,7 +116,7 @@ public class Main {
             tau = 0.8;
             minJump = 0.0;
             maxPLeft = 1;
-            maxPRight = 1;
+            maxPRight = 2;
             // max computations are: n choose (maxPLeft + maxPright -1)
             allowSideOverlap = false;
             shrinkFactor = 0;
