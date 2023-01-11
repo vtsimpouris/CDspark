@@ -1,7 +1,7 @@
 #instructions here
 #run this first, from terminal
 #sudo chmod 0777 /var/run/docker.sock
-FROM maven:3.6-jdk-11
+FROM maven:3.6-jdk-11@sha256:1d29ccf46ef2a5e64f7de3d79a63f9bcffb4dc56be0ae3daed5ca5542b38aa2d
 WORKDIR /opt/MavenProject
 COPY src ./src
 COPY pom.xml .
