@@ -208,7 +208,7 @@ public class RecursiveBounding implements Serializable {
             spark_CCs = rdd.collect();
 
             // local computation
-            par.parallel = true;
+            par.parallel = false;
             local_CCs = lib.getStream(subCCs, par.parallel).unordered()
                                 .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
                                 .collect(Collectors.toList());
@@ -264,7 +264,7 @@ public class RecursiveBounding implements Serializable {
 
 
         if(par.java) {
-            par.parallel = true;
+            par.parallel = false;
             //System.out.println(par.parallel);
             DCCs = lib.getStream(rootCandidateList, par.parallel)
                     .unordered()

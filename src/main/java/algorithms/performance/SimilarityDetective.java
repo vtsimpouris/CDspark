@@ -6,10 +6,12 @@ import algorithms.StageRunner;
 import bounding.RecursiveBounding;
 import clustering.HierarchicalClustering;
 import core.Parameters;
+import bounding.SparkBounding;
 
 import java.io.Serializable;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -18,14 +20,14 @@ public class SimilarityDetective extends Algorithm implements Serializable {
     private static final long serialVersionUID = -2685444218382696361L;
     public transient HierarchicalClustering HC;
     public transient RecursiveBounding RB;
-    public transient RecursiveBounding RB_spark;
+    public transient SparkBounding SB;
 
     public void print_results(Set<ResultTuple> results){
         Iterator iter = results.iterator();
         int i = 0;
         while (iter.hasNext() && i <10) {
             ResultTuple element = (ResultTuple) iter.next();
-            System.out.println(element);
+            //System.out.println(element);
             i++;
             }
         }
@@ -58,14 +60,23 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         RB = new RecursiveBounding(par, HC.clusterTree);
         stageRunner.run("Hierarchical clustering", () -> HC.run(), par.statBag.stopWatch);
 
+        StopWatch SBwatch = new StopWatch();
+        SBwatch.start();
+        SB = new SparkBounding(par, HC.clusterTree);
+        stageRunner.run("SparkBounding", () -> SB.run(), par.statBag.stopWatch);
+        SBwatch.stop();
+
         {
         par.java = true;
         par.spark = false;
+        StopWatch RBwatch = new StopWatch();
+        RBwatch.start();
         Set<ResultTuple> results = stageRunner.run("Recursive bounding local", () -> RB.run(), par.statBag.stopWatch);
+        RBwatch.stop();
         System.out.println("Results: " + results.size());
-        results.clear();}
+        //results.clear();}
 
-        RB = new RecursiveBounding(par, HC.clusterTree);
+        /*RB = new RecursiveBounding(par, HC.clusterTree);
         {
         par.java = false;
         par.spark = true;
@@ -74,14 +85,18 @@ public class SimilarityDetective extends Algorithm implements Serializable {
         }
         Set<ResultTuple> spark_results = stageRunner.run("Recursive bounding spark", () -> RB.run(), par.statBag.stopWatch);
         System.out.println("Results: " + spark_results.size());
-        print_results(spark_results);
+        print_results(spark_results);*/
 
         par.statBag.stopWatch.start();
         //par.statBag.stopWatch.stop();
         par.statBag.totalDuration = lib.nanoToSec(stopWatch.getNanoTime());
         par.statBag.stageDurations = stageRunner.stageDurations;
         this.prepareStats();
-        return spark_results;}
+            System.out.println("Total Spark Bounding execution time: "
+                    + SBwatch.getTime(TimeUnit.MILLISECONDS) + " milli-seconds");
+            System.out.println("Total Spark Bounding execution time: "
+                    + RBwatch.getTime(TimeUnit.MILLISECONDS) + " milli-seconds");
+        return results;}
     }
 
 

@@ -11,7 +11,7 @@ COPY pom.xml .
 RUN mvn clean
 #tests fail (delete them?)
 CMD ["mvn","clean","install"]
-RUN java -cp SimilarityDetective-1.0-jar-with-dependencies.jar Main
+RUN java -cp SimilarityDetective-1.0-jar-with-dependencies.jar core.Main
 
 #https://www.linkedin.com/pulse/dockerizing-maven-project-akshay-sharma
 #docker build -t testdockerfile .
