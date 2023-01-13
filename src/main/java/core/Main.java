@@ -123,7 +123,7 @@ public class Main {
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = true;
+            parallel = false;
             random = false;
             saveStats = false;
             saveResults = false;
