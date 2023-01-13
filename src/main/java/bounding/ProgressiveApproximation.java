@@ -13,7 +13,9 @@ public class ProgressiveApproximation {
     JavaSparkContext sc;
 
     public static List<ClusterCombination> ApproximateProgressively(List<ClusterCombination> approximatedCCs, List<ClusterCombination> runningPosDCCs, Parameters par, JavaSparkContext sc){
-        par.parallel = true;
+        if(par.spark) {
+            par.parallel = true;
+        }
         if (approximatedCCs.size() == 0){return runningPosDCCs;}
 
         // First group the approximated cluster combinations by their critical shrinkfactor

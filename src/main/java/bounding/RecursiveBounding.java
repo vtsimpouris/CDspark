@@ -159,7 +159,7 @@ public class RecursiveBounding implements Serializable {
         return allSubCCs;
     }
 
-
+    // wrapper function to open up spark parallelism
     public static List<ClusterCombination> recursiveBounding_spark(ClusterCombination CC, double shrinkFactor, Parameters par) {
         ArrayList<ClusterCombination> DCCs = new ArrayList<>();
 
@@ -205,13 +205,13 @@ public class RecursiveBounding implements Serializable {
             // spark computation
             JavaRDD<ClusterCombination> rdd = sc.parallelize(bigSubCCs,max_executors);
             rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-            spark_CCs = rdd.collect();
 
             // local computation
             par.parallel = true;
-            local_CCs = lib.getStream(subCCs, par.parallel).unordered()
+            local_CCs = lib.getStream(smallSubCCs, par.parallel).unordered()
                                 .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
                                 .collect(Collectors.toList());
+            spark_CCs = rdd.collect();
             // merge results
             List<ClusterCombination> CCs = Stream.concat(spark_CCs.stream().parallel(), local_CCs.stream().parallel())
                     .collect(Collectors.toList());

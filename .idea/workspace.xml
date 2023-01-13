@@ -6,21 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="implementation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/_aux/LibTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/algorithms/SimilarityDetectiveTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/bounding/ClusterCombinationTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/bounding/RecursiveBoundingTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/clustering/ClusteringTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/clustering/HierarchicalClusteringTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/data_reading/DataReaderTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/ChebyshevSimilarityTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/EuclideanSimilarityTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/ManhattanSimilarityTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/MultipoleTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/similarities/PearsonCorrelationTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/tools/ClusterKit.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -95,7 +83,7 @@
       <recent name="_aux" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.Dockerfile">
+  <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="core.Main" />
       <module name="SimilarityDetective" />
@@ -171,8 +159,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.Dockerfile" />
         <item itemvalue="Application.Main" />
+        <item itemvalue="Docker.Dockerfile" />
         <item itemvalue="Shell Script.run_sd.sh" />
         <item itemvalue="Application.Sandbox" />
         <item itemvalue="JUnit.DataReaderTest.testFMRIData" />
@@ -294,6 +282,7 @@
       <workItem from="1673322611143" duration="261000" />
       <workItem from="1673327028696" duration="18000" />
       <workItem from="1673327600735" duration="955000" />
+      <workItem from="1673600669408" duration="5000" />
     </task>
     <task id="LOCAL-00038" summary="Major bugfixes in baselines">
       <created>1666784406535</created>
@@ -713,6 +702,11 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="core.Parameters" memberName="parallel" />
+      </pinned-members>
+    </pin-to-top-manager>
     <watches-manager>
       <configuration name="JUnit">
         <watch expression="CC.size()" language="JAVA" />
