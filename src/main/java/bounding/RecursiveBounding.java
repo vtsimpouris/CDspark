@@ -143,10 +143,6 @@ public class RecursiveBounding implements Serializable {
         }
         Collections.sort(radiusList);
         Collections.reverse(radiusList); // If you want reverse order
-        /*for (Element element : radiusList) {
-                System.out.println(element.value + " " +
-                        "" + element.index);
-        }*/
         SubCCs allSubCCs = new SubCCs();
         for (Element element : radiusList) {
             if(executors > max_executors){
@@ -160,6 +156,7 @@ public class RecursiveBounding implements Serializable {
     }
 
 
+    // wrapper function to open up parallelism
     public static List<ClusterCombination> recursiveBounding_spark(ClusterCombination CC, double shrinkFactor, Parameters par) {
         ArrayList<ClusterCombination> DCCs = new ArrayList<>();
 
@@ -205,13 +202,13 @@ public class RecursiveBounding implements Serializable {
             // spark computation
             JavaRDD<ClusterCombination> rdd = sc.parallelize(bigSubCCs,max_executors);
             rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
-            spark_CCs = rdd.collect();
 
             // local computation
-            par.parallel = false;
-            local_CCs = lib.getStream(subCCs, par.parallel).unordered()
+            par.parallel = true;
+            local_CCs = lib.getStream(smallSubCCs, par.parallel).unordered()
                                 .flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).stream())
                                 .collect(Collectors.toList());
+            spark_CCs = rdd.collect();
             // merge results
             List<ClusterCombination> CCs = Stream.concat(spark_CCs.stream().parallel(), local_CCs.stream().parallel())
                     .collect(Collectors.toList());
@@ -260,12 +257,8 @@ public class RecursiveBounding implements Serializable {
         List<ClusterCombination> rootCandidateList = new ArrayList<>();
         rootCandidateList.add(rootCandidate);
         Map<Boolean, List<ClusterCombination>> DCCs = new HashMap<>();
-        //System.out.println("Java starting....");
-
 
         if(par.java) {
-            par.parallel = false;
-            //System.out.println(par.parallel);
             DCCs = lib.getStream(rootCandidateList, par.parallel)
                     .unordered()
                     .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))

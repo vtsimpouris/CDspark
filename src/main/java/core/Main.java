@@ -110,20 +110,20 @@ public class Main {
 //            aggPattern = "custom(0.4-0.6)(0.5-0.5)";
             empiricalBounding = true;
             dataType = "stock";
-            n = 1000;
+            n = 60;
             m = (int) 500;
             partition = 0;
             tau = 0.8;
             minJump = 0.0;
             maxPLeft = 1;
-            maxPRight = 2;
+            maxPRight = 4;
             // max computations are: n choose (maxPLeft + maxPright -1)
             allowSideOverlap = false;
             shrinkFactor = 0;
             topK = -1;
             approximationStrategy = ApproximationStrategyEnum.SIMPLE;
             seed = 0;
-            parallel = false;
+            parallel = true;
             random = false;
             saveStats = false;
             saveResults = false;
@@ -135,7 +135,7 @@ public class Main {
                 n, m, partition, tau);
         String dateTime = (new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss")).format(new Date());
         int threads = ForkJoinPool.getCommonPoolParallelism();
-        int defaultDesiredClusters = 16; // set to Integer.MAX_VALUE for unrestricted and clustering based on epsilon only
+        int defaultDesiredClusters = Integer.MAX_VALUE; // set to Integer.MAX_VALUE for unrestricted and clustering based on epsilon only
 
         double epsilonMultiplier = 0.8;
         int maxLevels = 20;
@@ -348,7 +348,7 @@ public class Main {
 
         Set<ResultTuple> results = algorithm.run();
         par.statBag.nResults = results.size();
-        //algorithm.printStats(par.statBag);
+        algorithm.printStats(par.statBag);
 
         par.LOGGER.info(String.format("Ending time " + LocalDateTime.now()));
         par.LOGGER.info("Number of reported results: " + results.size());
@@ -411,8 +411,8 @@ public class Main {
             case "stock":
                 //C:\Users\vtsim\Desktop\0021daily
             default: {
-                dataPath = String.format("C:\\Users\\SKIKK\\Desktop\\stocks\\0021daily\\stocks_0021daily_interpolated_full.csv");
-                //dataPath = String.format("/home/vtsimp/Desktop/0021daily/stocks_0021daily_interpolated_full.csv");
+                //dataPath = String.format("C:\\Users\\SKIKK\\Desktop\\stocks\\0021daily\\stocks_0021daily_interpolated_full.csv");
+                dataPath = String.format("/home/vtsimp/Desktop/0021daily/stocks_0021daily_interpolated_full.csv");
                 dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
         }

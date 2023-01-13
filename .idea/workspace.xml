@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="novel spark bounding">
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="implementation">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/algorithms/performance/SimilarityDetective.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/SparkBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/SparkBounding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -86,7 +86,7 @@
   <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="core.Main" />
-      <module name="CDspark" />
+      <module name="SimilarityDetective" />
       <option name="VM_PARAMETERS" value="-Xmx18g" />
       <extension name="coverage">
         <pattern>
@@ -282,6 +282,14 @@
       <workItem from="1673322611143" duration="261000" />
       <workItem from="1673327028696" duration="18000" />
       <workItem from="1673327600735" duration="955000" />
+      <workItem from="1673599507075" duration="428000" />
+    </task>
+    <task id="LOCAL-00038" summary="Major bugfixes in baselines">
+      <created>1666784406535</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1666784406535</updated>
     </task>
     <task id="LOCAL-00039" summary="working on sparking setPairwiseDistances">
       <created>1666796810642</created>
@@ -619,14 +627,7 @@
       <option name="project" value="LOCAL" />
       <updated>1673271360262</updated>
     </task>
-    <task id="LOCAL-00087" summary="novel spark bounding">
-      <created>1673440229740</created>
-      <option name="number" value="00087" />
-      <option name="presentableId" value="LOCAL-00087" />
-      <option name="project" value="LOCAL" />
-      <updated>1673440229740</updated>
-    </task>
-    <option name="localTasksCounter" value="88" />
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -650,6 +651,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <MESSAGE value="Updated some tests to comply with new parallel clustering" />
     <MESSAGE value="Major bugfixes in baselines" />
     <MESSAGE value="working on sparking setPairwiseDistances" />
     <MESSAGE value="we need compatible distance metrics" />
@@ -674,8 +676,7 @@
     <MESSAGE value="added comments" />
     <MESSAGE value="parallel java variable bug fix" />
     <MESSAGE value="implementation" />
-    <MESSAGE value="novel spark bounding" />
-    <option name="LAST_COMMIT_MESSAGE" value="novel spark bounding" />
+    <option name="LAST_COMMIT_MESSAGE" value="implementation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -701,6 +702,11 @@
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="core.Parameters" memberName="parallel" />
+      </pinned-members>
+    </pin-to-top-manager>
     <watches-manager>
       <configuration name="JUnit">
         <watch expression="CC.size()" language="JAVA" />
