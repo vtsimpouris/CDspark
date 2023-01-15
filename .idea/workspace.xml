@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="implementation">
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="bug fixes">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -282,13 +280,6 @@
       <workItem from="1673327028696" duration="18000" />
       <workItem from="1673327600735" duration="955000" />
       <workItem from="1673600669408" duration="5000" />
-    </task>
-    <task id="LOCAL-00038" summary="Major bugfixes in baselines">
-      <created>1666784406535</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1666784406535</updated>
     </task>
     <task id="LOCAL-00039" summary="working on sparking setPairwiseDistances">
       <created>1666796810642</created>
@@ -626,7 +617,14 @@
       <option name="project" value="LOCAL" />
       <updated>1673271360262</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="bug fixes">
+      <created>1673602386507</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1673602386507</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -667,7 +665,6 @@
     <MESSAGE value="working on recursive bounding" />
     <MESSAGE value="fully spark scalable recursive bounding" />
     <MESSAGE value="nice results to show" />
-    <MESSAGE value="bug fixes" />
     <MESSAGE value="bug fixes on clocks and parallelism" />
     <MESSAGE value="new TODO" />
     <MESSAGE value="sorting radius's" />
@@ -675,7 +672,8 @@
     <MESSAGE value="added comments" />
     <MESSAGE value="parallel java variable bug fix" />
     <MESSAGE value="implementation" />
-    <option name="LAST_COMMIT_MESSAGE" value="implementation" />
+    <MESSAGE value="bug fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="bug fixes" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
