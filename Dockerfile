@@ -10,6 +10,7 @@ FROM maven:3.6-jdk-11
 WORKDIR /opt/MavenProject
 COPY src ./src
 COPY pom.xml .
+COPY stocks_0021daily_interpolated_full.csv /opt/MavenProject
 RUN mvn clean install \
 && cd target \
 && java -cp SimilarityDetective-1.0-jar-with-dependencies.jar core.Main

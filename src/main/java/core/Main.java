@@ -413,7 +413,9 @@ public class Main {
             default: {
                 //dataPath = String.format("C:\\Users\\SKIKK\\Desktop\\stocks\\0021daily\\stocks_0021daily_interpolated_full.csv");
                 //dataPath = String.format("/home/vtsimp/Desktop/0021daily/stocks_0021daily_interpolated_full.csv");
-                dataPath = String.format("/home/vtsimpouris/Desktop/stock/stock_0021daily/0021daily/stocks_0021daily_interpolated_full.csv");
+                ///opt/MavenProject
+                dataPath = String.format("/opt/MavenProject/stocks_0021daily_interpolated_full.csv");
+                //dataPath = String.format("/home/vtsimpouris/Desktop/stock/stock_0021daily/0021daily/stocks_0021daily_interpolated_full.csv");
                 dataPair = DataReader.readRowMajorCSV(dataPath, n, m, true, partition);
             } break;
         }
