@@ -39,7 +39,7 @@ public class RecursiveBounding implements Serializable {
     List<ArrayList<Cluster>> Clusters = new ArrayList<ArrayList<Cluster>>();
     public transient Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
     public static int executors = 0;
-    public static int max_executors = 16;
+    public static int max_executors = 8;
 
 
     public Set<ResultTuple> run() {
@@ -239,7 +239,7 @@ public class RecursiveBounding implements Serializable {
         Logger.getLogger("org").setLevel(Level.OFF);
         Logger.getLogger("akka").setLevel(Level.OFF);
         SparkConf sparkConf = new SparkConf().setAppName("RB")
-                .setMaster("local[16]").set("spark.executor.memory","16g").set("spark.driver.maxResultSize", "4g");
+                .setMaster("local[*]").set("spark.executor.memory","8g").set("spark.driver.maxResultSize", "2g");
         // start a spark context
         sc = new JavaSparkContext(sparkConf);
         sc.setLogLevel("ERROR");
@@ -264,7 +264,6 @@ public class RecursiveBounding implements Serializable {
 
 
         if(par.java) {
-            //System.out.println(par.parallel);
             DCCs = lib.getStream(rootCandidateList, par.parallel)
                     .unordered()
                     .flatMap(cc -> lib.getStream(recursiveBounding(cc, shrinkFactor, par), par.parallel))
