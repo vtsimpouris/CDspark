@@ -39,7 +39,7 @@ public class RecursiveBounding implements Serializable {
     List<ArrayList<Cluster>> Clusters = new ArrayList<ArrayList<Cluster>>();
     public transient Map<Boolean, List<ClusterCombination>> dccs = new HashMap<>();
     public static int executors = 0;
-    public static int max_executors = 16;
+    public static int max_executors = 0;
 
 
     public Set<ResultTuple> run() {
@@ -158,7 +158,12 @@ public class RecursiveBounding implements Serializable {
         }
         return allSubCCs;
     }
-
+    public static void computeMaxExecutors(ArrayList<ClusterCombination> subCCs, double shrunkUB, double tau){
+        // set max executors for clusters with low UB shrinkage
+        if(shrunkUB > tau){
+            max_executors = Math.min(subCCs.size(),16);
+        }
+    }
     // wrapper function to open up spark parallelism
     public static List<ClusterCombination> recursiveBounding_spark(ClusterCombination CC, double shrinkFactor, Parameters par) {
         ArrayList<ClusterCombination> DCCs = new ArrayList<>();
@@ -194,7 +199,8 @@ public class RecursiveBounding implements Serializable {
 
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
-
+            // heuristic on how many worker nodes we will need
+            computeMaxExecutors(subCCs,shrunkUB,threshold);
             // Split CCs with biggest radius for spark computation. Smallest clusters are send for local computation.
             SubCCs allSubCCs = splitSubCCs(subCCs);
             ArrayList<ClusterCombination> bigSubCCs = new ArrayList<ClusterCombination>(allSubCCs.bigSubCCs);

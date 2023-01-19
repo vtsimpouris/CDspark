@@ -4,8 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="implementation">
-      <change beforePath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/ProgressiveApproximation.java" afterDir="false" />
+    <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="novel spark bounding">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
@@ -85,7 +85,7 @@
   <component name="RunManager" selected="Application.Main">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="core.Main" />
-      <module name="SimilarityDetective" />
+      <module name="CDspark" />
       <option name="VM_PARAMETERS" value="-Xmx18g" />
       <extension name="coverage">
         <pattern>
@@ -282,6 +282,7 @@
       <workItem from="1673327028696" duration="18000" />
       <workItem from="1673327600735" duration="955000" />
       <workItem from="1673600669408" duration="5000" />
+      <workItem from="1674099143106" duration="4355000" />
     </task>
     <task id="LOCAL-00038" summary="Major bugfixes in baselines">
       <created>1666784406535</created>
