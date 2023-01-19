@@ -158,10 +158,16 @@ public class RecursiveBounding implements Serializable {
         }
         return allSubCCs;
     }
-    public static void computeMaxExecutors(ArrayList<ClusterCombination> subCCs, double shrunkUB, double tau){
+    public static void computeMaxExecutors(ArrayList<ClusterCombination> subCCs, double tau, double shrinkFactor, @NonNull double maxApproximationSize){
         // set max executors for clusters with low UB shrinkage
-        if(shrunkUB > tau){
-            max_executors = Math.min(subCCs.size(),16);
+        for(int i = 0; i < subCCs.size(); i++){
+            double ShrunkUB = subCCs.get(i).getShrunkUB(shrinkFactor, maxApproximationSize);
+            if(ShrunkUB > 0){
+                max_executors++;
+            }
+        }
+        if(max_executors > 15){
+            max_executors = 16;
         }
     }
     // wrapper function to open up spark parallelism
@@ -200,7 +206,7 @@ public class RecursiveBounding implements Serializable {
 //            Get splitted CCs
             ArrayList<ClusterCombination> subCCs = CC.split(par.Wl.get(CC.LHS.size() - 1), par.Wr.size() > 0 ? par.Wr.get(CC.RHS.size() - 1): null, par.allowSideOverlap);
             // heuristic on how many worker nodes we will need
-            computeMaxExecutors(subCCs,shrunkUB,threshold);
+            computeMaxExecutors(subCCs,threshold,shrinkFactor, par.maxApproximationSize);
             // Split CCs with biggest radius for spark computation. Smallest clusters are send for local computation.
             SubCCs allSubCCs = splitSubCCs(subCCs);
             ArrayList<ClusterCombination> bigSubCCs = new ArrayList<ClusterCombination>(allSubCCs.bigSubCCs);
@@ -209,6 +215,7 @@ public class RecursiveBounding implements Serializable {
             List<ClusterCombination> local_CCs = new ArrayList<ClusterCombination>();
 
             // spark computation
+            System.out.println(max_executors);
             JavaRDD<ClusterCombination> rdd = sc.parallelize(bigSubCCs,max_executors);
             rdd = rdd.flatMap(subCC -> recursiveBounding(subCC, shrinkFactor, par).iterator());
 
