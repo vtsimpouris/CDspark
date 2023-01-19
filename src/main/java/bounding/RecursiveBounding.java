@@ -159,10 +159,10 @@ public class RecursiveBounding implements Serializable {
         return allSubCCs;
     }
     public static void computeMaxExecutors(ArrayList<ClusterCombination> subCCs, double tau, double shrinkFactor, @NonNull double maxApproximationSize){
-        // set max executors for clusters with low UB shrinkage
+        // set max executors for non singleton cluster combinations (radius > 0)
         for(int i = 0; i < subCCs.size(); i++){
-            double ShrunkUB = subCCs.get(i).getShrunkUB(shrinkFactor, maxApproximationSize);
-            if(ShrunkUB > 0){
+            double radii = subCCs.get(i).getRadiiGeometricMean();
+            if(radii > 0){
                 max_executors++;
             }
         }

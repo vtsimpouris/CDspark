@@ -7,6 +7,7 @@
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="novel spark bounding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/bounding/RecursiveBounding.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -282,14 +283,8 @@
       <workItem from="1673327600735" duration="955000" />
       <workItem from="1673600669408" duration="5000" />
       <workItem from="1674099143106" duration="4625000" />
-      <workItem from="1674108635626" duration="670000" />
-    </task>
-    <task id="LOCAL-00039" summary="working on sparking setPairwiseDistances">
-      <created>1666796810642</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1666796810642</updated>
+      <workItem from="1674108635626" duration="690000" />
+      <workItem from="1674110201529" duration="215000" />
     </task>
     <task id="LOCAL-00040" summary="we need compatible distance metrics">
       <created>1666805347990</created>
@@ -627,7 +622,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674103510047</updated>
     </task>
-    <option name="localTasksCounter" value="88" />
+    <task id="LOCAL-00088" summary="novel spark bounding">
+      <created>1674109314005</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1674109314006</updated>
+    </task>
+    <option name="localTasksCounter" value="89" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
