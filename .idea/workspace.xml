@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="788b383c-0d99-4f34-b549-df27614d3d2d" name="Changes" comment="novel spark bounding">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/core/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/core/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,16 +58,21 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/SKIKK/IdeaProjects/CDspark/src&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;editor.preferences.fonts.default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Docker&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\SKIKK\IdeaProjects\CDspark\src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\SKIKK\IdeaProjects\CDspark" />
       <recent name="$PROJECT_DIR$/src/test/resources" />
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -80,7 +87,7 @@
       <recent name="_aux" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="Docker.Dockerfile">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="core.Main" />
       <module name="CDspark" />
@@ -156,8 +163,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Main" />
         <item itemvalue="Docker.Dockerfile" />
+        <item itemvalue="Application.Main" />
         <item itemvalue="Shell Script.run_sd.sh" />
         <item itemvalue="Application.Sandbox" />
         <item itemvalue="JUnit.DataReaderTest.testFMRIData" />
@@ -287,14 +294,10 @@
       <workItem from="1674805267587" duration="19000" />
       <workItem from="1674805337812" duration="38000" />
       <workItem from="1674805752738" duration="17000" />
-      <workItem from="1674892350844" duration="11000" />
-    </task>
-    <task id="LOCAL-00041" summary="different approach due to type issues">
-      <created>1666883441855</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1666883441855</updated>
+      <workItem from="1674892350844" duration="75000" />
+      <workItem from="1674893589025" duration="865000" />
+      <workItem from="1676620134711" duration="1489000" />
+      <workItem from="1676635979480" duration="2564000" />
     </task>
     <task id="LOCAL-00042" summary="function to create rdd from data created">
       <created>1666883939124</created>
@@ -632,7 +635,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674110423800</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="novel spark bounding">
+      <created>1674892370496</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1674892370496</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
